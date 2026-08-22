@@ -6,21 +6,11 @@ import { SignupPage } from './pages/auth/SignupPage';
 import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/auth/ResetPasswordPage';
 import { OnboardingPage } from './pages/auth/OnboardingPage';
+import { WorkspacePage } from './pages/app/WorkspacePage';
 import { DesignSystemShowcase } from './components/ui/DesignSystemShowcase';
-import LexUIApp from './gpt/App';
+import { AuthGuard } from './components/auth/AuthGuard';
 
 export function App() {
-  // Check if current path is under the GPT application prefix to avoid nested Router crashes
-  const isGptPath = window.location.pathname.startsWith('/app');
-
-  if (isGptPath) {
-    return (
-      <AuthProvider>
-        <LexUIApp />
-      </AuthProvider>
-    );
-  }
-
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -31,8 +21,14 @@ export function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/onboarding" element={<OnboardingPage />} />
-          <Route path="/app" element={<Navigate to="/app" replace />} />
-          
+          <Route 
+            path="/app" 
+            element={
+              <AuthGuard>
+                <WorkspacePage />
+              </AuthGuard>
+            } 
+          />
           <Route 
             path="/design-system" 
             element={

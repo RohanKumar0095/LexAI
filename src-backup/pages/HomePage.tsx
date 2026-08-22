@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { Header } from '../components/shell/Header';
 import { Footer } from '../components/shell/Footer';
 import { HeroSection } from '../components/home/HeroSection';
@@ -14,10 +15,15 @@ import { ExploreProductSection } from '../components/home/ExploreProductSection'
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [currentLang, setCurrentLang] = useState<'EN' | 'HI'>('EN');
 
   const handleEnterApp = () => {
-    window.location.href = '/app';
+    if (isAuthenticated) {
+      navigate('/app');
+    } else {
+      navigate('/login');
+    }
   };
 
   const handleOpenAuth = (persona: 'citizen' | 'lawyer' = 'citizen') => {

@@ -38,48 +38,6 @@
   --shadow-lexai-glass: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   --shadow-lexai-glow-saffron: 0 0 25px rgba(2, 132, 199, 0.25);
   --shadow-lexai-glow-electric: 0 0 25px rgba(168, 85, 247, 0.25);
-
-  /* LexUI Tailwind v3 config mappings inside Tailwind v4 */
-  --color-background: var(--background);
-  --color-surface: var(--surface);
-  --color-foreground: var(--foreground);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-hover: var(--hover);
-  --color-selected: var(--selected);
-
-  --color-brand-navy-50: #f0f3fa;
-  --color-brand-navy-100: #dde4f2;
-  --color-brand-navy-200: #becbe6;
-  --color-brand-navy-300: #90a8d4;
-  --color-brand-navy-400: #5c7ebd;
-  --color-brand-navy-500: #3c5fa3;
-  --color-brand-navy-600: #2d4b85;
-  --color-brand-navy-700: #253d6e;
-  --color-brand-navy-800: #21355c;
-  --color-brand-navy-900: #1e2e4f;
-  --color-brand-navy-950: #0f172a;
-
-  --color-brand-gold-50: #f0f9ff;
-  --color-brand-gold-100: #e0f2fe;
-  --color-brand-gold-200: #bae6fd;
-  --color-brand-gold-300: #a855f7;
-  --color-brand-gold-400: #c084fc;
-  --color-brand-gold-500: #0ea5e9;
-  --color-brand-gold-550: #0284c7;
-  --color-brand-gold-800: #1e40af;
-  --color-brand-gold-900: #1e3a8a;
-
-  --color-brand-accent-50: #eef2ff;
-  --color-brand-accent-100: #e0e7ff;
-  --color-brand-accent-500: #6366f1;
-  --color-brand-accent-600: #4f46e5;
-  --color-brand-accent-700: #3730a3;
-
-  --shadow-premium: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 8px -1px rgba(15, 23, 42, 0.02);
-  --shadow-premium-dark: 0 4px 20px -2px rgba(0, 0, 0, 0.35), 0 2px 8px -1px rgba(0, 0, 0, 0.25);
 }
 
 @layer base {
@@ -125,17 +83,6 @@
     --radius-lg: 16px;
     --radius-xl: 24px;
     --radius-hero: 30px;
-
-    /* LexUI direct compatibility mapping */
-    --background: var(--lexai-background);
-    --surface: var(--lexai-surface);
-    --foreground: var(--lexai-foreground);
-    --secondary-foreground: var(--lexai-secondary-foreground);
-    --muted-foreground: var(--lexai-muted-foreground);
-    --border: var(--lexai-border);
-    --input: var(--lexai-input);
-    --hover: var(--lexai-hover);
-    --selected: var(--lexai-selected);
   }
 
   .light {
@@ -153,17 +100,6 @@
     --lexai-success: #10b981;
     --lexai-danger: #ef4444;
     --lexai-warning: #b91c1c;
-
-    /* LexUI light mode compatibility mapping */
-    --background: var(--lexai-background);
-    --surface: var(--lexai-surface);
-    --foreground: var(--lexai-foreground);
-    --secondary-foreground: var(--lexai-secondary-foreground);
-    --muted-foreground: var(--lexai-muted-foreground);
-    --border: var(--lexai-border);
-    --input: var(--lexai-input);
-    --hover: var(--lexai-hover);
-    --selected: var(--lexai-selected);
   }
 
   body {
@@ -274,14 +210,9 @@
   background: var(--lexai-background);
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.15);
-  border-radius: 9999px;
-}
-
 ::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.2);
-  border-radius: 9999px;
+  background: var(--lexai-border);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -358,22 +289,4 @@
 
 .hindi-text {
   font-family: 'Noto Sans Devanagari', sans-serif;
-}
-
-/* LexUI Custom shadow & animation utilities compatibility */
-.shadow-premium {
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 8px -1px rgba(15, 23, 42, 0.02);
-}
-
-.dark .shadow-premium {
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35), 0 2px 8px -1px rgba(0, 0, 0, 0.25);
-}
-
-@keyframes pulseSlow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
-}
-
-.animate-pulse-slow {
-  animation: pulseSlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
