@@ -1,0 +1,292 @@
+@import "tailwindcss";
+
+@theme {
+  --color-midnight-base: var(--lexai-background);
+  --color-midnight-surface: var(--lexai-surface);
+  --color-midnight-card: var(--lexai-surface);
+  --color-midnight-elevated: var(--lexai-surface);
+  --color-midnight-border: var(--lexai-border);
+
+  --color-saffron: var(--lexai-primary-accent);
+  --color-saffron-50: #f0f9ff;
+  --color-saffron-100: #e0f2fe;
+  --color-saffron-400: #38bdf8;
+  --color-saffron-500: var(--lexai-primary-accent);
+  --color-saffron-600: #0369a1;
+  --color-saffron-glow: rgba(2, 132, 199, 0.25);
+
+  --color-electric: var(--lexai-secondary-accent);
+  --color-electric-400: #c084fc;
+  --color-electric-500: var(--lexai-secondary-accent);
+  --color-electric-600: #9333ea;
+  --color-electric-glow: rgba(168, 85, 247, 0.25);
+
+  --color-emerald: var(--lexai-success);
+  --color-emerald-400: #34d399;
+  --color-emerald-500: var(--lexai-success);
+  --color-emerald-600: #059669;
+
+  --color-crimson: var(--lexai-danger);
+  --color-crimson-400: #f87171;
+  --color-crimson-500: var(--lexai-danger);
+  --color-crimson-600: #dc2626;
+
+  --color-text-primary: var(--lexai-foreground);
+  --color-text-secondary: var(--lexai-secondary-foreground);
+  --color-text-muted: var(--lexai-muted-foreground);
+
+  --shadow-lexai-glass: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --shadow-lexai-glow-saffron: 0 0 25px rgba(2, 132, 199, 0.25);
+  --shadow-lexai-glow-electric: 0 0 25px rgba(168, 85, 247, 0.25);
+}
+
+@layer base {
+  :root {
+    /* GPT Color Specification - Dark Mode (Default) */
+    --lexai-background: #0D0F13;
+    --lexai-surface: #15171C;
+    --lexai-foreground: #F7F8FA;
+    --lexai-secondary-foreground: #98A2B3;
+    --lexai-muted-foreground: #667085;
+    --lexai-border: #2A2D34;
+    --lexai-input: #1A1D23;
+    --lexai-hover: #20232A;
+    --lexai-selected: #1E2A45;
+
+    /* Brand Accent Colors */
+    --lexai-primary-accent: #0284c7;
+    --lexai-secondary-accent: #a855f7;
+    --lexai-tertiary-accent: #6366f1;
+    --lexai-brand-navy: #0f172a;
+
+    /* Semantic Colors */
+    --lexai-success: #10b981;
+    --lexai-danger: #ef4444;
+    --lexai-warning: #f87171;
+
+    /* Base theme mappings for compatibility */
+    --midnight-base: var(--lexai-background);
+    --midnight-surface: var(--lexai-surface);
+    --midnight-card: var(--lexai-surface);
+    
+    --saffron: var(--lexai-primary-accent);
+    --electric-indigo: var(--lexai-secondary-accent);
+    --emerald: var(--lexai-success);
+    --crimson: var(--lexai-danger);
+    
+    --text-primary: var(--lexai-foreground);
+    --text-secondary: var(--lexai-secondary-foreground);
+    --text-muted: var(--lexai-muted-foreground);
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-hero: 30px;
+  }
+
+  .light {
+    /* GPT Color Specification - Light Mode */
+    --lexai-background: #F7F8FA;
+    --lexai-surface: #FFFFFF;
+    --lexai-foreground: #171923;
+    --lexai-secondary-foreground: #667085;
+    --lexai-muted-foreground: #98A2B3;
+    --lexai-border: #E4E7EC;
+    --lexai-input: #F9FAFB;
+    --lexai-hover: #F2F4F7;
+    --lexai-selected: #EEF2FF;
+    
+    --lexai-success: #10b981;
+    --lexai-danger: #ef4444;
+    --lexai-warning: #b91c1c;
+  }
+
+  body {
+    background-color: var(--lexai-background);
+    color: var(--lexai-foreground);
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+/* Background Atmosphere & Ambient Lighting (Non-Gradient Theme Aligned) */
+.lexai-ambient-bg {
+  position: relative;
+  background-color: var(--lexai-background);
+  background-image: 
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(2, 132, 199, 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 85% 15%, rgba(168, 85, 247, 0.04), transparent),
+    radial-gradient(ellipse 50% 30% at 15% 70%, rgba(16, 185, 129, 0.03), transparent);
+}
+
+.lexai-grid-pattern {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+}
+
+/* Signature LexAI System (Non-Gradient Adaptation) */
+.lexai-signature-gradient {
+  background: var(--lexai-primary-accent);
+}
+
+.lexai-signature-text {
+  color: var(--lexai-foreground);
+  background: none;
+  -webkit-text-fill-color: initial;
+  background-clip: unset;
+}
+
+.lexai-saffron-text {
+  color: var(--lexai-primary-accent);
+  background: none;
+  -webkit-text-fill-color: initial;
+  background-clip: unset;
+}
+
+.lexai-electric-text {
+  color: var(--lexai-secondary-accent);
+  background: none;
+  -webkit-text-fill-color: initial;
+  background-clip: unset;
+}
+
+/* Surface System */
+.lexai-surface-glass {
+  background: rgba(21, 23, 28, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--lexai-border);
+  box-shadow: var(--shadow-lexai-glass);
+}
+
+.lexai-surface-elevated {
+  background: var(--lexai-surface);
+  border: 1px solid var(--lexai-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.lexai-surface-card {
+  background: var(--lexai-surface);
+  border: 1px solid var(--lexai-border);
+  transition: all 0.25s ease-in-out;
+}
+
+.lexai-surface-card:hover {
+  background: var(--lexai-surface);
+  border-color: var(--lexai-primary-accent);
+  box-shadow: 0 12px 30px rgba(2, 132, 199, 0.1);
+  transform: translateY(-2px);
+}
+
+.lexai-surface-input {
+  background: var(--lexai-input);
+  border: 1px solid var(--lexai-border);
+  transition: all 0.2s ease;
+}
+
+.lexai-surface-input:focus-within, .lexai-surface-input:focus {
+  border-color: var(--lexai-primary-accent);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2), 0 0 20px rgba(2, 132, 199, 0.15);
+  outline: none;
+}
+
+.lexai-surface-modal {
+  background: var(--lexai-surface);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--lexai-border);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(2, 132, 199, 0.1);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--lexai-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--lexai-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--lexai-primary-accent);
+}
+
+/* Typography Hierarchy Classes */
+.display-xl {
+  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  font-size: 3.5rem;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.display-lg {
+  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  font-size: 2.75rem;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.heading-xl {
+  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  font-size: 2rem;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.heading-lg {
+  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.5rem;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.heading-md {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.25rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.body-lg {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.body-md {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.body-sm {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.caption-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.hindi-text {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+}
