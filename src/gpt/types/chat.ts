@@ -31,7 +31,7 @@ export interface Message {
   followUps?: string[];
   roadmapId?: string;
   evidenceChecklist?: string[];
-  explainMode?: 'normal' | 'detailed' | 'personalized'; // Updated to Normal, Personalized, Detailed
+  explainMode?: 'simple' | 'detailed' | 'case-analysis' | 'technical'; // Updated to Simple, Detailed, Case Analysis, Technical
 }
 
 export interface Conversation {

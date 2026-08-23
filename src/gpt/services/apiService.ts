@@ -15,7 +15,7 @@ export const apiService = {
   async sendChatMessage(
     messageText: string,
     _history: Message[],
-    explainMode: 'normal' | 'detailed' | 'personalized' = 'normal'
+    explainMode: 'simple' | 'detailed' | 'case-analysis' | 'technical' = 'simple'
   ): Promise<Message> {
     await delay(1200); // Simulate network round-trip and LLM generation
 

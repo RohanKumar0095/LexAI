@@ -49,7 +49,7 @@ export const mockConversations: Conversation[] = [
           'How do I file a complaint against an officer?'
         ],
         roadmapId: 'police-stop-roadmap',
-        explainMode: 'normal'
+        explainMode: 'simple'
       }
     ]
   },
@@ -93,7 +93,7 @@ export const mockConversations: Conversation[] = [
           'What happens if my lease agreement is expired?',
           'How do I file a complaint with the Rent Control Court?'
         ],
-        explainMode: 'normal'
+        explainMode: 'simple'
       }
     ]
   },
@@ -145,7 +145,7 @@ export const mockConversations: Conversation[] = [
           'Can I recover my money if the police find the fraudster?'
         ],
         roadmapId: 'cyber-fraud-roadmap',
-        explainMode: 'normal'
+        explainMode: 'simple'
       }
     ]
   },
@@ -189,7 +189,7 @@ export const mockConversations: Conversation[] = [
           'Is an unboxing video mandatory to win a consumer case?',
           'Can I claim compensation for mental harassment?'
         ],
-        explainMode: 'normal'
+        explainMode: 'simple'
       }
     ]
   },
@@ -241,7 +241,7 @@ export const mockConversations: Conversation[] = [
           'How do I check my FIR status online?'
         ],
         roadmapId: 'fir-roadmap',
-        explainMode: 'normal'
+        explainMode: 'simple'
       }
     ]
   },
@@ -265,7 +265,7 @@ export const mockConversations: Conversation[] = [
         role: 'assistant',
         content: 'In India, employees are protected against delayed salary payments and wrongful termination under labour laws.\n\n### What this means\nEmployers cannot withhold earned wages or terminate services without following the agreed notice period or contract rules, subject to the Payment of Wages Act, 1936.\n\n### What you can do next\n1. **Send a Demand Email:** Write a formal email demanding unpaid salary and outlining severance dues.\n2. **File a labor complaint:** Contact the regional Labor Commissioner office.\n3. **Send a legal notice:** Engage a legal counsel to send a recovery notice.',
         timestamp: '10 days ago',
-        explainMode: 'normal'
+        explainMode: 'simple'
       }
     ]
   },
@@ -289,7 +289,7 @@ export const mockConversations: Conversation[] = [
         role: 'assistant',
         content: 'Under the Motor Vehicles Act, you have duties and rights in a collision.\n\n### What this means\nImmediately document the damage, seek medical help for any injuries, and report to the police cell.\n\n### What you can do next\n1. **Take Photos:** Capture the vehicles, damage, and truck registration plate.\n2. **Call 112:** Notify police immediately to get a spot check or diary entry.\n3. **Call Insurance:** Notify your motor insurer to initiate claims.',
         timestamp: '12 days ago',
-        explainMode: 'normal'
+        explainMode: 'simple'
       }
     ]
   }

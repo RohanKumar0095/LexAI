@@ -9,8 +9,8 @@ import { X, Sparkles } from 'lucide-react';
 interface ChatScreenProps {
   messages: Message[];
   isTyping: boolean;
-  explainMode: 'normal' | 'personalized' | 'detailed';
-  onChangeExplainMode: (mode: 'normal' | 'personalized' | 'detailed') => void;
+  explainMode: 'simple' | 'detailed' | 'case-analysis' | 'technical';
+  onChangeExplainMode: (mode: 'simple' | 'detailed' | 'case-analysis' | 'technical') => void;
   onSendMessage: (text: string) => void;
   onSelectQuickPrompt: (text: string) => void;
   onStartLearning: () => void;

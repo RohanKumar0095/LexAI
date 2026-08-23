@@ -7,7 +7,7 @@ export const useChat = () => {
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState<boolean>(false);
-  const [explainMode, setExplainMode] = useState<'normal' | 'detailed' | 'personalized'>('normal');
+  const [explainMode, setExplainMode] = useState<'simple' | 'detailed' | 'case-analysis' | 'technical'>('simple');
 
   // Load initial history
   useEffect(() => {
@@ -33,7 +33,7 @@ export const useChat = () => {
   const startNewChat = () => {
     setActiveConversationId(null);
     setMessages([]);
-    setExplainMode('normal');
+    setExplainMode('simple');
   };
 
   const loadConversation = (id: string) => {

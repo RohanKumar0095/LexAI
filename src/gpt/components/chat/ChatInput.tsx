@@ -4,15 +4,16 @@ import { Send, BookOpen, Mic, ChevronDown, Check } from 'lucide-react';
 export const OFFICIAL_LEGAL_RESOURCE_URL = 'https://www.indiacode.nic.in';
 
 const explanationOptions = [
-  { value: 'normal', label: 'Normal' },
-  { value: 'personalized', label: 'Personalized' },
-  { value: 'detailed', label: 'Detailed' }
+  { value: 'simple', label: 'Simple' },
+  { value: 'detailed', label: 'Detailed' },
+  { value: 'case-analysis', label: 'Case Analysis' },
+  { value: 'technical', label: 'Technical' }
 ] as const;
 
 interface ChatInputProps {
   onSendMessage: (text: string) => void;
-  explainMode: 'normal' | 'personalized' | 'detailed';
-  onChangeExplainMode: (mode: 'normal' | 'personalized' | 'detailed') => void;
+  explainMode: 'simple' | 'detailed' | 'case-analysis' | 'technical';
+  onChangeExplainMode: (mode: 'simple' | 'detailed' | 'case-analysis' | 'technical') => void;
   onSelectQuickPrompt: (text: string) => void;
   disabled: boolean;
 }
@@ -61,7 +62,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     }
   }, [inputText]);
 
-  const handleSelectMode = (value: 'normal' | 'personalized' | 'detailed') => {
+  const handleSelectMode = (value: 'simple' | 'detailed' | 'case-analysis' | 'technical') => {
     onChangeExplainMode(value);
     setDropdownOpen(false);
   };
