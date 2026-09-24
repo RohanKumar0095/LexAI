@@ -26,6 +26,7 @@ export interface SignupData {
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  isGuest: boolean;
   isLoading: boolean;
   persona: 'citizen';
   user: UserProfile | null;
@@ -33,6 +34,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   signup: (data: SignupData) => Promise<boolean>;
   logout: () => void;
+  continueAsGuest: () => void;
   updateProfile: (profileUpdates: Partial<UserProfile>) => void;
 }
 
@@ -41,9 +43,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const TOKEN_KEY = 'lexai_access_token';
 const USER_KEY = 'lexai_user';
 const AUTH_FLAG_KEY = 'lexai_authenticated';
+const GUEST_KEY = 'lexai_guest_mode';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isGuest, setIsGuest] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -55,9 +59,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     async function restoreSession() {
       const storedToken = localStorage.getItem(TOKEN_KEY);
       const storedUser = localStorage.getItem(USER_KEY);
+      const storedGuest = localStorage.getItem(GUEST_KEY) === 'true';
 
       if (!storedToken) {
         if (isMounted) {
+          setIsGuest(storedGuest);
           setIsLoading(false);
           setIsAuthenticated(false);
         }
@@ -92,6 +98,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setToken(storedToken);
         setUser(fullProfile);
         setIsAuthenticated(true);
+        setIsGuest(false);
+        localStorage.removeItem(GUEST_KEY);
         localStorage.setItem(AUTH_FLAG_KEY, 'true');
         localStorage.setItem(USER_KEY, JSON.stringify(fullProfile));
       } catch (err) {
@@ -100,6 +108,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setToken(null);
           setUser(null);
           setIsAuthenticated(false);
+          setIsGuest(storedGuest);
           localStorage.removeItem(TOKEN_KEY);
           localStorage.removeItem(USER_KEY);
           localStorage.removeItem(AUTH_FLAG_KEY);
@@ -144,7 +153,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setToken(authData.access_token);
     setUser(profile);
     setIsAuthenticated(true);
+    setIsGuest(false);
 
+    localStorage.removeItem(GUEST_KEY);
     localStorage.setItem(TOKEN_KEY, authData.access_token);
     localStorage.setItem(AUTH_FLAG_KEY, 'true');
     localStorage.setItem(USER_KEY, JSON.stringify(profile));
@@ -166,12 +177,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setToken(authData.access_token);
     setUser(newUser);
     setIsAuthenticated(true);
+    setIsGuest(false);
 
+    localStorage.removeItem(GUEST_KEY);
     localStorage.setItem(TOKEN_KEY, authData.access_token);
     localStorage.setItem(AUTH_FLAG_KEY, 'true');
     localStorage.setItem(USER_KEY, JSON.stringify(newUser));
 
     return true;
+  };
+
+  const continueAsGuest = () => {
+    setIsGuest(true);
+    setIsAuthenticated(false);
+    setUser(null);
+    setToken(null);
+    localStorage.setItem(GUEST_KEY, 'true');
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(AUTH_FLAG_KEY);
+    localStorage.removeItem(USER_KEY);
   };
 
   const logout = () => {
@@ -182,10 +206,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setToken(null);
     setIsAuthenticated(false);
+    setIsGuest(false);
     setUser(null);
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(AUTH_FLAG_KEY);
     localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(GUEST_KEY);
   };
 
   const updateProfile = (profileUpdates: Partial<UserProfile>) => {
@@ -204,6 +230,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     <AuthContext.Provider
       value={{
         isAuthenticated,
+        isGuest,
         isLoading,
         persona: 'citizen',
         user,
@@ -211,6 +238,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         signup,
         logout,
+        continueAsGuest,
         updateProfile,
       }}
     >

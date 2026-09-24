@@ -53,7 +53,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           ref={ref}
           id={inputId}
           disabled={disabled}
-          className="w-full bg-transparent px-3.5 py-2.5 text-sm text-[#F8FAFC] placeholder-slate-500 focus:outline-none disabled:cursor-not-allowed"
+          style={{ colorScheme: 'dark' }}
+          className="w-full bg-transparent px-3.5 py-2.5 text-sm text-[#F8FAFC] placeholder-slate-500 focus:outline-none focus:bg-transparent active:bg-transparent disabled:cursor-not-allowed"
           {...props}
         />
 

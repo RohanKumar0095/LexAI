@@ -5,12 +5,11 @@ import { AuthLayout } from '../../components/auth/AuthLayout';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { PasswordInput } from '../../components/auth/PasswordInput';
-import { SocialLoginButton } from '../../components/auth/SocialLoginButton';
-import { Mail, User, Phone, ArrowRight, ShieldCheck, Briefcase } from 'lucide-react';
+import { Mail, User, Phone, ArrowRight, ShieldCheck, Briefcase, Compass } from 'lucide-react';
 
 export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
-  const { signup, isAuthenticated } = useAuth();
+  const { signup, continueAsGuest, isAuthenticated } = useAuth();
 
   const [persona, setPersona] = useState<'citizen' | 'lawyer'>('citizen');
   const [name, setName] = useState('');
@@ -114,6 +113,22 @@ export const SignupPage: React.FC = () => {
     }
   };
 
+  const handleGuestAccess = () => {
+    continueAsGuest();
+    navigate('/app');
+  };
+
+  const clearFieldError = (fieldName: string) => {
+    if (errors[fieldName] || errors.form) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[fieldName];
+        delete next.form;
+        return next;
+      });
+    }
+  };
+
   return (
     <AuthLayout
       title={persona === 'citizen' ? "Create Citizen Account" : "Lawyer Pre-Access Registration"}
@@ -185,7 +200,10 @@ export const SignupPage: React.FC = () => {
             type="text"
             placeholder="Rohan Kumar"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              clearFieldError('name');
+            }}
             errorText={errors.name}
             leftIcon={<User className="w-4 h-4 text-slate-500" />}
             required
@@ -196,7 +214,10 @@ export const SignupPage: React.FC = () => {
             type="email"
             placeholder="name@example.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              clearFieldError('email');
+            }}
             errorText={errors.email}
             leftIcon={<Mail className="w-4 h-4 text-slate-500" />}
             required
@@ -207,7 +228,10 @@ export const SignupPage: React.FC = () => {
             type="tel"
             placeholder="e.g. +91 98765 43210"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => {
+              setPhone(e.target.value);
+              clearFieldError('phone');
+            }}
             errorText={errors.phone}
             leftIcon={<Phone className="w-4 h-4 text-slate-500" />}
           />
@@ -217,7 +241,10 @@ export const SignupPage: React.FC = () => {
               label="Password"
               placeholder="Min 6 chars"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                clearFieldError('password');
+              }}
               errorText={errors.password}
               helperText="Must be at least 6 characters"
               required
@@ -227,7 +254,10 @@ export const SignupPage: React.FC = () => {
               label="Confirm Password"
               placeholder="Repeat password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                clearFieldError('confirmPassword');
+              }}
               errorText={errors.confirmPassword}
               required
             />
@@ -256,16 +286,19 @@ export const SignupPage: React.FC = () => {
               <div className="w-full border-t border-slate-800" />
             </div>
             <span className="relative px-3 bg-[#080B14] text-[10px] text-slate-500 uppercase tracking-widest">
-              Or continue with
+              Or explore without account
             </span>
           </div>
 
-          {/* Google OAuth Button */}
-          <SocialLoginButton 
-            onClick={() => {
-              setErrors({ form: 'Google registration is currently unavailable. Please register with email and password.' });
-            }} 
-          />
+          {/* Guest Mode Option */}
+          <button
+            type="button"
+            onClick={handleGuestAccess}
+            className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 active:bg-white/15 border border-slate-800 text-sm font-semibold text-slate-200 transition-all duration-200 cursor-pointer"
+          >
+            <Compass className="w-4 h-4 text-[#FF9933]" />
+            <span>Continue in Guest Mode</span>
+          </button>
 
           {/* Bottom Link */}
           <p className="text-center text-xs text-slate-400 pt-4">

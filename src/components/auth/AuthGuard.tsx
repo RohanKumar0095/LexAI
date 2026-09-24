@@ -7,7 +7,7 @@ interface AuthGuardProps {
 }
 
 export const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isGuest, isLoading } = useAuth();
   
   // Show non-intrusive loading indicator while initial session / token verification completes
   if (isLoading) {
@@ -21,8 +21,8 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
     );
   }
 
-  // If session check has completed and user is not authenticated, redirect to /login
-  if (!isAuthenticated) {
+  // If session check has completed and user is neither authenticated nor in Guest Mode, redirect to /login
+  if (!isAuthenticated && !isGuest) {
     return <Navigate to="/login" replace />;
   }
   

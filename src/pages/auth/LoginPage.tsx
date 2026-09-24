@@ -5,12 +5,11 @@ import { AuthLayout } from '../../components/auth/AuthLayout';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { PasswordInput } from '../../components/auth/PasswordInput';
-import { SocialLoginButton } from '../../components/auth/SocialLoginButton';
-import { Mail, ArrowRight, ShieldCheck, Briefcase, User } from 'lucide-react';
+import { Mail, ArrowRight, ShieldCheck, Briefcase, User, Compass } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
+  const { login, continueAsGuest, isAuthenticated } = useAuth();
 
   const [persona, setPersona] = useState<'citizen' | 'lawyer'>('citizen');
   const [email, setEmail] = useState('');
@@ -81,6 +80,11 @@ export const LoginPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGuestAccess = () => {
+    continueAsGuest();
+    navigate('/app');
   };
 
   return (
@@ -214,16 +218,19 @@ export const LoginPage: React.FC = () => {
               <div className="w-full border-t border-slate-800" />
             </div>
             <span className="relative px-3 bg-[#080B14] text-[10px] text-slate-500 uppercase tracking-widest">
-              Or continue with
+              Or explore without account
             </span>
           </div>
 
-          {/* Google OAuth Button */}
-          <SocialLoginButton 
-            onClick={() => {
-              setEmailError('Google sign-in is currently unavailable. Please sign in with email and password.');
-            }} 
-          />
+          {/* Guest Mode Option */}
+          <button
+            type="button"
+            onClick={handleGuestAccess}
+            className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 active:bg-white/15 border border-slate-800 text-sm font-semibold text-slate-200 transition-all duration-200 cursor-pointer"
+          >
+            <Compass className="w-4 h-4 text-[#FF9933]" />
+            <span>Continue in Guest Mode</span>
+          </button>
 
           {/* Bottom link to signup */}
           <p className="text-center text-xs text-slate-400 pt-4">
