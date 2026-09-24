@@ -1,6 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import {
+  signupApi,
+  loginApi,
+  logoutApi,
+  getMeApi,
+  AuthApiError,
+} from '../services/authApi';
 
 export interface UserProfile {
+  id?: string;
   name: string;
   email: string;
   phone?: string;
@@ -9,137 +17,197 @@ export interface UserProfile {
   language?: 'en' | 'hi';
 }
 
+export interface SignupData {
+  name?: string;
+  email: string;
+  password: string;
+  phone?: string;
+}
+
 interface AuthContextType {
   isAuthenticated: boolean;
+  isLoading: boolean;
   persona: 'citizen';
   user: UserProfile | null;
-  login: (email: string) => Promise<boolean>;
-  signup: (profile: Omit<UserProfile, 'state' | 'district' | 'language'>) => Promise<boolean>;
+  token: string | null;
+  login: (email: string, password: string) => Promise<boolean>;
+  signup: (data: SignupData) => Promise<boolean>;
   logout: () => void;
   updateProfile: (profileUpdates: Partial<UserProfile>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const TOKEN_KEY = 'lexai_access_token';
+const USER_KEY = 'lexai_user';
+const AUTH_FLAG_KEY = 'lexai_authenticated';
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [user, setUser] = useState<UserProfile | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
-  // Load initial session on mount
+  // Load and verify initial session on mount
   useEffect(() => {
-    const storedAuth = localStorage.getItem('lexai_authenticated');
-    const storedUser = localStorage.getItem('lexai_user');
-    
-    if (storedAuth === 'true' && storedUser) {
+    let isMounted = true;
+
+    async function restoreSession() {
+      const storedToken = localStorage.getItem(TOKEN_KEY);
+      const storedUser = localStorage.getItem(USER_KEY);
+
+      if (!storedToken) {
+        if (isMounted) {
+          setIsLoading(false);
+          setIsAuthenticated(false);
+        }
+        return;
+      }
+
       try {
-        setUser(JSON.parse(storedUser));
+        // Verify token with backend
+        const serverUser = await getMeApi(storedToken);
+
+        if (!isMounted) return;
+
+        let parsedLocalUser: Partial<UserProfile> = {};
+        if (storedUser) {
+          try {
+            parsedLocalUser = JSON.parse(storedUser);
+          } catch {
+            // Ignore parse errors on cached profile
+          }
+        }
+
+        const fullProfile: UserProfile = {
+          id: serverUser.id,
+          name: serverUser.full_name || parsedLocalUser.name || serverUser.email.split('@')[0],
+          email: serverUser.email,
+          phone: parsedLocalUser.phone,
+          state: parsedLocalUser.state,
+          district: parsedLocalUser.district,
+          language: parsedLocalUser.language || 'en',
+        };
+
+        setToken(storedToken);
+        setUser(fullProfile);
         setIsAuthenticated(true);
-      } catch (e) {
-        console.error('Failed to parse stored user info', e);
-        localStorage.removeItem('lexai_authenticated');
-        localStorage.removeItem('lexai_user');
+        localStorage.setItem(AUTH_FLAG_KEY, 'true');
+        localStorage.setItem(USER_KEY, JSON.stringify(fullProfile));
+      } catch (err) {
+        console.warn('Session verification failed or token expired:', err);
+        if (isMounted) {
+          setToken(null);
+          setUser(null);
+          setIsAuthenticated(false);
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+          localStorage.removeItem(AUTH_FLAG_KEY);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
+
+    restoreSession();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const login = async (email: string): Promise<boolean> => {
-    // Mock login delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    
-    // Check if we have a registered user matching this email in localStorage (as a demo register flow helper)
-    const registeredUsersStr = localStorage.getItem('lexai_registered_users');
-    let profile: UserProfile = {
-      name: 'Rohan Kumar',
-      email: email,
-      phone: '+91 98765 43210',
-      state: 'Maharashtra',
-      district: 'Mumbai',
-      language: 'en'
-    };
+  const login = async (email: string, password: string): Promise<boolean> => {
+    const authData = await loginApi(email, password);
 
-    if (registeredUsersStr) {
+    const storedUser = localStorage.getItem(USER_KEY);
+    let parsedLocalUser: Partial<UserProfile> = {};
+    if (storedUser) {
       try {
-        const users: Record<string, UserProfile> = JSON.parse(registeredUsersStr);
-        if (users[email.toLowerCase()]) {
-          profile = users[email.toLowerCase()];
-        }
-      } catch (e) {
-        console.error('Error parsing registered users database placeholder', e);
+        parsedLocalUser = JSON.parse(storedUser);
+      } catch {
+        // Ignore
       }
     }
 
+    const profile: UserProfile = {
+      id: authData.user.id,
+      name: authData.user.full_name || parsedLocalUser.name || authData.user.email.split('@')[0],
+      email: authData.user.email,
+      phone: parsedLocalUser.phone,
+      state: parsedLocalUser.state || 'Maharashtra',
+      district: parsedLocalUser.district || 'Mumbai',
+      language: parsedLocalUser.language || 'en',
+    };
+
+    setToken(authData.access_token);
     setUser(profile);
     setIsAuthenticated(true);
-    localStorage.setItem('lexai_authenticated', 'true');
-    localStorage.setItem('lexai_user', JSON.stringify(profile));
+
+    localStorage.setItem(TOKEN_KEY, authData.access_token);
+    localStorage.setItem(AUTH_FLAG_KEY, 'true');
+    localStorage.setItem(USER_KEY, JSON.stringify(profile));
+
     return true;
   };
 
-  const signup = async (profile: Omit<UserProfile, 'state' | 'district' | 'language'>): Promise<boolean> => {
-    await new Promise((resolve) => setTimeout(resolve, 800));
+  const signup = async (data: SignupData): Promise<boolean> => {
+    const authData = await signupApi(data.email, data.password, data.name);
 
     const newUser: UserProfile = {
-      ...profile,
-      language: 'en', // Default language
+      id: authData.user.id,
+      name: authData.user.full_name || data.name || data.email.split('@')[0],
+      email: authData.user.email,
+      phone: data.phone,
+      language: 'en',
     };
 
-    // Save user profile in state (for onboarding flow completion)
+    setToken(authData.access_token);
     setUser(newUser);
     setIsAuthenticated(true);
-    localStorage.setItem('lexai_authenticated', 'true');
-    localStorage.setItem('lexai_user', JSON.stringify(newUser));
 
-    // Keep track of registered users locally to let them sign back in during the demo
-    const registeredUsersStr = localStorage.getItem('lexai_registered_users') || '{}';
-    try {
-      const users = JSON.parse(registeredUsersStr);
-      users[profile.email.toLowerCase()] = newUser;
-      localStorage.setItem('lexai_registered_users', JSON.stringify(users));
-    } catch (e) {
-      console.error('Failed to update registered users database placeholder', e);
-    }
+    localStorage.setItem(TOKEN_KEY, authData.access_token);
+    localStorage.setItem(AUTH_FLAG_KEY, 'true');
+    localStorage.setItem(USER_KEY, JSON.stringify(newUser));
 
     return true;
   };
 
   const logout = () => {
+    const currentToken = token || localStorage.getItem(TOKEN_KEY);
+    if (currentToken) {
+      logoutApi(currentToken).catch(() => {});
+    }
+
+    setToken(null);
     setIsAuthenticated(false);
     setUser(null);
-    localStorage.removeItem('lexai_authenticated');
-    localStorage.removeItem('lexai_user');
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(AUTH_FLAG_KEY);
+    localStorage.removeItem(USER_KEY);
   };
 
   const updateProfile = (profileUpdates: Partial<UserProfile>) => {
     if (!user) return;
-    
-    const updatedUser = {
+
+    const updatedUser: UserProfile = {
       ...user,
       ...profileUpdates,
     };
-    setUser(updatedUser);
-    localStorage.setItem('lexai_user', JSON.stringify(updatedUser));
 
-    // Update registered user catalog as well
-    const registeredUsersStr = localStorage.getItem('lexai_registered_users');
-    if (registeredUsersStr) {
-      try {
-        const users = JSON.parse(registeredUsersStr);
-        if (users[updatedUser.email.toLowerCase()]) {
-          users[updatedUser.email.toLowerCase()] = updatedUser;
-          localStorage.setItem('lexai_registered_users', JSON.stringify(users));
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
+    setUser(updatedUser);
+    localStorage.setItem(USER_KEY, JSON.stringify(updatedUser));
   };
 
   return (
     <AuthContext.Provider
       value={{
         isAuthenticated,
+        isLoading,
         persona: 'citizen',
         user,
+        token,
         login,
         signup,
         logout,
@@ -158,3 +226,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+export { AuthApiError };

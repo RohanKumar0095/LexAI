@@ -3,6 +3,7 @@ import { X, User, Briefcase, Eye, EyeOff, ShieldCheck, ArrowRight, Lock } from '
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Badge } from '../ui/Badge';
+import { useAuth, AuthApiError } from '../../context/AuthContext';
 
 export type UserPersona = 'citizen' | 'lawyer';
 export type AuthTab = 'signin' | 'signup';
@@ -20,6 +21,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   initialPersona = 'citizen',
   onSuccessLogin,
 }) => {
+  const { login, signup } = useAuth();
+
   const [persona, setPersona] = useState<UserPersona>(initialPersona);
   const [authTab, setAuthTab] = useState<AuthTab>('signin');
   const [email, setEmail] = useState('');
@@ -27,19 +30,42 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [barNumber, setBarNumber] = useState('');
   const [stateBar, setStateBar] = useState('');
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !password) return;
+
+    if (persona === 'lawyer') {
+      setError('Lawyer portal registration is scheduled for a future release. Please sign in as a Citizen.');
+      return;
+    }
+
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    setError('');
+
+    try {
+      if (authTab === 'signin') {
+        await login(email, password);
+      } else {
+        await signup({ email, password });
+      }
       onSuccessLogin?.(persona, email);
       onClose();
-    }, 1000);
+    } catch (err: unknown) {
+      if (err instanceof AuthApiError) {
+        setError(err.message);
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Authentication failed. Please check your credentials.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -82,7 +108,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <div className="grid grid-cols-2 gap-2 p-1.5 bg-[#070A12] rounded-xl border border-slate-800 mb-6">
           <button
             type="button"
-            onClick={() => setPersona('citizen')}
+            onClick={() => {
+              setPersona('citizen');
+              setError('');
+            }}
             className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-semibold transition-all ${
               persona === 'citizen'
                 ? 'bg-[#FF9933] text-[#070A12] shadow-md shadow-saffron-500/20'
@@ -95,7 +124,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           <button
             type="button"
-            onClick={() => setPersona('lawyer')}
+            onClick={() => {
+              setPersona('lawyer');
+              setError('');
+            }}
             className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-semibold transition-all ${
               persona === 'lawyer'
                 ? 'bg-[#6366F1] text-white shadow-md shadow-indigo-500/20'
@@ -110,7 +142,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* Sign In vs Sign Up Tab */}
         <div className="flex items-center justify-center gap-6 border-b border-slate-800 mb-6 pb-2 text-sm font-medium">
           <button
-            onClick={() => setAuthTab('signin')}
+            onClick={() => {
+              setAuthTab('signin');
+              setError('');
+            }}
             className={`pb-2 transition-colors relative ${
               authTab === 'signin' ? 'text-white font-semibold' : 'text-slate-500 hover:text-slate-300'
             }`}
@@ -121,7 +156,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             )}
           </button>
           <button
-            onClick={() => setAuthTab('signup')}
+            onClick={() => {
+              setAuthTab('signup');
+              setError('');
+            }}
             className={`pb-2 transition-colors relative ${
               authTab === 'signup' ? 'text-white font-semibold' : 'text-slate-500 hover:text-slate-300'
             }`}
@@ -135,6 +173,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
         {/* Auth Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <p className="text-xs text-rose-400 font-medium text-center bg-rose-500/10 border border-rose-500/20 py-2 px-3 rounded-lg">
+              {error}
+            </p>
+          )}
+
           <Input
             label="Email Address"
             type="email"
@@ -220,8 +264,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           <button
             type="button"
-            onClick={() => alert("Google OAuth Integration will be enabled in Phase 3 backend integration.")}
-            className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-slate-800 text-sm font-medium text-slate-200 transition-colors"
+            onClick={() => setError('Google OAuth is currently unavailable. Please use email and password.')}
+            className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-slate-800 text-sm font-medium text-slate-200 transition-colors cursor-pointer"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z" />

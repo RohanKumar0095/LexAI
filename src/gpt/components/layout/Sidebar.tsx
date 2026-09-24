@@ -348,19 +348,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className="h-[1px] bg-border my-1 mx-1" />
             <button
               onClick={() => {
-                alert("Sign in option clicked! (Phase 1 Frontend Demonstration)");
                 setAccountMenuOpen(false);
+                window.location.href = '/login';
               }}
-              className="w-full text-left px-2.5 py-2 text-xs text-secondary-foreground hover:bg-hover hover:text-foreground rounded-lg transition-colors font-medium focus:outline-none focus:bg-hover focus:text-foreground"
+              className="w-full text-left px-2.5 py-2 text-xs text-secondary-foreground hover:bg-hover hover:text-foreground rounded-lg transition-colors font-medium focus:outline-none focus:bg-hover focus:text-foreground cursor-pointer"
             >
               Sign in
             </button>
             <button
               onClick={() => {
-                alert("Create account option clicked! (Phase 1 Frontend Demonstration)");
                 setAccountMenuOpen(false);
+                window.location.href = '/signup';
               }}
-              className="w-full text-left px-2.5 py-2 text-xs text-secondary-foreground hover:bg-hover hover:text-foreground rounded-lg transition-colors font-medium focus:outline-none focus:bg-hover focus:text-foreground"
+              className="w-full text-left px-2.5 py-2 text-xs text-secondary-foreground hover:bg-hover hover:text-foreground rounded-lg transition-colors font-medium focus:outline-none focus:bg-hover focus:text-foreground cursor-pointer"
             >
               Create account
             </button>

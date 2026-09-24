@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth, AuthApiError } from '../../context/AuthContext';
 import { AuthLayout } from '../../components/auth/AuthLayout';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
@@ -61,14 +61,23 @@ export const LoginPage: React.FC = () => {
     if (!validate()) return;
 
     setIsLoading(true);
+    setEmailError('');
+    setPasswordError('');
+
     try {
-      const success = await login(email);
+      const success = await login(email, password);
       if (success) {
         navigate('/app');
       }
-    } catch (err) {
-      console.error(err);
-      setEmailError('Login failed. Please check credentials.');
+    } catch (err: unknown) {
+      console.error('Login error:', err);
+      if (err instanceof AuthApiError) {
+        setEmailError(err.message);
+      } else if (err instanceof Error) {
+        setEmailError(err.message);
+      } else {
+        setEmailError('Login failed. Please check your credentials.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -178,7 +187,7 @@ export const LoginPage: React.FC = () => {
           {/* Secure indicator badge in form */}
           <div className="flex items-center gap-2 justify-center py-2 px-3 rounded-lg bg-emerald-500/5 border border-emerald-500/10 text-[10px] text-emerald-400">
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Secure 256-bit Mock Authentication Active</span>
+            <span>Secure 256-bit Encrypted Authentication Active</span>
           </div>
 
           <Button
@@ -205,8 +214,7 @@ export const LoginPage: React.FC = () => {
           {/* Google OAuth Button */}
           <SocialLoginButton 
             onClick={() => {
-              alert("Google OAuth is simulated. Setting demo session...");
-              login("demo.citizen@gmail.com").then(() => navigate('/app'));
+              setEmailError('Google sign-in is currently unavailable. Please sign in with email and password.');
             }} 
           />
 

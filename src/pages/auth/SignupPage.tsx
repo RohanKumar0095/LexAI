@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth, AuthApiError } from '../../context/AuthContext';
 import { AuthLayout } from '../../components/auth/AuthLayout';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
@@ -55,11 +55,8 @@ export const SignupPage: React.FC = () => {
     if (!password) {
       tempErrors.password = 'Password is required';
       isValid = false;
-    } else if (password.length < 8) {
-      tempErrors.password = 'Password must be at least 8 characters';
-      isValid = false;
-    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-      tempErrors.password = 'Must contain lowercase, uppercase and a number';
+    } else if (password.length < 6) {
+      tempErrors.password = 'Password must be at least 6 characters';
       isValid = false;
     }
 
@@ -82,19 +79,36 @@ export const SignupPage: React.FC = () => {
     if (!validate()) return;
 
     setIsLoading(true);
+    setErrors({});
+
     try {
       const success = await signup({
-        name,
-        email,
+        name: name.trim(),
+        email: email.trim(),
+        password,
         phone: phone.trim() || undefined,
       });
 
       if (success) {
         navigate('/onboarding');
       }
-    } catch (err) {
-      console.error(err);
-      setErrors({ form: 'Sign up failed. Please try again.' });
+    } catch (err: unknown) {
+      console.error('Signup error:', err);
+      if (err instanceof AuthApiError) {
+        if (
+          err.statusCode === 409 ||
+          err.message.toLowerCase().includes('already exists') ||
+          err.message.toLowerCase().includes('registered')
+        ) {
+          setErrors({ email: err.message });
+        } else {
+          setErrors({ form: err.message });
+        }
+      } else if (err instanceof Error) {
+        setErrors({ form: err.message });
+      } else {
+        setErrors({ form: 'Sign up failed. Please try again.' });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -201,11 +215,11 @@ export const SignupPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <PasswordInput
               label="Password"
-              placeholder="Min 8 chars"
+              placeholder="Min 6 chars"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               errorText={errors.password}
-              helperText="Must include capitalization & number"
+              helperText="Must be at least 6 characters"
               required
             />
 
@@ -222,7 +236,7 @@ export const SignupPage: React.FC = () => {
           {/* Secure indicator badge */}
           <div className="flex items-center gap-2 justify-center py-2 px-3 rounded-lg bg-emerald-500/5 border border-emerald-500/10 text-[10px] text-emerald-400">
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>DPDP-compliant local storage isolation</span>
+            <span>DPDP-compliant encrypted authentication</span>
           </div>
 
           <Button
@@ -249,11 +263,7 @@ export const SignupPage: React.FC = () => {
           {/* Google OAuth Button */}
           <SocialLoginButton 
             onClick={() => {
-              alert("Google OAuth is simulated. Creating demo citizen account...");
-              signup({
-                name: "Demo Google Citizen",
-                email: "demo.citizen@gmail.com"
-              }).then(() => navigate('/onboarding'));
+              setErrors({ form: 'Google registration is currently unavailable. Please register with email and password.' });
             }} 
           />
 
