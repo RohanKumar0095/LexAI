@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import AppShell from './components/layout/AppShell';
 import ChatScreen from './components/chat/ChatScreen';
+
+// Auth
+import { useAuth } from '../context/AuthContext';
 
 // Hooks
 import { useTheme } from './hooks/useTheme';
@@ -34,9 +37,10 @@ import { mockNotifications } from './data/mockNotifications';
 // Types
 import type { UserSettings, Notification } from './types/user';
 
-function AppContent() {
+export function AppContent() {
   const navigate = useNavigate();
   const { panelId } = useParams();
+  const { user } = useAuth();
 
   // Selected sidebar workspace panel (mapped to route params)
   const activePanel = panelId || null;
@@ -44,9 +48,9 @@ function AppContent() {
   const handleSelectPanel = (id: string | null) => {
     if (id === null) {
       startNewChat();
-      navigate('/');
+      navigate('/app');
     } else {
-      navigate(`/${id}`);
+      navigate(`/app/${id}`);
     }
   };
 
@@ -72,15 +76,15 @@ function AppContent() {
   // User details & local preferences states
   const [language, setLanguage] = useState<'en' | 'hi'>(() => {
     const saved = localStorage.getItem('lexai-lang');
-    return (saved as 'en' | 'hi') || 'en';
+    return (saved as 'en' | 'hi') || user?.language || 'en';
   });
 
   const [locationState, setLocationState] = useState(() => {
-    return localStorage.getItem('lexai-state') || 'Delhi';
+    return localStorage.getItem('lexai-state') || user?.state || 'Delhi';
   });
 
   const [locationDistrict, setLocationDistrict] = useState(() => {
-    return localStorage.getItem('lexai-district') || 'Delhi NCR';
+    return localStorage.getItem('lexai-district') || user?.district || 'Delhi NCR';
   });
 
   const [notifications, setNotifications] = useState<Notification[]>(() => {
@@ -193,7 +197,7 @@ function AppContent() {
     accessibilityReducedMotion: false,
     accessibilityHighContrast: false,
     chatHistoryEnabled,
-    guestMode: true
+    guestMode: !user
   };
 
   // Determine Active Workspace Panel Component
@@ -278,7 +282,7 @@ function AppContent() {
             activeConversationId={activeConversationId}
             onSelectConversation={(id) => {
               loadConversation(id);
-              navigate('/');
+              navigate('/app');
             }}
             onDeleteConversation={deleteConversation}
             onPinConversation={addPinConversation}
@@ -310,7 +314,7 @@ function AppContent() {
       activeConversationId={activeConversationId}
       onSelectConversation={(id) => {
         loadConversation(id);
-        navigate('/');
+        navigate('/app');
       }}
       onPinConversation={addPinConversation}
       onDeleteConversation={deleteConversation}
@@ -334,12 +338,5 @@ function AppContent() {
 }
 
 export default function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<AppContent />} />
-        <Route path="/:panelId" element={<AppContent />} />
-      </Routes>
-    </Router>
-  );
+  return <AppContent />;
 }

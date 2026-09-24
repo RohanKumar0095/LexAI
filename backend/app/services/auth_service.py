@@ -1,7 +1,7 @@
 from uuid import UUID
 from typing import Optional
 from fastapi import HTTPException, status
-from backend.app.core.supabase import get_supabase_client
+from backend.app.core.supabase import get_supabase_client, get_supabase_user_client
 from backend.app.schemas.auth import SignUpRequest, LoginRequest, AuthResponse, UserOut, LogoutResponse
 
 
@@ -52,15 +52,23 @@ class AuthService:
         except HTTPException:
             raise
         except Exception as e:
-            error_msg = str(e).lower()
-            if "already registered" in error_msg or "user already exists" in error_msg:
+            error_msg = str(e)
+            error_code = getattr(e, "code", None) or ""
+            error_status = getattr(e, "status", None) or 400
+
+            if "already registered" in error_msg.lower() or "user already exists" in error_msg.lower():
                 raise HTTPException(
                     status_code=status.HTTP_409_CONFLICT,
                     detail="A user with this email address already exists."
                 )
+            if error_code in ("over_email_send_rate_limit", "over_request_rate_limit") or "rate limit" in error_msg.lower() or error_status == 429:
+                raise HTTPException(
+                    status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                    detail="Too many registration attempts. Please wait a moment and try again."
+                )
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Sign up failed: {str(e)}"
+                detail=f"Sign up failed: {error_msg}"
             )
 
     @staticmethod
@@ -96,19 +104,47 @@ class AuthService:
         except HTTPException:
             raise
         except Exception as e:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid email or password."
-            )
+            error_msg = str(e)
+            error_code = getattr(e, "code", None) or ""
+            error_status = getattr(e, "status", None) or 401
+
+            # Distinguish specific authentication error cases accurately
+            if error_code == "email_not_confirmed" or "email not confirmed" in error_msg.lower():
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Email address has not been confirmed. Please verify your email before signing in."
+                )
+            elif (
+                error_code in ("over_email_send_rate_limit", "over_request_rate_limit")
+                or "rate limit" in error_msg.lower()
+                or error_status == 429
+            ):
+                raise HTTPException(
+                    status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                    detail="Too many login attempts. Please wait a moment and try again."
+                )
+            elif (
+                error_code == "invalid_credentials"
+                or "invalid login credentials" in error_msg.lower()
+                or "invalid email or password" in error_msg.lower()
+            ):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid email or password."
+                )
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid email or password."
+                )
 
     @staticmethod
     def logout(token: Optional[str] = None) -> LogoutResponse:
         try:
             if token:
-                supabase = get_supabase_client()
-                # Sign out session if possible
+                user_client = get_supabase_user_client(token)
                 try:
-                    supabase.auth.sign_out()
+                    user_client.auth.sign_out()
                 except Exception:
                     pass
             return LogoutResponse(message="Successfully logged out")

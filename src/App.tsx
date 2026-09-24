@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { AuthGuard } from './components/auth/AuthGuard';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { SignupPage } from './pages/auth/SignupPage';
@@ -10,17 +11,6 @@ import { DesignSystemShowcase } from './components/ui/DesignSystemShowcase';
 import LexUIApp from './gpt/App';
 
 export function App() {
-  // Check if current path is under the GPT application prefix to avoid nested Router crashes
-  const isGptPath = window.location.pathname.startsWith('/app');
-
-  if (isGptPath) {
-    return (
-      <AuthProvider>
-        <LexUIApp />
-      </AuthProvider>
-    );
-  }
-
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -31,7 +21,24 @@ export function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/onboarding" element={<OnboardingPage />} />
-          <Route path="/app" element={<Navigate to="/app" replace />} />
+          
+          {/* Protected LexAI Application Routes */}
+          <Route 
+            path="/app" 
+            element={
+              <AuthGuard>
+                <LexUIApp />
+              </AuthGuard>
+            } 
+          />
+          <Route 
+            path="/app/:panelId" 
+            element={
+              <AuthGuard>
+                <LexUIApp />
+              </AuthGuard>
+            } 
+          />
           
           <Route 
             path="/design-system" 

@@ -1,6 +1,5 @@
 from typing import Optional
 from supabase import create_client, Client
-from supabase.lib.client_options import ClientOptions
 from backend.app.core.config import settings
 
 
@@ -63,10 +62,10 @@ def get_supabase_user_client(access_token: str) -> Client:
             "Supabase is not configured. Please set SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY."
         )
     
-    headers = {"Authorization": f"Bearer {access_token}"}
-    options = ClientOptions(headers=headers)
-    return create_client(
+    client = create_client(
         settings.SUPABASE_URL,
-        key,
-        options=options
+        key
     )
+    if access_token:
+        client.postgrest.auth(access_token)
+    return client

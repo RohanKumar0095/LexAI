@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   Plus, MessageSquare, BookOpen, Bookmark, PenTool,
   MapPin, AlertOctagon, ChevronLeft, ChevronRight, 
-  History, Settings, Pin, PinOff, Trash2, User, ChevronDown, X 
+  History, Settings, Pin, PinOff, Trash2, User, ChevronDown, X, LogOut 
 } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
 import type { Conversation } from '../../types/chat';
 
 interface SidebarProps {
@@ -42,6 +43,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onPinConversation,
   onDeleteConversation
 }) => {
+  const { user, isAuthenticated, logout } = useAuth();
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(true);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
@@ -318,7 +320,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             {!isCollapsed && (
               <span className="text-xs font-semibold text-secondary-foreground truncate">
-                Guest Mode
+                {isAuthenticated ? (user?.name || user?.email || 'Citizen User') : 'Guest Mode'}
               </span>
             )}
           </button>
@@ -342,28 +344,44 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className={`absolute bottom-full mb-2 w-48 rounded-xl border border-border bg-surface p-1.5 shadow-lg z-50 animate-in fade-in slide-in-from-bottom-2 duration-150 ${
             isCollapsed ? 'left-2' : 'left-3'
           }`}>
-            <div className="px-2.5 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-              Guest Mode
+            <div className="px-2.5 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider truncate">
+              {isAuthenticated ? (user?.email || 'Logged In') : 'Guest Mode'}
             </div>
             <div className="h-[1px] bg-border my-1 mx-1" />
-            <button
-              onClick={() => {
-                setAccountMenuOpen(false);
-                window.location.href = '/login';
-              }}
-              className="w-full text-left px-2.5 py-2 text-xs text-secondary-foreground hover:bg-hover hover:text-foreground rounded-lg transition-colors font-medium focus:outline-none focus:bg-hover focus:text-foreground cursor-pointer"
-            >
-              Sign in
-            </button>
-            <button
-              onClick={() => {
-                setAccountMenuOpen(false);
-                window.location.href = '/signup';
-              }}
-              className="w-full text-left px-2.5 py-2 text-xs text-secondary-foreground hover:bg-hover hover:text-foreground rounded-lg transition-colors font-medium focus:outline-none focus:bg-hover focus:text-foreground cursor-pointer"
-            >
-              Create account
-            </button>
+            {isAuthenticated ? (
+              <button
+                onClick={() => {
+                  setAccountMenuOpen(false);
+                  logout();
+                  window.location.href = '/login';
+                }}
+                className="w-full text-left flex items-center gap-2 px-2.5 py-2 text-xs text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 rounded-lg transition-colors font-medium focus:outline-none cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sign Out</span>
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    setAccountMenuOpen(false);
+                    window.location.href = '/login';
+                  }}
+                  className="w-full text-left px-2.5 py-2 text-xs text-secondary-foreground hover:bg-hover hover:text-foreground rounded-lg transition-colors font-medium focus:outline-none focus:bg-hover focus:text-foreground cursor-pointer"
+                >
+                  Sign in
+                </button>
+                <button
+                  onClick={() => {
+                    setAccountMenuOpen(false);
+                    window.location.href = '/signup';
+                  }}
+                  className="w-full text-left px-2.5 py-2 text-xs text-secondary-foreground hover:bg-hover hover:text-foreground rounded-lg transition-colors font-medium focus:outline-none focus:bg-hover focus:text-foreground cursor-pointer"
+                >
+                  Create account
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>

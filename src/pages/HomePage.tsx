@@ -17,7 +17,7 @@ export const HomePage: React.FC = () => {
   const [currentLang, setCurrentLang] = useState<'EN' | 'HI'>('EN');
 
   const handleEnterApp = () => {
-    window.location.href = '/app';
+    navigate('/app');
   };
 
   const handleOpenAuth = (persona: 'citizen' | 'lawyer' = 'citizen') => {

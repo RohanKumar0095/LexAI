@@ -150,7 +150,10 @@ export const LoginPage: React.FC = () => {
             type="email"
             placeholder="name@example.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (emailError) setEmailError('');
+            }}
             errorText={emailError}
             leftIcon={<Mail className="w-4 h-4 text-slate-500" />}
             required
@@ -160,7 +163,11 @@ export const LoginPage: React.FC = () => {
             label="Password"
             placeholder="••••••••••••"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (passwordError) setPasswordError('');
+              if (emailError) setEmailError('');
+            }}
             errorText={passwordError}
             required
           />
