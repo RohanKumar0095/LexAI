@@ -1,28 +1,6 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
+# Environment variables and secrets
 .env
-.env.*
+*.env
 !.env.example
 
 # Python
@@ -31,12 +9,45 @@ __pycache__/
 *$py.class
 *.so
 .Python
-backend/.venv/
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 .venv/
 venv/
 ENV/
-env/
+
+# Database & Chroma
+backend/chroma/
+*.sqlite
+*.sqlite3
+*.db
+
+# Node / Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Testing & Coverage
 .pytest_cache/
 .coverage
 htmlcov/
-backend/ .env 
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

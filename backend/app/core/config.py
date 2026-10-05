@@ -1,60 +1,69 @@
+import os
 from pathlib import Path
+from functools import lru_cache
 from typing import Optional
-from pydantic import model_validator
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# Determine the absolute path to the backend directory
-# Path: <project-root>/backend/app/core/config.py -> parent(core) -> parent(app) -> parent(backend)
+# Determine backend directory and .env absolute locations
 BACKEND_DIR = Path(__file__).resolve().parent.parent.parent
-BACKEND_ENV_PATH = BACKEND_DIR / ".env"
+BACKEND_ENV_FILE = BACKEND_DIR / ".env"
+ROOT_ENV_FILE = BACKEND_DIR.parent / ".env"
+
+# Explicitly load backend/.env into os.environ so all external SDKs have it
+if BACKEND_ENV_FILE.exists():
+    load_dotenv(BACKEND_ENV_FILE, override=False)
+elif ROOT_ENV_FILE.exists():
+    load_dotenv(ROOT_ENV_FILE, override=False)
 
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "LexAI Backend Foundation"
-    VERSION: str = "1.0.0"
+    PROJECT_NAME: str = "LexAI India Legal RAG"
     API_V1_STR: str = "/api/v1"
     
-    # Supabase Configuration - Current / Preferred Key Names
-    SUPABASE_URL: str = ""
-    SUPABASE_PUBLISHABLE_KEY: str = ""
-    SUPABASE_SECRET_KEY: str = ""
+    # Database (PostgreSQL)
+    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/lexai_db"
     
-    # Supabase Configuration - Legacy Fallbacks
-    SUPABASE_ANON_KEY: str = ""
-    SUPABASE_SERVICE_ROLE_KEY: str = ""
+    # Gemini Configuration
+    GEMINI_API_KEY: Optional[str] = None
+    GEMINI_MODEL: str = "gemini-3.5-flash-lite"
     
-    # Frontend URL for CORS
+    # ChromaDB Configuration
+    CHROMA_PATH: str = "./backend/chroma"
+    CHROMA_COLLECTION_NAME: str = "lexai_legal_chunks"
+    
+    # Embedding Model
+    EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
+    
+    # Reranker Model (optional cross-encoder)
+    RERANKER_MODEL: Optional[str] = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    
+    # Retrieval Configuration
+    RETRIEVAL_TOP_K: int = 20
+    RERANK_TOP_K: int = 5
+    VECTOR_WEIGHT: float = 0.6
+    KEYWORD_WEIGHT: float = 0.4
+    
+    # Frontend & CORS
     FRONTEND_URL: str = "http://localhost:5173"
     
-    # Environment
-    ENVIRONMENT: str = "development"
-    
+    # Chunking Configuration
+    DEFAULT_CHUNK_SIZE: int = 1000
+    DEFAULT_CHUNK_OVERLAP: int = 200
+
     model_config = SettingsConfigDict(
-        # Check backend/.env first, then cwd .env as fallback, plus system env vars
-        env_file=(str(BACKEND_ENV_PATH), ".env"),
+        env_file=(str(BACKEND_ENV_FILE), str(ROOT_ENV_FILE), ".env", "backend/.env"),
         env_file_encoding="utf-8",
         extra="ignore"
     )
 
-    @model_validator(mode="after")
-    def resolve_key_fallbacks(self) -> "Settings":
-        # Resolve Publishable Key <-> Anon Key
-        if not self.SUPABASE_PUBLISHABLE_KEY and self.SUPABASE_ANON_KEY:
-            self.SUPABASE_PUBLISHABLE_KEY = self.SUPABASE_ANON_KEY
-        elif self.SUPABASE_PUBLISHABLE_KEY and not self.SUPABASE_ANON_KEY:
-            self.SUPABASE_ANON_KEY = self.SUPABASE_PUBLISHABLE_KEY
-
-        # Resolve Secret Key <-> Service Role Key
-        if not self.SUPABASE_SECRET_KEY and self.SUPABASE_SERVICE_ROLE_KEY:
-            self.SUPABASE_SECRET_KEY = self.SUPABASE_SERVICE_ROLE_KEY
-        elif self.SUPABASE_SECRET_KEY and not self.SUPABASE_SERVICE_ROLE_KEY:
-            self.SUPABASE_SERVICE_ROLE_KEY = self.SUPABASE_SECRET_KEY
-
-        return self
-
-    @property
-    def is_supabase_configured(self) -> bool:
-        return bool(self.SUPABASE_URL and (self.SUPABASE_PUBLISHABLE_KEY or self.SUPABASE_ANON_KEY))
+    def __init__(self, **values):
+        super().__init__(**values)
+        # Ensure GEMINI_API_KEY is synchronized to os.environ if present
+        if self.GEMINI_API_KEY and not os.environ.get("GEMINI_API_KEY"):
+            os.environ["GEMINI_API_KEY"] = self.GEMINI_API_KEY.strip()
 
 
-settings = Settings()
+@lru_cache()
+def get_settings() -> Settings:
+    return Settings()

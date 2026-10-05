@@ -1,1 +1,0 @@
-"""LexAI Backend Root Package."""
