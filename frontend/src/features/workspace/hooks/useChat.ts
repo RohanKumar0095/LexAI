@@ -9,6 +9,9 @@ export const useChat = () => {
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [explainMode, setExplainMode] = useState<'simple' | 'detailed' | 'case-analysis' | 'technical'>('simple');
 
+  const [activeTraceId, setActiveTraceId] = useState<string | null>(null);
+  const [latestTraceId, setLatestTraceId] = useState<string | null>(null);
+
   // Load initial history
   useEffect(() => {
     const loadHistory = async () => {
@@ -24,6 +27,10 @@ export const useChat = () => {
       const active = conversations.find(c => c.id === activeConversationId);
       if (active) {
         setMessages(active.messages);
+        const lastWithTrace = [...active.messages].reverse().find(m => m.traceId);
+        if (lastWithTrace?.traceId) {
+          setLatestTraceId(lastWithTrace.traceId);
+        }
       }
     } else {
       setMessages([]);
@@ -34,6 +41,7 @@ export const useChat = () => {
     setActiveConversationId(null);
     setMessages([]);
     setExplainMode('simple');
+    setActiveTraceId(null);
   };
 
   const loadConversation = (id: string) => {
@@ -41,6 +49,10 @@ export const useChat = () => {
     const active = conversations.find(c => c.id === id);
     if (active) {
       setMessages(active.messages);
+      const lastWithTrace = [...active.messages].reverse().find(m => m.traceId);
+      if (lastWithTrace?.traceId) {
+        setLatestTraceId(lastWithTrace.traceId);
+      }
     }
   };
 
@@ -69,12 +81,18 @@ export const useChat = () => {
   const sendMessage = async (text: string) => {
     if (!text.trim()) return;
 
+    // Generate correlated trace ID immediately
+    const traceId = `trace_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+    setActiveTraceId(traceId);
+    setLatestTraceId(traceId);
+
     // Create user message
     const userMsg: Message = {
       id: `msg-user-${Date.now()}`,
       role: 'user',
       content: text,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      traceId
     };
 
     const updatedMessages = [...messages, userMsg];
@@ -116,8 +134,8 @@ export const useChat = () => {
     }
 
     try {
-      // Fetch AI response from FastAPI RAG backend
-      const aiResponse = await apiService.sendChatMessage(text, updatedMessages, explainMode, currentConvId);
+      // Fetch AI response from FastAPI RAG backend with correlated traceId
+      const aiResponse = await apiService.sendChatMessage(text, updatedMessages, explainMode, currentConvId, traceId);
       
       setMessages(prev => [...prev, aiResponse]);
       setIsTyping(false);
@@ -138,8 +156,9 @@ export const useChat = () => {
       const errorMsg: Message = {
         id: `msg-err-${Date.now()}`,
         role: 'assistant',
-        content: '⚠️ **Something went wrong.** We couldn\'t connect to our mock assistant. Please try sending your message again.',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        content: '⚠️ **Something went wrong.** We couldn\'t connect to our assistant. Please try sending your message again.',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        traceId
       };
       setMessages(prev => [...prev, errorMsg]);
     }
@@ -158,6 +177,10 @@ export const useChat = () => {
     deleteConversation,
     addPinConversation,
     clearAllConversations,
-    setMessages
+    setMessages,
+    activeTraceId,
+    latestTraceId,
+    setActiveTraceId
   };
 };
+

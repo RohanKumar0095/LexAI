@@ -27,6 +27,7 @@ import MyLearningPanel from './components/panels/MyLearningPanel';
 import SavedLawsPanel from './components/panels/SavedLawsPanel';
 import NotificationsPanel from './components/panels/NotificationsPanel';
 import SettingsPanel from './components/panels/SettingsPanel';
+import RagInspectorPanel from './components/panels/RagInspectorPanel';
 
 // Data
 import { mockDailyLaws } from './data/mockLaws';
@@ -70,8 +71,18 @@ export function AppContent() {
     loadConversation,
     deleteConversation,
     addPinConversation,
-    clearAllConversations
+    clearAllConversations,
+    activeTraceId,
+    latestTraceId
   } = useChat();
+
+
+  const [isInspectorOpen, setIsInspectorOpen] = useState(false);
+  const [inspectedTraceId, setInspectedTraceId] = useState<string | null>(null);
+
+  // Automatically track latest trace ID when active or inspector opens
+  const effectiveTraceId = inspectedTraceId || activeTraceId || latestTraceId;
+
 
   // User details & local preferences states
   const [language, setLanguage] = useState<'en' | 'hi'>(() => {
@@ -318,6 +329,9 @@ export function AppContent() {
       }}
       onPinConversation={addPinConversation}
       onDeleteConversation={deleteConversation}
+      onToggleInspector={() => setIsInspectorOpen(prev => !prev)}
+      isInspectorOpen={isInspectorOpen}
+      isProcessing={isTyping}
     >
       <ChatScreen
         messages={messages}
@@ -332,10 +346,23 @@ export function AppContent() {
         onClosePanel={() => handleSelectPanel(null)}
         bookmarkedMsgIds={bookmarkedMsgIds}
         onBookmarkMessage={handleBookmarkMessage}
+        onInspectTrace={(tid) => {
+          setInspectedTraceId(tid);
+          setIsInspectorOpen(true);
+        }}
+      />
+
+      {/* RAG Pipeline Inspector Drawer */}
+      <RagInspectorPanel
+        isOpen={isInspectorOpen}
+        onClose={() => setIsInspectorOpen(false)}
+        traceId={effectiveTraceId}
+        isProcessing={isTyping}
       />
     </AppShell>
   );
 }
+
 
 export default function WorkspaceApp() {
   return <AppContent />;

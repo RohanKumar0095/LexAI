@@ -34,14 +34,16 @@ class RAGService:
         conversation_id: Optional[str] = None,
         db: Optional[Session] = None,
         explain_mode: Optional[str] = "simple",
-        timer: Optional[Any] = None
+        timer: Optional[Any] = None,
+        trace_id: Optional[str] = None
     ) -> ChatResponse:
         return self.pipeline.run(
             query=query,
             conversation_id=conversation_id,
             db=db,
             explain_mode=explain_mode,
-            timer=timer
+            timer=timer,
+            trace_id=trace_id
         )
 
     def search_chunks(self, query: str, top_k: int = 10, db: Optional[Session] = None) -> List[RetrievedChunk]:

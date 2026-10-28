@@ -43,18 +43,111 @@ def create_token(user_id: str, email: str) -> str:
     return f"lex_{user_id}_{sig[:32]}"
 
 
+import base64
+import json
+import time
+
+def decode_supabase_jwt(token: str, jwt_secret: Optional[str] = None) -> Optional[dict]:
+    """
+    Decodes and optionally verifies a Supabase JWT token using standard library primitives.
+    Validates token structure, expiration, and HS256 signature if secret is provided.
+    """
+    try:
+        parts = token.split(".")
+        if len(parts) != 3:
+            return None
+        header_b64, payload_b64, sig_b64 = parts
+
+        # Decode payload with URL-safe base64 padding
+        padded_payload = payload_b64 + "=" * (-len(payload_b64) % 4)
+        payload_bytes = base64.urlsafe_b64decode(padded_payload.encode("utf-8"))
+        payload = json.loads(payload_bytes.decode("utf-8"))
+
+        # Verify expiration
+        exp = payload.get("exp")
+        if exp and time.time() > float(exp):
+            logger.warning("Supabase JWT has expired")
+            return None
+
+        # Verify HMAC-SHA256 signature if JWT secret is configured
+        if jwt_secret and jwt_secret.strip():
+            msg = f"{header_b64}.{payload_b64}".encode("utf-8")
+            expected_sig = base64.urlsafe_b64encode(
+                hmac.new(jwt_secret.strip().encode("utf-8"), msg, hashlib.sha256).digest()
+            ).decode("utf-8").rstrip("=")
+            clean_sig = sig_b64.rstrip("=")
+            if not hmac.compare_digest(expected_sig, clean_sig):
+                logger.warning("Supabase JWT signature mismatch")
+                return None
+
+        return payload
+    except Exception as e:
+        logger.warning(f"Error decoding Supabase JWT: {e}")
+        return None
+
+
 def decode_token(token: str, db: Session) -> Optional[User]:
+    """
+    Decodes an authentication token supporting both Supabase JWTs and native LexAI tokens.
+    Automatically provisions/syncs Supabase authenticated identities in the local database.
+    """
     try:
         clean_token = token.replace("Bearer ", "").strip()
-        if not clean_token.startswith("lex_"):
+        if not clean_token:
             return None
-        parts = clean_token.split("_")
-        if len(parts) < 3:
-            return None
-        user_id = parts[1]
-        user = db.query(User).filter(User.id == user_id).first()
-        return user
-    except Exception:
+
+        # 1. Check for Supabase JWT (3-part dot-delimited token)
+        if clean_token.count(".") == 2:
+            from backend.app.core.config import get_settings
+            settings = get_settings()
+            jwt_secret = settings.SUPABASE_JWT_SECRET or os.environ.get("SUPABASE_JWT_SECRET")
+            payload = decode_supabase_jwt(clean_token, jwt_secret=jwt_secret)
+            if not payload:
+                return None
+
+            user_id = payload.get("sub")
+            email = payload.get("email") or f"{user_id}@supabase.user"
+            if not user_id:
+                return None
+
+            # Look up or auto-sync user in local database
+            user = db.query(User).filter(User.id == str(user_id)).first()
+            if not user:
+                user = db.query(User).filter(User.email == email.lower().strip()).first()
+
+            if not user:
+                # Sync user into local DB for relational integrity
+                user_meta = payload.get("user_metadata", {}) or {}
+                full_name = user_meta.get("full_name") or email.split("@")[0]
+                user = User(
+                    id=str(user_id),
+                    email=email.lower().strip(),
+                    password_hash="supabase_managed_oauth",
+                    full_name=full_name,
+                    avatar_url=user_meta.get("avatar_url")
+                )
+                db.add(user)
+                try:
+                    db.commit()
+                    db.refresh(user)
+                except Exception:
+                    db.rollback()
+                    user = db.query(User).filter(User.id == str(user_id)).first()
+
+            return user
+
+        # 2. Check for native LexAI token (lex_{user_id}_{signature})
+        if clean_token.startswith("lex_"):
+            parts = clean_token.split("_")
+            if len(parts) < 3:
+                return None
+            user_id = parts[1]
+            user = db.query(User).filter(User.id == user_id).first()
+            return user
+
+        return None
+    except Exception as e:
+        logger.warning(f"Error decoding token: {e}")
         return None
 
 
@@ -94,9 +187,16 @@ class LogoutResponse(BaseModel):
 @router.get("/status", summary="Check auth service status")
 def auth_status():
     """
-    Placeholder auth endpoint preserving existing authentication structure.
+    Returns auth configuration status supporting Supabase and standard authentication.
     """
-    return {"status": "auth_ready", "auth_type": "standard"}
+    from backend.app.core.config import get_settings
+    settings = get_settings()
+    has_supabase = bool(settings.SUPABASE_URL or os.environ.get("SUPABASE_URL"))
+    return {
+        "status": "auth_ready",
+        "auth_type": "supabase" if has_supabase else "standard",
+        "supabase_configured": has_supabase
+    }
 
 
 @router.post(

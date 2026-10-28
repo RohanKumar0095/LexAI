@@ -4,6 +4,12 @@ export interface Citation {
   section: string;
   url: string;
   context: string;
+  chunkId?: string;
+  evidenceId?: string;
+  pageNumber?: number;
+  court?: string;
+  citation?: string;
+  relevanceScore?: number;
 }
 
 export interface RoadmapStep {
@@ -22,6 +28,51 @@ export interface Roadmap {
   steps: RoadmapStep[];
 }
 
+export interface StageTrace {
+  stage_id: string;
+  stage_number: number;
+  stage_name: string;
+  simple_name: string;
+  description: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'failed' | 'skipped';
+  started_at?: number | null;
+  completed_at?: number | null;
+  duration_ms?: number | null;
+  technical_details: Record<string, any>;
+  status_message?: string | null;
+  error?: string | null;
+}
+
+export interface PipelineTrace {
+  trace_id: string;
+  conversation_id?: string | null;
+  user_id?: string | null;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  created_at: number;
+  started_at?: number | null;
+  completed_at?: number | null;
+  total_duration_ms?: number | null;
+  current_stage_id?: string | null;
+  stages: StageTrace[];
+}
+
+export interface KeyPointItem {
+  text: string;
+  source_ids: string[];
+}
+
+export interface StructuredLegalAnswer {
+  status: 'supported' | 'partially_supported' | 'sufficient' | 'partial' | 'insufficient';
+  summary: string;
+  summary_source_ids?: string[];
+  key_points: KeyPointItem[];
+  steps?: (KeyPointItem | string)[];
+  conditions?: (KeyPointItem | string)[];
+  exceptions?: (KeyPointItem | string)[];
+  important_notes?: (KeyPointItem | string)[];
+  unavailable_information?: string[];
+}
+
 export interface Message {
   id: string;
   role: 'user' | 'assistant';
@@ -32,6 +83,9 @@ export interface Message {
   roadmapId?: string;
   evidenceChecklist?: string[];
   explainMode?: 'simple' | 'detailed' | 'case-analysis' | 'technical'; // Updated to Simple, Detailed, Case Analysis, Technical
+  traceId?: string;
+  evidenceState?: 'sufficient' | 'partial' | 'insufficient' | 'validation_failed';
+  structuredAnswer?: StructuredLegalAnswer;
 }
 
 export interface Conversation {
@@ -44,3 +98,4 @@ export interface Conversation {
   pinned?: boolean; // Pinned state
   messages: Message[];
 }
+

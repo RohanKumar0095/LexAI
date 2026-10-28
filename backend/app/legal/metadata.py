@@ -25,8 +25,9 @@ def extract_legal_metadata_from_text(text: str) -> Dict[str, Any]:
     elif "tribunal" in text.lower() or "nclat" in text.lower() or "nclt" in text.lower():
         metadata["court"] = "National Company Law Tribunal"
         metadata["document_type"] = "order"
-    elif "act," in text.lower() or "act 20" in text.lower() or "act 19" in text.lower() or "code," in text.lower():
-        metadata["document_type"] = "act"
+    elif "sanhita" in text.lower() or "bill no." in text.lower() or "act," in text.lower() or "act 20" in text.lower() or "act 19" in text.lower() or "code," in text.lower():
+        metadata["document_type"] = "statute"
+        metadata["court"] = "Parliament of India (Lok Sabha)"
 
     # 2. Detect Case Name (e.g. "State of X vs. Y" or "X v. Y" or "Appellant ... vs. Respondent")
     case_patterns = [

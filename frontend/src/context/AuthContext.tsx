@@ -6,6 +6,14 @@ import {
   getMeApi,
   AuthApiError,
 } from '../services/authApi';
+import {
+  isSupabaseConfigured,
+  supabase,
+  supabaseSignIn,
+  supabaseSignUp,
+  supabaseSignOut,
+  supabaseGetSession,
+} from '../services/supabaseClient';
 
 export interface UserProfile {
   id?: string;
@@ -55,8 +63,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Load and verify initial session on mount
   useEffect(() => {
     let isMounted = true;
+    let authListenerSubscription: { unsubscribe: () => void } | null = null;
 
     async function restoreSession() {
+      // 1. If Supabase is configured, use active Supabase session
+      if (isSupabaseConfigured() && supabase) {
+        try {
+          const session = await supabaseGetSession();
+          if (!isMounted) return;
+
+          if (session && session.user) {
+            const sbUser = session.user;
+            const fullProfile: UserProfile = {
+              id: sbUser.id,
+              name: (sbUser.user_metadata?.full_name as string) || sbUser.email?.split('@')[0] || 'User',
+              email: sbUser.email || '',
+              language: 'en',
+            };
+            setToken(session.access_token);
+            setUser(fullProfile);
+            setIsAuthenticated(true);
+            setIsGuest(false);
+            localStorage.removeItem(GUEST_KEY);
+            localStorage.setItem(AUTH_FLAG_KEY, 'true');
+            localStorage.setItem(TOKEN_KEY, session.access_token);
+            localStorage.setItem(USER_KEY, JSON.stringify(fullProfile));
+            setIsLoading(false);
+            return;
+          }
+        } catch (sbErr) {
+          console.warn('Supabase initial session check error:', sbErr);
+        }
+      }
+
+      // 2. Fallback to local stored session
       const storedToken = localStorage.getItem(TOKEN_KEY);
       const storedUser = localStorage.getItem(USER_KEY);
       const storedGuest = localStorage.getItem(GUEST_KEY) === 'true';
@@ -120,14 +160,79 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
 
+    // Set up Supabase auth state listener if available
+    if (isSupabaseConfigured() && supabase) {
+      const { data } = supabase.auth.onAuthStateChange((event, session) => {
+        if (!isMounted) return;
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          if (session && session.user) {
+            const sbUser = session.user;
+            const fullProfile: UserProfile = {
+              id: sbUser.id,
+              name: (sbUser.user_metadata?.full_name as string) || sbUser.email?.split('@')[0] || 'User',
+              email: sbUser.email || '',
+              language: 'en',
+            };
+            setToken(session.access_token);
+            setUser(fullProfile);
+            setIsAuthenticated(true);
+            setIsGuest(false);
+            localStorage.removeItem(GUEST_KEY);
+            localStorage.setItem(AUTH_FLAG_KEY, 'true');
+            localStorage.setItem(TOKEN_KEY, session.access_token);
+            localStorage.setItem(USER_KEY, JSON.stringify(fullProfile));
+          }
+        } else if (event === 'SIGNED_OUT') {
+          setToken(null);
+          setUser(null);
+          setIsAuthenticated(false);
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(AUTH_FLAG_KEY);
+          localStorage.removeItem(USER_KEY);
+        }
+      });
+      authListenerSubscription = data.subscription;
+    }
+
     restoreSession();
 
     return () => {
       isMounted = false;
+      authListenerSubscription?.unsubscribe();
     };
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
+    if (isSupabaseConfigured()) {
+      try {
+        const { user: sbUser, session } = await supabaseSignIn(email, password);
+        if (session && sbUser) {
+          const profile: UserProfile = {
+            id: sbUser.id,
+            name: (sbUser.user_metadata?.full_name as string) || sbUser.email?.split('@')[0] || 'User',
+            email: sbUser.email || email,
+            language: 'en',
+          };
+          setToken(session.access_token);
+          setUser(profile);
+          setIsAuthenticated(true);
+          setIsGuest(false);
+          localStorage.removeItem(GUEST_KEY);
+          localStorage.setItem(TOKEN_KEY, session.access_token);
+          localStorage.setItem(AUTH_FLAG_KEY, 'true');
+          localStorage.setItem(USER_KEY, JSON.stringify(profile));
+          return true;
+        } else if (sbUser && !session) {
+          throw new AuthApiError('Please verify your email address before logging in.', 401);
+        }
+        return false;
+      } catch (err: unknown) {
+        if (err instanceof AuthApiError) throw err;
+        const msg = err instanceof Error ? err.message : 'Login failed';
+        throw new AuthApiError(msg, 401);
+      }
+    }
+
     const authData = await loginApi(email, password);
 
     const storedUser = localStorage.getItem(USER_KEY);
@@ -164,6 +269,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signup = async (data: SignupData): Promise<boolean> => {
+    if (isSupabaseConfigured()) {
+      try {
+        const { user: sbUser, session } = await supabaseSignUp(data.email, data.password, data.name);
+        if (session && sbUser) {
+          const newUser: UserProfile = {
+            id: sbUser.id,
+            name: (sbUser.user_metadata?.full_name as string) || data.name || sbUser.email?.split('@')[0] || 'User',
+            email: sbUser.email || data.email,
+            phone: data.phone,
+            language: 'en',
+          };
+          setToken(session.access_token);
+          setUser(newUser);
+          setIsAuthenticated(true);
+          setIsGuest(false);
+          localStorage.removeItem(GUEST_KEY);
+          localStorage.setItem(TOKEN_KEY, session.access_token);
+          localStorage.setItem(AUTH_FLAG_KEY, 'true');
+          localStorage.setItem(USER_KEY, JSON.stringify(newUser));
+          return true;
+        } else if (sbUser && !session) {
+          // Email confirmation is required by Supabase project settings
+          throw new AuthApiError('Account created! Please check your email to confirm your registration before logging in.', 200);
+        }
+        return false;
+      } catch (err: unknown) {
+        if (err instanceof AuthApiError) throw err;
+        const msg = err instanceof Error ? err.message : 'Signup failed';
+        throw new AuthApiError(msg, 400);
+      }
+    }
+
     const authData = await signupApi(data.email, data.password, data.name);
 
     const newUser: UserProfile = {
@@ -199,8 +336,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    if (isSupabaseConfigured()) {
+      supabaseSignOut().catch(() => {});
+    }
+
     const currentToken = token || localStorage.getItem(TOKEN_KEY);
-    if (currentToken) {
+    if (currentToken && !isSupabaseConfigured()) {
       logoutApi(currentToken).catch(() => {});
     }
 

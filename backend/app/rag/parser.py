@@ -100,8 +100,20 @@ class DocumentParser:
             # Extract legal metadata from extracted text
             legal_meta = extract_legal_metadata_from_text(full_text[:5000])
             
-            # Title fallback
-            title = legal_meta.get("case_name") or path.stem.replace("_", " ").title()
+            # Title fallback and accurate statutory bill identification
+            raw_title = legal_meta.get("case_name") or path.stem.replace("_", " ").title()
+            if "Bharatiya Nyaya Sanhita" in raw_title or "Bharatiya Nyaya Sanhita" in full_text[:1000]:
+                title = "Bharatiya Nyaya Sanhita, 2023 (Bill No. 121 of 2023 - As Introduced in Lok Sabha)"
+                legal_meta["case_name"] = title
+                legal_meta["court"] = "Parliament of India (Lok Sabha)"
+                legal_meta["document_type"] = "statute"
+            elif "Bharatiya Nagarik Suraksha" in raw_title or "Bharatiya Nagarik Suraksha" in full_text[:1000]:
+                title = "Bharatiya Nagarik Suraksha Sanhita, 2023 (Bill No. 122 of 2023 - As Introduced in Lok Sabha)"
+                legal_meta["case_name"] = title
+                legal_meta["court"] = "Parliament of India (Lok Sabha)"
+                legal_meta["document_type"] = "statute"
+            else:
+                title = raw_title
 
             metadata = {
                 "document_id": doc_id,
@@ -109,7 +121,7 @@ class DocumentParser:
                 "document_type": legal_meta.get("document_type", "judgment"),
                 "source": legal_meta.get("court") or "Supreme Court of India",
                 "court": legal_meta.get("court"),
-                "case_name": legal_meta.get("case_name"),
+                "case_name": legal_meta.get("case_name") or title,
                 "citation": legal_meta.get("citation"),
                 "judgment_date": legal_meta.get("judgment_date"),
                 "jurisdiction": legal_meta.get("jurisdiction", "India"),

@@ -161,3 +161,46 @@ def test_auth_flow():
     logout_res = client.post("/api/v1/auth/logout")
     assert logout_res.status_code == 200
 
+
+def test_rag_trace_endpoint():
+    # Submit chat with trace_id
+    mock_service = MagicMock(spec=RAGService)
+    src = LegalSource(
+        document_id="doc1",
+        chunk_id="c1",
+        case_name="State vs A",
+        citation="2024 SC 1",
+        snippet="Sample snippet"
+    )
+    mock_service.process_chat.return_value = ChatResponse(
+        query="What is the procedure for bail?",
+        answer="Bail application procedure under BNSS.",
+        sources=[src]
+    )
+
+    app.dependency_overrides[get_rag_service] = lambda: mock_service
+
+    test_trace_id = "test_trace_12345"
+    chat_res = client.post("/api/v1/rag/chat", json={
+        "query": "What is the procedure for bail?",
+        "trace_id": test_trace_id
+    })
+    assert chat_res.status_code == 200
+    chat_data = chat_res.json()
+    assert chat_data["trace_id"] == test_trace_id
+
+    # Retrieve telemetry trace
+    trace_res = client.get(f"/api/v1/rag/trace/{test_trace_id}")
+    assert trace_res.status_code == 200
+    trace_data = trace_res.json()
+    assert trace_data["trace_id"] == test_trace_id
+    assert len(trace_data["stages"]) == 12
+    # Check that request_received, session_context, and evidence_validation stages were recorded
+    stages_by_id = {s["stage_id"]: s for s in trace_data["stages"]}
+    assert stages_by_id["request_received"]["status"] == "completed"
+    assert stages_by_id["session_context"]["status"] == "completed"
+    assert "evidence_validation" in stages_by_id
+
+    app.dependency_overrides.clear()
+
+

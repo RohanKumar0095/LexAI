@@ -24,6 +24,11 @@ class Settings(BaseSettings):
     # Database (PostgreSQL)
     DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/lexai_db"
     
+    # Supabase Authentication Configuration
+    SUPABASE_URL: Optional[str] = None
+    SUPABASE_JWT_SECRET: Optional[str] = None
+    SUPABASE_SERVICE_ROLE_KEY: Optional[str] = None
+    
     # Gemini Configuration
     GEMINI_API_KEY: Optional[str] = None
     GEMINI_MODEL: str = "gemini-3.5-flash-lite"
@@ -39,13 +44,18 @@ class Settings(BaseSettings):
     RERANKER_MODEL: Optional[str] = "cross-encoder/ms-marco-MiniLM-L-6-v2"
     
     # Retrieval Configuration
-    RETRIEVAL_TOP_K: int = 20
-    RERANK_TOP_K: int = 5
-    VECTOR_WEIGHT: float = 0.6
-    KEYWORD_WEIGHT: float = 0.4
+    RETRIEVAL_TOP_K: int = 30
+    RERANK_TOP_K: int = 8
+    VECTOR_WEIGHT: float = 0.5
+    KEYWORD_WEIGHT: float = 0.5
     
+    # Strict Evidence Relevance Thresholds (CrossEncoder calibrated)
+    MIN_EVIDENCE_RELEVANCE_SCORE: float = -2.5
+    PARTIAL_EVIDENCE_SCORE_THRESHOLD: float = 1.0
+
     # Frontend & CORS
     FRONTEND_URL: str = "http://localhost:5173"
+
     
     # Chunking Configuration
     DEFAULT_CHUNK_SIZE: int = 1000

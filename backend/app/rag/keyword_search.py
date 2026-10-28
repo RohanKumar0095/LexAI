@@ -98,24 +98,58 @@ class KeywordSearchService:
         try:
             extracted = extract_search_keywords(cleaned_query)
             tokens = extracted if extracted else [t for t in cleaned_query.split() if len(t) > 2]
-            tokens = tokens[:6]  # Focus on top distinctive keywords to avoid excessive table scan overhead
-            filters = [LegalChunk.chunk_text.ilike(f"%{t}%") for t in tokens]
-            if not filters:
-                filters = [LegalChunk.chunk_text.ilike(f"%{cleaned_query}%")]
+            tokens = tokens[:8]
 
-            query_obj = (
-                session.query(LegalChunk, LegalDocument)
-                .join(LegalDocument, LegalChunk.document_id == LegalDocument.id)
-                .filter(or_(*filters))
-                .limit(top_k)
-            )
+            # Query candidates per token so rare terms (e.g. specific offence name or section)
+            # are not starved by ubiquitous words (e.g. "punishment" or "offence")
+            from sqlalchemy import or_
+            candidates_map = {}
+            for t in tokens:
+                matching_rows = (
+                    session.query(LegalChunk, LegalDocument)
+                    .join(LegalDocument, LegalChunk.document_id == LegalDocument.id)
+                    .filter(
+                        or_(
+                            LegalChunk.chunk_text.ilike(f"%{t}%"),
+                            LegalChunk.section_reference.ilike(f"%{t}%"),
+                            LegalDocument.title.ilike(f"%{t}%")
+                        )
+                    )
+                    .limit(top_k)
+                    .all()
+                )
+                for chunk, doc in matching_rows:
+                    if chunk.id not in candidates_map:
+                        candidates_map[chunk.id] = (chunk, doc)
 
-            for chunk, doc in query_obj.all():
+            if not candidates_map:
+                matching_rows = (
+                    session.query(LegalChunk, LegalDocument)
+                    .join(LegalDocument, LegalChunk.document_id == LegalDocument.id)
+                    .filter(
+                        or_(
+                            LegalChunk.chunk_text.ilike(f"%{cleaned_query}%"),
+                            LegalDocument.title.ilike(f"%{cleaned_query}%")
+                        )
+                    )
+                    .limit(top_k)
+                    .all()
+                )
+                for chunk, doc in matching_rows:
+                    candidates_map[chunk.id] = (chunk, doc)
+
+            for chunk, doc in candidates_map.values():
                 raw_meta = json.loads(chunk.metadata_json) if chunk.metadata_json else {}
                 
-                # Simple term overlap score calculation
-                text_lower = chunk.chunk_text.lower()
-                matches = sum(1 for t in tokens if t.lower() in text_lower)
+                # Term overlap score calculation including document title, section, and chunk text
+                searchable_text = f"{doc.title or ''} {doc.case_name or ''} {chunk.section_reference or ''} {chunk.chunk_text}".lower()
+                matches = 0
+                for t in tokens:
+                    tl = t.lower()
+                    if tl in searchable_text:
+                        matches += 1.0
+                    elif len(tl) > 5 and tl[:5] in searchable_text:
+                        matches += 0.8
                 score = min(1.0, matches / max(1, len(tokens)))
 
                 chunk_meta = LegalChunkMetadata(

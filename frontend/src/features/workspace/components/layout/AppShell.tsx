@@ -25,8 +25,12 @@ interface AppShellProps {
   onSelectConversation: (id: string) => void;
   onPinConversation: (id: string) => void;
   onDeleteConversation: (id: string) => void;
+  onToggleInspector?: () => void;
+  isInspectorOpen?: boolean;
+  isProcessing?: boolean;
   children: React.ReactNode;
 }
+
 
 export const AppShell: React.FC<AppShellProps> = ({
   theme,
@@ -48,6 +52,9 @@ export const AppShell: React.FC<AppShellProps> = ({
   onSelectConversation,
   onPinConversation,
   onDeleteConversation,
+  onToggleInspector,
+  isInspectorOpen,
+  isProcessing,
   children
 }) => {
   return (
@@ -93,7 +100,11 @@ export const AppShell: React.FC<AppShellProps> = ({
           onOpenNotifications={() => onSelectPanel('notifications')}
           onOpenSettings={() => onSelectPanel('settings')}
           guestMode={guestMode}
+          onToggleInspector={onToggleInspector}
+          isInspectorOpen={isInspectorOpen}
+          isProcessing={isProcessing}
         />
+
 
         {/* Workspace Children Screen View */}
         <main className="flex-1 overflow-hidden relative bg-background">

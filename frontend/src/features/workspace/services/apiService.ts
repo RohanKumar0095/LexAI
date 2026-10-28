@@ -11,7 +11,7 @@ import { mockDailyLaws } from '../data/mockLaws';
 import { mockConversations } from '../data/mockChats';
 import { mockScenarios } from '../data/mockScenarios';
 
-import { sendChatMessage } from './chatApi';
+import { sendChatMessage, getPipelineTrace } from './chatApi';
 import { getTodayLaw } from './dailyLawApi';
 import { analyzeDocument, type DocumentAnalysisResult } from './documentApi';
 import { generateComplaint, type ComplaintData } from './complaintApi';
@@ -20,6 +20,7 @@ import { loginApi, signupApi, logoutApi, getMeApi } from '../../../services/auth
 
 export {
   sendChatMessage,
+  getPipelineTrace,
   getTodayLaw,
   analyzeDocument,
   generateComplaint,
@@ -27,6 +28,7 @@ export {
   type DocumentAnalysisResult,
   type ComplaintData,
 };
+
 
 export const apiService = {
   /**
@@ -45,10 +47,12 @@ export const apiService = {
   },
 
   sendChatMessage,
+  getPipelineTrace,
   getTodayLaw,
   analyzeDocument,
   generateComplaint,
   generateRoadmap,
+
 
   // Fallback and mock helpers
   getChatHistory(): Promise<Conversation[]> {

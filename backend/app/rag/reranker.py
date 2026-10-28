@@ -66,7 +66,19 @@ class CrossEncoderReranker(BaseReranker):
         # If model is loaded, compute cross-encoder scores
         if self._model is not None:
             try:
-                pairs = [(query, chunk.chunk_text) for chunk in chunks]
+                pairs = []
+                for chunk in chunks:
+                    doc_title = chunk.metadata.case_name or ""
+                    sec_ref = chunk.metadata.section_reference or ""
+                    header_parts = []
+                    if doc_title:
+                        header_parts.append(f"Document: {doc_title}")
+                    if sec_ref:
+                        header_parts.append(f"Section: {sec_ref}")
+                    header_str = " | ".join(header_parts)
+                    content = f"{header_str}\n\n{chunk.chunk_text}" if header_str else chunk.chunk_text
+                    pairs.append((query, content))
+
                 scores = self._model.predict(pairs, batch_size=32)
 
                 reranked_chunks: List[RetrievedChunk] = []

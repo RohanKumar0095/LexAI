@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sun, Moon, Bell, Globe } from 'lucide-react';
+import { Sun, Moon, Bell, Globe, Workflow } from 'lucide-react';
 import type { Notification } from '../../types/user';
 
 interface HeaderProps {
@@ -13,6 +13,9 @@ interface HeaderProps {
   onOpenNotifications: () => void;
   onOpenSettings: () => void;
   guestMode: boolean;
+  onToggleInspector?: () => void;
+  isInspectorOpen?: boolean;
+  isProcessing?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -23,7 +26,10 @@ export const Header: React.FC<HeaderProps> = ({
   setLanguage,
   notifications,
   onToggleMobileSidebar,
-  onOpenNotifications
+  onOpenNotifications,
+  onToggleInspector,
+  isInspectorOpen = false,
+  isProcessing = false
 }) => {
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -60,6 +66,30 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right: Actions */}
       <div className="flex items-center gap-1 sm:gap-2">
+        {/* RAG Pipeline Inspector Button */}
+        {onToggleInspector && (
+          <button
+            onClick={onToggleInspector}
+            className={`relative flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-brand-gold-550/40 ${
+              isInspectorOpen
+                ? 'bg-brand-gold-550/15 text-brand-gold-650 dark:text-brand-gold-300 border border-brand-gold-550/30 shadow-xs'
+                : 'text-slate-650 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 border border-transparent'
+            }`}
+            title="RAG Pipeline"
+            aria-label="RAG Pipeline"
+            aria-pressed={isInspectorOpen}
+          >
+            <Workflow className={`h-4 w-4 ${isProcessing ? 'animate-spin text-amber-500' : 'text-brand-gold-550 dark:text-brand-gold-300'}`} />
+            <span className="hidden sm:inline">RAG Pipeline</span>
+            {isProcessing && (
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+              </span>
+            )}
+          </button>
+        )}
+
         {/* Language Selector */}
         <div className="relative">
           <button
@@ -104,3 +134,4 @@ export const Header: React.FC<HeaderProps> = ({
   );
 };
 export default Header;
+

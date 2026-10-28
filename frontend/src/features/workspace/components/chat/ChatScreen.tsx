@@ -20,6 +20,7 @@ interface ChatScreenProps {
   onClosePanel: () => void;
   bookmarkedMsgIds: string[];
   onBookmarkMessage: (msgId: string) => void;
+  onInspectTrace?: (traceId: string) => void;
 }
 
 export const ChatScreen: React.FC<ChatScreenProps> = ({
@@ -34,8 +35,10 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({
   activePanelNode,
   onClosePanel,
   bookmarkedMsgIds,
-  onBookmarkMessage
+  onBookmarkMessage,
+  onInspectTrace
 }) => {
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom of messages
@@ -107,10 +110,12 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({
                   onOpenPanel={onSelectQuickPrompt}
                   onBookmarkMessage={onBookmarkMessage}
                   isBookmarked={bookmarkedMsgIds.includes(msg.id)}
+                  onInspectTrace={onInspectTrace}
                 />
               ))}
               {isTyping && <TypingIndicator />}
             </div>
+
           )}
         </div>
 

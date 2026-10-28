@@ -157,17 +157,70 @@ npm run dev
 - `CHROMA_COLLECTION_NAME`: `lexai_legal_chunks`
 - `EMBEDDING_MODEL`: `sentence-transformers/all-MiniLM-L6-v2`
 - `RERANKER_MODEL`: `cross-encoder/ms-marco-MiniLM-L-6-v2`
-- `RETRIEVAL_TOP_K`: `20`
-- `RERANK_TOP_K`: `5`
+- `RETRIEVAL_TOP_K`: `30`
+- `RERANK_TOP_K`: `8`
 - `FRONTEND_URL`: `http://localhost:5173`
 - `LEXAI_API_URL`: `http://127.0.0.1:8001`
+- `SUPABASE_URL`: Supabase project URL (e.g. `https://xyzcompany.supabase.co`).
+- `SUPABASE_JWT_SECRET`: Supabase JWT secret from Project Settings -> API.
 
 ### Frontend (`frontend/.env`)
 - `VITE_API_BASE_URL`: `http://127.0.0.1:8001`
+- `VITE_SUPABASE_URL`: Supabase project URL.
+- `VITE_SUPABASE_ANON_KEY`: Supabase anon/public API key.
 
 ---
 
-## 5. API Endpoints
+## 5. Supabase Authentication Setup Guide
+
+### 5.1 Status & Architecture
+Supabase Authentication is integrated into the LexAI platform:
+- **Client**: `@supabase/supabase-js` is configured in `frontend/src/services/supabaseClient.ts` and managed via `frontend/src/context/AuthContext.tsx`.
+- **Backend Verification**: `backend/app/api/v1/auth.py` decodes and cryptographically verifies Supabase JWTs using `SUPABASE_JWT_SECRET` and auto-provisions user sessions in the local database.
+- **Graceful Fallback**: If Supabase environment variables are unset, the system automatically falls back to local authenticated sessions so development and offline testing are never disrupted.
+
+### 5.2 Where to Obtain Credentials (Supabase Dashboard)
+1. Sign in to [Supabase Dashboard](https://supabase.com/dashboard) and select your project.
+2. In the left navigation, click **Project Settings** (gear icon) -> **API**:
+   - **Project URL**: Copy and paste into `VITE_SUPABASE_URL` (`frontend/.env`) and `SUPABASE_URL` (`backend/.env`).
+   - **Project API keys (`anon` / `public`)**: Copy and paste into `VITE_SUPABASE_ANON_KEY` (`frontend/.env`).
+   - **JWT Settings (`JWT Secret`)**: Copy and paste into `SUPABASE_JWT_SECRET` (`backend/.env`).
+   > *Security note: Never expose the `service_role` key in frontend code or commits.*
+
+### 5.3 Configuring Email Verification & Auth Providers
+1. Go to **Authentication** -> **Providers** -> **Email**:
+   - Ensure **Enable Email provider** is turned **ON**.
+   - **Confirm email**:
+     - *Disabled* (recommended for rapid local development): Users log in immediately upon registration.
+     - *Enabled* (production): Users must click the verification link in their inbox before first login.
+2. Go to **Authentication** -> **URL Configuration**:
+   - Set **Site URL** to `http://localhost:5173`.
+   - Add `http://localhost:5173/**` to **Redirect URLs**.
+
+### 5.4 Running in VS Code
+Open two integrated terminals in VS Code:
+
+- **Terminal 1 (Backend)**:
+  ```powershell
+  .\venv\Scripts\Activate.ps1
+  python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8001 --reload
+  ```
+- **Terminal 2 (Frontend)**:
+  ```powershell
+  cd frontend
+  npm run dev
+  ```
+
+### 5.5 Verification & Testing Steps
+1. Add your credentials into `frontend/.env` and `backend/.env`.
+2. Navigate to `http://localhost:5173/signup`.
+3. Fill out the registration form (email, password, full name).
+4. Verify user creation in the Supabase Dashboard under **Authentication -> Users**.
+5. Log in at `http://localhost:5173/login` and verify that the session persists on page refresh.
+
+---
+
+## 6. API Endpoints
 
 | Feature | Frontend Trigger | Backend Endpoint | Method | Technology |
 |---|---|---|---|---|
@@ -181,7 +234,7 @@ npm run dev
 
 ---
 
-## 6. Running Tests
+## 7. Running Tests
 
 ### Backend Test Suite
 ```powershell

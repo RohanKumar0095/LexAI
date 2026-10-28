@@ -4,6 +4,7 @@ from backend.app.schemas.legal import LegalChunkMetadata
 
 
 class LegalSource(BaseModel):
+    evidence_id: Optional[str] = None  # e.g. "EVIDENCE_1"
     document_id: str
     chunk_id: str
     title: Optional[str] = None
@@ -40,10 +41,38 @@ class SearchResponse(BaseModel):
     results: List[RetrievedChunk]
 
 
+from enum import Enum
+
+
+class EvidenceState(str, Enum):
+    SUFFICIENT = "sufficient"
+    PARTIAL = "partial"
+    INSUFFICIENT = "insufficient"
+    VALIDATION_FAILED = "validation_failed"
+
+
+class KeyPointItem(BaseModel):
+    text: str
+    source_ids: List[str] = Field(default_factory=list)
+
+
+class StructuredLegalAnswer(BaseModel):
+    status: str = "supported"  # "supported", "partially_supported", "insufficient"
+    summary: str = ""
+    summary_source_ids: List[str] = Field(default_factory=list)
+    key_points: List[KeyPointItem] = Field(default_factory=list)
+    steps: List[KeyPointItem] = Field(default_factory=list)
+    conditions: List[KeyPointItem] = Field(default_factory=list)
+    exceptions: List[KeyPointItem] = Field(default_factory=list)
+    important_notes: List[KeyPointItem] = Field(default_factory=list)
+    unavailable_information: List[str] = Field(default_factory=list)
+
+
 class ChatRequest(BaseModel):
     query: str = Field(..., min_length=1, description="Legal query or factual scenario")
     conversation_id: Optional[str] = Field(default=None, description="Optional conversation session ID")
     explain_mode: Optional[str] = Field(default="simple", description="Explanation mode: simple, detailed, case-analysis, technical")
+    trace_id: Optional[str] = Field(default=None, description="Optional client-generated or correlated telemetry trace ID")
 
 
 class ChatResponse(BaseModel):
@@ -53,6 +82,10 @@ class ChatResponse(BaseModel):
     retrieved_chunks: Optional[List[RetrievedChunk]] = None
     conversation_id: Optional[str] = None
     explain_mode: Optional[str] = "simple"
+    trace_id: Optional[str] = None
+    evidence_state: str = "sufficient"  # "sufficient", "partial", "insufficient"
+    structured_answer: Optional[StructuredLegalAnswer] = None
+
 
 
 class HealthResponse(BaseModel):
@@ -62,3 +95,4 @@ class HealthResponse(BaseModel):
     embedding_model_loaded: bool
     gemini_configured: bool
     details: Dict[str, Any] = {}
+
