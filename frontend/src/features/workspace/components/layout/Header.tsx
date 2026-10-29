@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sun, Moon, Bell, Globe, Workflow } from 'lucide-react';
+import { Bell, Globe, Workflow } from 'lucide-react';
 import type { Notification } from '../../types/user';
 
 interface HeaderProps {
@@ -20,8 +20,6 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   currentConversationTitle,
-  theme,
-  setTheme,
   language,
   setLanguage,
   notifications,
@@ -34,12 +32,12 @@ export const Header: React.FC<HeaderProps> = ({
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-between border-b border-slate-200 bg-white/80 px-4 backdrop-blur-md transition-colors duration-200 dark:border-slate-800 dark:bg-brand-navy-950/80">
-      {/* Left: Mobile Toggle & Logo */}
+    <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-between border-b border-[#30243F] bg-[#08070D]/90 px-4 backdrop-blur-md transition-colors duration-200">
+      {/* Left: Mobile Toggle & Title */}
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleMobileSidebar}
-          className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 md:hidden"
+          className="rounded-xl p-1.5 text-[#AAA3BB] hover:bg-[#15111F] hover:text-white md:hidden cursor-pointer"
           aria-label="Toggle mobile menu"
           id="mobile-sidebar-toggle"
         >
@@ -49,83 +47,69 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
         
         <div className="hidden items-baseline gap-2 md:flex">
-          <span className="font-sans text-xs font-semibold uppercase tracking-wider text-brand-gold-550 dark:text-brand-gold-300">
+          <span className="font-sans text-xs font-semibold uppercase tracking-wider text-[#C084FC]">
             {currentConversationTitle ? 'Active Session' : 'LexAI India'}
           </span>
-          <h2 className="text-sm font-medium text-slate-800 dark:text-slate-200 line-clamp-1">
+          <h2 className="text-sm font-medium text-white line-clamp-1">
             {currentConversationTitle || 'Your Personal AI Legal Assistant'}
           </h2>
         </div>
 
         <div className="flex items-center md:hidden font-sans">
-          <span className="text-base font-bold text-slate-900 dark:text-white">
-            LexAI<span className="text-brand-gold-550 dark:text-brand-gold-300">.in</span>
+          <span className="text-base font-bold text-white">
+            LexAI<span className="text-[#A855F7]">.in</span>
           </span>
         </div>
       </div>
 
       {/* Right: Actions */}
-      <div className="flex items-center gap-1 sm:gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-2">
         {/* RAG Pipeline Inspector Button */}
         {onToggleInspector && (
           <button
             onClick={onToggleInspector}
-            className={`relative flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-brand-gold-550/40 ${
+            className={`relative flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-medium transition-all focus:outline-none focus:ring-1 focus:ring-[#A855F7] cursor-pointer ${
               isInspectorOpen
-                ? 'bg-brand-gold-550/15 text-brand-gold-650 dark:text-brand-gold-300 border border-brand-gold-550/30 shadow-xs'
-                : 'text-slate-650 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 border border-transparent'
+                ? 'bg-[#A855F7]/20 text-[#C084FC] border border-[#A855F7]/40 shadow-sm'
+                : 'text-[#AAA3BB] hover:bg-[#15111F] hover:text-white border border-transparent'
             }`}
-            title="RAG Pipeline"
+            title="RAG Pipeline Inspector"
             aria-label="RAG Pipeline"
             aria-pressed={isInspectorOpen}
           >
-            <Workflow className={`h-4 w-4 ${isProcessing ? 'animate-spin text-amber-500' : 'text-brand-gold-550 dark:text-brand-gold-300'}`} />
+            <Workflow className={`h-4 w-4 ${isProcessing ? 'animate-spin text-[#C084FC]' : 'text-[#C084FC]'}`} />
             <span className="hidden sm:inline">RAG Pipeline</span>
             {isProcessing && (
               <span className="flex h-2 w-2 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#A855F7] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#A855F7]"></span>
               </span>
             )}
           </button>
         )}
 
         {/* Language Selector */}
-        <div className="relative">
-          <button
-            onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
-            className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-650 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 transition-colors"
-            title="Switch Language"
-          >
-            <Globe className="h-3.5 w-3.5 opacity-80" />
-            <span>{language === 'en' ? 'English' : 'हिंदी'}</span>
-          </button>
-        </div>
-
-        {/* Theme Toggle */}
         <button
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
-          title="Toggle Theme"
+          onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+          className="flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-medium text-[#AAA3BB] hover:bg-[#15111F] hover:text-white border border-[#30243F] transition-colors cursor-pointer"
+          title="Switch Language"
         >
-          {theme === 'dark' ? (
-            <Sun className="h-4 w-4" />
-          ) : (
-            <Moon className="h-4 w-4" />
-          )}
+          <Globe className="h-3.5 w-3.5 text-[#C084FC]" />
+          <span className="font-semibold text-white uppercase">{language}</span>
         </button>
 
-        {/* Notifications trigger */}
+        {/* Notifications */}
         <button
           onClick={onOpenNotifications}
-          className="relative rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
+          className="relative rounded-xl p-2 text-[#AAA3BB] hover:bg-[#15111F] hover:text-white border border-transparent hover:border-[#30243F] transition-colors cursor-pointer"
           title="Notifications"
+          aria-label="Open notifications"
         >
           <Bell className="h-4 w-4" />
           {unreadCount > 0 && (
-            <span className="absolute right-1 top-1 flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500"></span>
+            <span className="absolute top-1 right-1 flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#A855F7] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#A855F7]"></span>
             </span>
           )}
         </button>
@@ -134,4 +118,3 @@ export const Header: React.FC<HeaderProps> = ({
   );
 };
 export default Header;
-

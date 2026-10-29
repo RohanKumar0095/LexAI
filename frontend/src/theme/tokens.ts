@@ -1,29 +1,38 @@
 /**
  * LexAI Design Token Registry
  * Primary Source of Truth for Visual Foundation
+ * Theme: Black with Luminous Purple Accents
  */
 
 export const LEXAI_COLORS = {
   midnight: {
-    base: '#0D0F13',
-    surface: '#15171C',
-    card: '#15171C',
-    elevated: '#1A1D23',
-    border: '#2A2D34',
+    base: '#08070D',
+    surface: '#15111F',
+    card: '#15111F',
+    elevated: '#1C1728',
+    border: '#30243F',
   },
-  saffron: {
-    default: '#0284c7', // Sky Blue Primary Accent
-    hover: '#38bdf8',
-    active: '#0369a1',
-    glow: 'rgba(2, 132, 199, 0.25)',
-    subtle: 'rgba(2, 132, 199, 0.10)',
-  },
-  electricIndigo: {
-    default: '#a855f7', // Purple Secondary Accent
-    hover: '#c084fc',
-    active: '#9333ea',
+  primary: {
+    default: '#A855F7',
+    bright: '#C084FC',
+    deep: '#7C3AED',
     glow: 'rgba(168, 85, 247, 0.25)',
     subtle: 'rgba(168, 85, 247, 0.10)',
+  },
+  // Legacy aliases mapped to luminous purple for backward compatibility
+  saffron: {
+    default: '#A855F7',
+    hover: '#C084FC',
+    active: '#7C3AED',
+    glow: 'rgba(168, 85, 247, 0.25)',
+    subtle: 'rgba(168, 85, 247, 0.10)',
+  },
+  electricIndigo: {
+    default: '#C084FC',
+    hover: '#D8B4FE',
+    active: '#A855F7',
+    glow: 'rgba(192, 132, 252, 0.25)',
+    subtle: 'rgba(192, 132, 252, 0.10)',
   },
   emerald: {
     default: '#10B981',
@@ -33,16 +42,16 @@ export const LEXAI_COLORS = {
     subtle: 'rgba(16, 185, 129, 0.10)',
   },
   crimson: {
-    default: '#ef4444',
-    hover: '#f87171',
-    active: '#dc2626',
+    default: '#EF4444',
+    hover: '#F87171',
+    active: '#DC2626',
     glow: 'rgba(239, 68, 68, 0.25)',
     subtle: 'rgba(239, 68, 68, 0.10)',
   },
   text: {
-    primary: '#F7F8FA',
-    secondary: '#98A2B3',
-    muted: '#667085',
+    primary: '#F8F7FC',
+    secondary: '#D4CFE2',
+    muted: '#AAA3BB',
   }
 } as const;
 
@@ -55,11 +64,11 @@ export const LEXAI_RADII = {
 } as const;
 
 export const LEXAI_GRADIENTS = {
-  signature: 'none',
-  accentText: 'none',
-  saffron: 'none',
-  electric: 'none',
-  surfaceGlass: 'rgba(21, 23, 28, 0.85)',
+  signature: 'linear-gradient(135deg, #F8F7FC 0%, #C084FC 50%, #A855F7 100%)',
+  accentText: 'linear-gradient(135deg, #C084FC 0%, #A855F7 100%)',
+  saffron: 'linear-gradient(135deg, #C084FC 0%, #A855F7 100%)',
+  electric: 'linear-gradient(135deg, #E9D5FF 0%, #C084FC 100%)',
+  surfaceGlass: 'rgba(21, 17, 31, 0.85)',
 } as const;
 
 export const LEXAI_MOTION = {

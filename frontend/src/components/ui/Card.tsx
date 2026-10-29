@@ -16,13 +16,13 @@ export const Card: React.FC<CardProps> = ({
   ...props
 }) => {
   const variantStyles: Record<CardVariant, string> = {
-    glass: 'lexai-surface-glass rounded-xl p-6',
-    elevated: 'lexai-surface-elevated rounded-xl p-6',
-    card: 'lexai-surface-card rounded-lg p-5',
-    modal: 'lexai-surface-modal rounded-hero p-8',
+    glass: 'lexai-surface-glass rounded-2xl p-6 border border-[#30243F]',
+    elevated: 'lexai-surface-elevated rounded-2xl p-6 border border-[#30243F]',
+    card: 'lexai-surface-card rounded-xl p-5 border border-[#30243F]',
+    modal: 'lexai-surface-modal rounded-3xl p-8 border border-[#30243F]',
   };
 
-  const hoverEffect = hoverable ? 'cursor-pointer hover:border-indigo-500/40 hover:-translate-y-1 hover:shadow-xl transition-all duration-300' : '';
+  const hoverEffect = hoverable ? 'cursor-pointer hover:border-[#A855F7]/50 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-950/20 transition-all duration-300' : '';
 
   return (
     <div

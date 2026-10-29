@@ -14,7 +14,7 @@ export const SocialLoginButton: React.FC<SocialLoginButtonProps> = ({
       type="button"
       onClick={onClick}
       disabled={isLoading}
-      className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 active:bg-white/15 border border-slate-800 text-sm font-semibold text-slate-200 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none"
+      className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-[#100D18] hover:bg-[#1C1728] active:bg-[#15111F] border border-[#30243F] hover:border-[#A855F7]/40 text-sm font-semibold text-[#F8F7FC] transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none"
     >
       <svg className="w-4.5 h-4.5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
         <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z" />
@@ -26,3 +26,4 @@ export const SocialLoginButton: React.FC<SocialLoginButtonProps> = ({
     </button>
   );
 };
+export default SocialLoginButton;

@@ -1,83 +1,101 @@
 import React from 'react';
 import { Scale, Shield, Heart } from 'lucide-react';
-import { Badge } from '../ui/Badge';
+
+const LOGO_ASSET_URL = "/assets/logo.jpg";
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-[#05070E] border-t border-slate-800/80 text-slate-400 pt-16 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
+    <footer className="bg-[#07050D] border-t border-[#C084FC]/15 text-[#AAA1BC] pt-16 pb-12 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         {/* Top Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           
-          {/* Col 1: Brand */}
+          {/* Col 1: Brand with Logo */}
           <div className="space-y-4 md:col-span-1">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FF9933] via-[#E11D48] to-[#6366F1] flex items-center justify-center shadow-md">
-                <Scale className="w-5 h-5 text-white" />
+              <div className="relative w-9 h-9 rounded-xl overflow-hidden border border-[#A855F7]/30 shadow-md shadow-purple-950/40">
+                <img 
+                  src={LOGO_ASSET_URL} 
+                  alt="LexAI-India Logo" 
+                  className="w-full h-full object-cover" 
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
+                />
+                <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#7C3AED] via-[#A855F7] to-[#C084FC] flex items-center justify-center">
+                  <Scale className="w-4 h-4 text-white" />
+                </div>
               </div>
-              <span className="font-display font-bold text-lg text-white">LEXAI-INDIA</span>
+              <span className="font-display font-extrabold text-lg text-white tracking-tight">
+                LEXAI<span className="text-[#A855F7]">-INDIA</span>
+              </span>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              AI-first legal awareness and conversational assistant for Indian citizens. Empowering every citizen with accessible, understandable legal knowledge.
+            <p className="text-xs text-[#AAA1BC] leading-relaxed">
+              AI-first legal awareness and conversational intelligence platform engineered for Indian citizens. Empowering every citizen with accessible, understandable legal knowledge.
             </p>
             <div className="flex items-center gap-2 pt-2">
-              <Badge variant="saffron" className="text-[10px]">India Jurisdiction</Badge>
-              <Badge variant="glass" className="text-[10px]">Version 2.0</Badge>
+              <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-[#A855F7]/15 text-[#C084FC] border border-[#A855F7]/30">
+                India Jurisdiction
+              </span>
+              <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-[#151020] text-[#AAA1BC] border border-[#30243F]">
+                Version 2.0
+              </span>
             </div>
           </div>
 
           {/* Col 2: Core Platform */}
           <div className="space-y-3">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-200">Core Features</h4>
+            <h4 className="caption-text text-[#FAF8FF]">Core Features</h4>
             <ul className="space-y-2 text-xs">
-              <li><a href="#features" className="hover:text-white transition-colors">AI Chat Assistant</a></li>
-              <li><a href="#features" className="hover:text-white transition-colors">Rights Checker</a></li>
-              <li><a href="#features" className="hover:text-white transition-colors">Scenario Simulator</a></li>
-              <li><a href="#features" className="hover:text-white transition-colors">Document AI & Complaints</a></li>
-              <li><a href="#features" className="hover:text-white transition-colors">Daily Law & Learning</a></li>
+              <li><a href="#features" className="hover:text-[#C084FC] transition-colors">AI Chat Assistant</a></li>
+              <li><a href="#features" className="hover:text-[#C084FC] transition-colors">Rights Checker</a></li>
+              <li><a href="#features" className="hover:text-[#C084FC] transition-colors">Scenario Simulator</a></li>
+              <li><a href="#features" className="hover:text-[#C084FC] transition-colors">Document AI & Complaints</a></li>
+              <li><a href="#features" className="hover:text-[#C084FC] transition-colors">Daily Law & Learning</a></li>
             </ul>
           </div>
 
           {/* Col 3: Future Vision */}
           <div className="space-y-3">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-200">Future Roadmap</h4>
+            <h4 className="caption-text text-[#FAF8FF]">Future Roadmap</h4>
             <ul className="space-y-2 text-xs">
-              <li><a href="#roadmap" className="hover:text-white transition-colors">Agentic AI Execution</a></li>
-              <li><a href="#roadmap" className="hover:text-white transition-colors">Lawyer Directory & Consultation</a></li>
-              <li><a href="#roadmap" className="hover:text-white transition-colors">Voice Assistant & Regional Languages</a></li>
-              <li><a href="#roadmap" className="hover:text-white transition-colors">Court E-filing & Status Tracking</a></li>
-              <li><a href="#roadmap" className="hover:text-white transition-colors">Global Jurisdiction Scaling</a></li>
+              <li><a href="#roadmap" className="hover:text-[#C084FC] transition-colors">Agentic AI Execution</a></li>
+              <li><a href="#roadmap" className="hover:text-[#C084FC] transition-colors">Lawyer Directory & Consultation</a></li>
+              <li><a href="#roadmap" className="hover:text-[#C084FC] transition-colors">Voice Assistant & Regional Languages</a></li>
+              <li><a href="#roadmap" className="hover:text-[#C084FC] transition-colors">Court E-filing & Status Tracking</a></li>
+              <li><a href="#roadmap" className="hover:text-[#C084FC] transition-colors">Global Jurisdiction Scaling</a></li>
             </ul>
           </div>
 
           {/* Col 4: Important Legal Disclaimer */}
-          <div className="space-y-3 bg-[#080B14] p-4 rounded-xl border border-slate-800">
+          <div className="space-y-3 bg-[#151020] p-5 rounded-2xl border border-[#C084FC]/15 shadow-lg shadow-black/50">
             <div className="flex items-center gap-2 text-xs font-semibold text-rose-400">
-              <Shield className="w-4 h-4" />
+              <Shield className="w-4 h-4 shrink-0" />
               <span>Legal Information Disclaimer</span>
             </div>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
-              LexAI-India is an artificial intelligence application designed for legal literacy, awareness, and administrative guidance. It does not provide formal legal representation, attorney-client privilege, or legal advice. Consult a licensed Indian advocate for specific legal disputes.
+            <p className="text-[11px] text-[#AAA1BC] leading-relaxed">
+              LexAI-India is an artificial intelligence application designed for legal literacy, awareness, and administrative guidance. It does not provide formal legal representation, attorney-client privilege, or formal legal advice. Consult a licensed Indian advocate for specific legal disputes.
             </p>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <div className="flex items-center gap-1">
+        <div className="pt-8 border-t border-[#30243F]/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#AAA1BC]/80">
+          <div className="flex items-center gap-1.5">
             <span>Built with care for Indian citizens</span>
-            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
+            <Heart className="w-3.5 h-3.5 text-[#C084FC] fill-[#C084FC]" />
             <span>in India</span>
           </div>
 
           <div className="flex items-center gap-6">
-            <span>DPDP Act 2023 Compliant</span>
-            <span>Terms of Service</span>
-            <span>Privacy Policy</span>
+            <span className="hover:text-white transition-colors cursor-pointer">DPDP Act 2023 Compliant</span>
+            <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
+            <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
           </div>
         </div>
       </div>
     </footer>
   );
 };
+export default Footer;

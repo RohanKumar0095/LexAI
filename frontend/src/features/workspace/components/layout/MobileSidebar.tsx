@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   X, Plus, BookOpen, Bookmark, PenTool,
   MapPin, AlertOctagon, Settings,
-  MessageSquare, Pin, PinOff, Trash2, User, ChevronDown, ChevronRight, LogOut
+  MessageSquare, Pin, PinOff, Trash2, User, ChevronDown, ChevronRight, LogOut, Scale 
 } from 'lucide-react';
 import { useAuth } from '../../../../context/AuthContext';
 import type { Conversation } from '../../types/chat';
@@ -82,7 +82,6 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
     }
   ];
 
-  // Group conversations for history list
   const pinnedConvs = conversations.filter(c => c.pinned);
   const unpinnedConvs = conversations.filter(c => !c.pinned);
 
@@ -124,30 +123,34 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
       <div
         key={conv.id}
         onClick={() => handleConversationClick(conv.id)}
-        className={`group relative flex items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs transition-all duration-150 cursor-pointer ${
+        className={`group relative flex items-center justify-between rounded-xl px-2.5 py-2 text-left text-xs transition-all duration-150 cursor-pointer ${
           isActive 
-            ? 'bg-selected text-foreground font-semibold border border-border/40' 
-            : 'text-secondary-foreground hover:bg-hover border border-transparent'
+            ? 'bg-[#1C1728] text-white font-semibold border border-[#30243F]' 
+            : 'text-[#AAA3BB] hover:bg-[#15111F] hover:text-white'
         }`}
       >
         <div className="flex items-center gap-2 overflow-hidden flex-1">
-          <MessageSquare className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-brand-gold-550 dark:text-brand-gold-300' : 'text-muted-foreground'}`} />
+          <MessageSquare className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-[#C084FC]' : 'text-[#AAA3BB]/60'}`} />
           <span className="truncate leading-tight pr-4">
             {conv.title}
           </span>
         </div>
 
-        {/* Action buttons */}
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex items-center gap-1">
+          {conv.pinned && (
+            <Pin className="h-3 w-3 text-[#C084FC] shrink-0" />
+          )}
           <button
             onClick={(e) => handlePinClick(conv.id, e)}
-            className="p-0.5 rounded text-muted-foreground hover:text-brand-gold-550 dark:hover:text-brand-gold-300"
+            className="p-1 rounded text-[#AAA3BB] hover:text-[#C084FC]"
+            title={conv.pinned ? "Unpin" : "Pin"}
           >
             {conv.pinned ? <PinOff className="h-3 w-3" /> : <Pin className="h-3 w-3" />}
           </button>
           <button
             onClick={(e) => handleDeleteClick(conv.id, e)}
-            className="p-0.5 rounded text-muted-foreground hover:text-red-500"
+            className="p-1 rounded text-[#AAA3BB] hover:text-rose-400"
+            title="Delete"
           >
             <Trash2 className="h-3 w-3" />
           </button>
@@ -160,7 +163,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
     if (items.length === 0) return null;
     return (
       <div className="space-y-1 mt-3 first:mt-0">
-        <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground px-2">
+        <span className="text-[9px] font-bold uppercase tracking-wider text-[#AAA3BB]/70 px-2.5">
           {title}
         </span>
         <div className="space-y-[2px]">
@@ -171,60 +174,64 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex md:hidden animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex md:hidden">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/75 backdrop-blur-sm transition-opacity"
         onClick={onClose}
+        aria-hidden="true"
       />
 
-      {/* Drawer Body */}
-      <div className="relative flex w-80 max-w-xs flex-col bg-surface text-foreground p-4 shadow-xl border-r border-border ring-1 ring-black/5 animate-in slide-in-from-left duration-250 z-10">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border pb-3">
+      {/* Drawer */}
+      <aside className="relative flex w-4/5 max-w-xs flex-1 flex-col bg-[#08070D] border-r border-[#30243F] text-[#F8F7FC] pt-3 pb-4">
+        {/* Brand Header & Close */}
+        <div className="flex h-12 items-center justify-between border-b border-[#30243F] px-4 pb-2">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleSelect(null)}>
-            <img src="/assets/logo.jpg" alt="LexAI Logo" className="h-8 w-8 rounded-lg object-cover" />
-            <span className="font-sans font-bold text-lg text-foreground">
-              LexAI<span className="text-brand-gold-550 dark:text-brand-gold-300">.in</span>
+            <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#A855F7] flex items-center justify-center text-white shadow-md shadow-purple-500/20">
+              <Scale className="h-4 w-4" />
+            </div>
+            <span className="font-sans font-bold text-base text-white">
+              LexAI<span className="text-[#A855F7]">.in</span>
             </span>
           </div>
-          <button 
+          <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-muted-foreground hover:bg-hover hover:text-foreground"
+            className="rounded-xl p-1.5 text-[#AAA3BB] hover:bg-[#15111F] hover:text-white transition-colors cursor-pointer"
+            aria-label="Close sidebar"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Menu Items */}
-        <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-1 scrollbar-none">
+        <div className="flex-1 overflow-y-auto py-3 px-2 space-y-4">
           {menuItems.map((group, gIdx) => (
             <div key={gIdx} className="space-y-1">
-              <h3 className="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <h3 className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#AAA3BB]/70">
                 {group.group}
               </h3>
-              <div className="space-y-0.5">
+              
+              <div className="space-y-[2px]">
                 {group.items.map((item, iIdx) => {
-                  const Icon = item.icon;
+                  const IconComponent = item.icon;
                   const isActive = activePanel === item.id;
                   
                   return (
                     <button
                       key={iIdx}
                       onClick={() => handleSelect(item.id)}
-                      className={`flex w-full items-center gap-3 rounded-lg py-2 px-3 text-left text-xs transition-all duration-150 ${
-                        isActive
-                          ? 'bg-selected text-foreground font-semibold border-l-2 border-brand-gold-550'
+                      className={`flex w-full items-center gap-3 rounded-xl py-2 px-3 text-left transition-all duration-150 cursor-pointer ${
+                        isActive 
+                          ? 'bg-[#1C1728] text-white font-semibold border-l-2 border-[#A855F7]' 
                           : item.highlight
-                            ? 'border border-red-500/20 bg-red-50/50 text-red-500 hover:bg-red-500/10'
-                            : 'text-secondary-foreground hover:bg-hover hover:text-foreground'
+                            ? 'border border-rose-500/25 bg-rose-500/08 text-rose-400'
+                            : 'text-[#AAA3BB] hover:bg-[#15111F] hover:text-white'
                       }`}
                     >
-                      <Icon className={`h-4.5 w-4.5 shrink-0 ${
-                        isActive ? 'text-brand-gold-550 dark:text-brand-gold-300' : item.highlight ? 'text-red-500 animate-pulse' : 'text-muted-foreground'
+                      <IconComponent className={`h-4 w-4 shrink-0 ${
+                        isActive ? 'text-[#C084FC]' : item.highlight ? 'text-rose-400' : 'text-[#AAA3BB]'
                       }`} />
-                      <span>{item.label}</span>
+                      <span className="text-xs">{item.label}</span>
                     </button>
                   );
                 })}
@@ -232,25 +239,24 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
             </div>
           ))}
 
-          {/* History Collapsible */}
-          <div className="space-y-1 pt-2">
+          {/* History */}
+          <div className="space-y-1">
             <button
               onClick={() => setIsHistoryExpanded(!isHistoryExpanded)}
-              className="flex w-full items-center justify-between px-2 py-1 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
-              aria-label={isHistoryExpanded ? "Collapse chat history" : "Expand chat history"}
+              className="flex w-full items-center justify-between px-3 py-1.5 text-left text-[10px] font-bold uppercase tracking-wider text-[#AAA3BB]/70 hover:text-white"
             >
               <span>History</span>
               {isHistoryExpanded ? (
-                <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                <ChevronDown className="h-3 w-3 text-[#AAA3BB]" />
               ) : (
-                <ChevronRight className="h-3 w-3 text-muted-foreground" />
+                <ChevronRight className="h-3 w-3 text-[#AAA3BB]" />
               )}
             </button>
 
             {isHistoryExpanded && (
-              <div className="space-y-3 px-1 mt-1">
+              <div className="space-y-3 px-1">
                 {conversations.length === 0 ? (
-                  <div className="text-center py-4 text-[10px] text-muted-foreground">
+                  <div className="text-center py-4 text-[10px] text-[#AAA3BB]/60">
                     No past conversations
                   </div>
                 ) : (
@@ -267,46 +273,36 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
           </div>
         </div>
 
-        {/* Bottom Account Area */}
-        <div className="border-t border-border p-3 mt-auto bg-background/30 flex flex-col items-center relative" ref={accountMenuRef}>
+        {/* Footer Account Area */}
+        <div className="border-t border-[#30243F] p-3 mt-auto bg-[#08070D]" ref={accountMenuRef}>
           <div className="flex w-full items-center justify-between">
             <button
               onClick={() => setAccountMenuOpen(!accountMenuOpen)}
-              className={`flex items-center gap-2 overflow-hidden hover:bg-hover rounded-lg p-1 transition-colors text-left focus:outline-none focus:ring-1 focus:ring-brand-gold-550 flex-1 mr-2 ${
-                accountMenuOpen ? 'bg-hover' : ''
-              }`}
-              title="Account Options"
-              aria-label="Open account menu"
-              aria-expanded={accountMenuOpen}
-              aria-haspopup="true"
+              className="flex items-center gap-2 overflow-hidden hover:bg-[#15111F] rounded-xl p-1.5 text-left flex-1 mr-2"
             >
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-hover text-secondary-foreground">
-                <User className="h-4 w-4" />
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-[#1C1728] border border-[#30243F] text-[#C084FC]">
+                <User className="h-3.5 w-3.5" />
               </div>
-              <span className="text-xs font-semibold text-secondary-foreground truncate">
+              <span className="text-xs font-semibold text-[#D4CFE2] truncate">
                 {isAuthenticated ? (user?.name || user?.email || 'Citizen User') : 'Guest Mode'}
               </span>
             </button>
             
             <button
               onClick={() => handleSelect('settings')}
-              className={`p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-hover transition-colors focus:outline-none focus:ring-1 focus:ring-brand-gold-550 ${
-                activePanel === 'settings' ? 'bg-selected text-brand-gold-550 dark:text-brand-gold-300' : ''
-              }`}
+              className="p-1.5 rounded-xl text-[#AAA3BB] hover:text-white hover:bg-[#15111F]"
               title="Settings"
-              aria-label="Open settings"
             >
               <Settings className="h-4 w-4" />
             </button>
           </div>
 
-          {/* Account Menu Popover */}
           {accountMenuOpen && (
-            <div className="absolute bottom-full mb-2 w-48 rounded-xl border border-border bg-surface p-1.5 shadow-lg z-50 animate-in fade-in slide-in-from-bottom-2 duration-150 left-2">
-              <div className="px-2.5 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider truncate">
+            <div className="absolute bottom-full mb-2 left-3 right-3 rounded-2xl border border-[#30243F] bg-[#15111F] p-1.5 shadow-2xl z-50">
+              <div className="px-2.5 py-1 text-[10px] font-bold text-[#AAA3BB] uppercase tracking-wider truncate">
                 {isAuthenticated ? (user?.email || 'Logged In') : 'Guest Mode'}
               </div>
-              <div className="h-[1px] bg-border my-1 mx-1" />
+              <div className="h-[1px] bg-[#30243F] my-1 mx-1" />
               {isAuthenticated ? (
                 <button
                   onClick={() => {
@@ -314,7 +310,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
                     logout();
                     window.location.href = '/login';
                   }}
-                  className="w-full text-left flex items-center gap-2 px-2.5 py-2 text-xs text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 rounded-lg transition-colors font-medium focus:outline-none cursor-pointer"
+                  className="w-full text-left flex items-center gap-2 px-2.5 py-2 text-xs text-rose-400 hover:bg-rose-500/10 rounded-xl"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span>Sign Out</span>
@@ -326,7 +322,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
                       setAccountMenuOpen(false);
                       window.location.href = '/login';
                     }}
-                    className="w-full text-left px-2.5 py-2 text-xs text-secondary-foreground hover:bg-hover hover:text-foreground rounded-lg transition-colors font-medium focus:outline-none focus:bg-hover focus:text-foreground cursor-pointer"
+                    className="w-full text-left px-2.5 py-2 text-xs text-[#D4CFE2] hover:bg-[#1C1728] rounded-xl"
                   >
                     Sign in
                   </button>
@@ -335,7 +331,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
                       setAccountMenuOpen(false);
                       window.location.href = '/signup';
                     }}
-                    className="w-full text-left px-2.5 py-2 text-xs text-secondary-foreground hover:bg-hover hover:text-foreground rounded-lg transition-colors font-medium focus:outline-none focus:bg-hover focus:text-foreground cursor-pointer"
+                    className="w-full text-left px-2.5 py-2 text-xs text-[#D4CFE2] hover:bg-[#1C1728] rounded-xl"
                   >
                     Create account
                   </button>
@@ -344,43 +340,31 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
             </div>
           )}
         </div>
-      </div>
 
-      {/* Delete Individual Confirmation Modal */}
-      {deleteConfirmId && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 shadow-premium border border-border space-y-4 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-start justify-between">
-              <h4 className="text-sm font-bold text-foreground">
-                Delete this conversation?
-              </h4>
-              <button 
-                onClick={() => setDeleteConfirmId(null)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <p className="text-xs text-secondary-foreground leading-relaxed">
-              This will permanently delete this conversation from your session cache.
-            </p>
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                onClick={() => setDeleteConfirmId(null)}
-                className="px-3 py-1.5 rounded-lg border border-border text-xs font-bold text-secondary-foreground bg-surface hover:bg-hover"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-red-650 hover:bg-red-500 transition-colors"
-              >
-                Delete
-              </button>
+        {/* Delete Dialog */}
+        {deleteConfirmId && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+            <div className="bg-[#15111F] rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-[#30243F] space-y-4">
+              <h4 className="text-sm font-bold text-white">Delete conversation?</h4>
+              <p className="text-xs text-[#AAA3BB]">This will remove it permanently.</p>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setDeleteConfirmId(null)}
+                  className="px-3 py-1.5 rounded-xl border border-[#30243F] text-xs text-[#AAA3BB] bg-[#100D18]"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="px-3 py-1.5 rounded-xl text-xs text-white bg-rose-600 hover:bg-rose-500"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </aside>
     </div>
   );
 };

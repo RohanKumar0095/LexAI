@@ -4,44 +4,51 @@
   --color-midnight-base: var(--lexai-background);
   --color-midnight-surface: var(--lexai-surface);
   --color-midnight-card: var(--lexai-surface);
-  --color-midnight-elevated: var(--lexai-surface);
+  --color-midnight-elevated: var(--lexai-surface-elevated);
   --color-midnight-border: var(--lexai-border);
 
+  --color-primary: #A855F7;
+  --color-primary-bright: #C084FC;
+  --color-primary-deep: #7C3AED;
+  --color-primary-glow: rgba(168, 85, 247, 0.25);
+
   --color-saffron: var(--lexai-primary-accent);
-  --color-saffron-50: #f0f9ff;
-  --color-saffron-100: #e0f2fe;
-  --color-saffron-400: #38bdf8;
+  --color-saffron-50: #FAF5FF;
+  --color-saffron-100: #F3E8FF;
+  --color-saffron-400: #C084FC;
   --color-saffron-500: var(--lexai-primary-accent);
-  --color-saffron-600: #0369a1;
-  --color-saffron-glow: rgba(2, 132, 199, 0.25);
+  --color-saffron-600: #9333EA;
+  --color-saffron-glow: rgba(168, 85, 247, 0.25);
 
   --color-electric: var(--lexai-secondary-accent);
-  --color-electric-400: #c084fc;
+  --color-electric-400: #C084FC;
   --color-electric-500: var(--lexai-secondary-accent);
-  --color-electric-600: #9333ea;
-  --color-electric-glow: rgba(168, 85, 247, 0.25);
+  --color-electric-600: #9333EA;
+  --color-electric-glow: rgba(192, 132, 252, 0.25);
 
   --color-emerald: var(--lexai-success);
-  --color-emerald-400: #34d399;
+  --color-emerald-400: #34D399;
   --color-emerald-500: var(--lexai-success);
   --color-emerald-600: #059669;
 
   --color-crimson: var(--lexai-danger);
-  --color-crimson-400: #f87171;
+  --color-crimson-400: #F87171;
   --color-crimson-500: var(--lexai-danger);
-  --color-crimson-600: #dc2626;
+  --color-crimson-600: #DC2626;
 
   --color-text-primary: var(--lexai-foreground);
   --color-text-secondary: var(--lexai-secondary-foreground);
   --color-text-muted: var(--lexai-muted-foreground);
 
-  --shadow-lexai-glass: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  --shadow-lexai-glow-saffron: 0 0 25px rgba(2, 132, 199, 0.25);
-  --shadow-lexai-glow-electric: 0 0 25px rgba(168, 85, 247, 0.25);
+  --shadow-lexai-glass: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --shadow-lexai-glow-primary: 0 0 25px rgba(168, 85, 247, 0.3);
+  --shadow-lexai-glow-saffron: 0 0 25px rgba(168, 85, 247, 0.25);
+  --shadow-lexai-glow-electric: 0 0 25px rgba(192, 132, 252, 0.25);
 
-  /* LexUI Tailwind v3 config mappings inside Tailwind v4 */
+  /* LexUI Tailwind token mappings */
   --color-background: var(--background);
   --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
   --color-foreground: var(--foreground);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted-foreground: var(--muted-foreground);
@@ -50,72 +57,82 @@
   --color-hover: var(--hover);
   --color-selected: var(--selected);
 
-  --color-brand-navy-50: #f0f3fa;
-  --color-brand-navy-100: #dde4f2;
-  --color-brand-navy-200: #becbe6;
-  --color-brand-navy-300: #90a8d4;
-  --color-brand-navy-400: #5c7ebd;
-  --color-brand-navy-500: #3c5fa3;
-  --color-brand-navy-600: #2d4b85;
-  --color-brand-navy-700: #253d6e;
-  --color-brand-navy-800: #21355c;
-  --color-brand-navy-900: #1e2e4f;
-  --color-brand-navy-950: #0f172a;
+  --color-brand-navy-50: #FAF5FF;
+  --color-brand-navy-100: #F3E8FF;
+  --color-brand-navy-200: #E9D5FF;
+  --color-brand-navy-300: #D8B4FE;
+  --color-brand-navy-400: #C084FC;
+  --color-brand-navy-500: #A855F7;
+  --color-brand-navy-600: #9333EA;
+  --color-brand-navy-700: #7C3AED;
+  --color-brand-navy-800: #6B21A8;
+  --color-brand-navy-850: #1C1728;
+  --color-brand-navy-900: #15111F;
+  --color-brand-navy-950: #08070D;
 
-  --color-brand-gold-50: #f0f9ff;
-  --color-brand-gold-100: #e0f2fe;
-  --color-brand-gold-200: #bae6fd;
-  --color-brand-gold-300: #a855f7;
-  --color-brand-gold-400: #c084fc;
-  --color-brand-gold-500: #0ea5e9;
-  --color-brand-gold-550: #0284c7;
-  --color-brand-gold-800: #1e40af;
-  --color-brand-gold-900: #1e3a8a;
+  --color-brand-gold-50: #FAF5FF;
+  --color-brand-gold-100: #F3E8FF;
+  --color-brand-gold-200: #E9D5FF;
+  --color-brand-gold-300: #C084FC;
+  --color-brand-gold-400: #C084FC;
+  --color-brand-gold-500: #A855F7;
+  --color-brand-gold-550: #A855F7;
+  --color-brand-gold-800: #7C3AED;
+  --color-brand-gold-900: #581C87;
 
-  --color-brand-accent-50: #eef2ff;
-  --color-brand-accent-100: #e0e7ff;
-  --color-brand-accent-500: #6366f1;
-  --color-brand-accent-600: #4f46e5;
-  --color-brand-accent-700: #3730a3;
+  --color-brand-accent-50: #FAF5FF;
+  --color-brand-accent-100: #F3E8FF;
+  --color-brand-accent-500: #A855F7;
+  --color-brand-accent-600: #9333EA;
+  --color-brand-accent-700: #7C3AED;
 
-  --shadow-premium: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 8px -1px rgba(15, 23, 42, 0.02);
-  --shadow-premium-dark: 0 4px 20px -2px rgba(0, 0, 0, 0.35), 0 2px 8px -1px rgba(0, 0, 0, 0.25);
+  --shadow-premium: 0 4px 20px -2px rgba(0, 0, 0, 0.45), 0 2px 8px -1px rgba(168, 85, 247, 0.08);
+  --shadow-premium-dark: 0 4px 20px -2px rgba(0, 0, 0, 0.65), 0 2px 8px -1px rgba(168, 85, 247, 0.12);
 }
 
 @layer base {
   :root {
-    /* GPT Color Specification - Dark Mode (Default) */
-    --lexai-background: #0D0F13;
-    --lexai-surface: #15171C;
-    --lexai-foreground: #F7F8FA;
-    --lexai-secondary-foreground: #98A2B3;
-    --lexai-muted-foreground: #667085;
-    --lexai-border: #2A2D34;
-    --lexai-input: #1A1D23;
-    --lexai-hover: #20232A;
-    --lexai-selected: #1E2A45;
+    /* Premium Futuristic Black & Luminous Purple Theme Tokens */
+    --lexai-background: #08070D;
+    --lexai-background-secondary: #100D18;
+    --lexai-surface: #15111F;
+    --lexai-surface-elevated: #1C1728;
+    --lexai-foreground: #F8F7FC;
+    --lexai-secondary-foreground: #D4CFE2;
+    --lexai-muted-foreground: #AAA3BB;
+    --lexai-border: #30243F;
+    --lexai-input: #100D18;
+    --lexai-hover: #1F1A2E;
+    --lexai-selected: #251C38;
 
-    /* Brand Accent Colors */
-    --lexai-primary-accent: #0284c7;
-    --lexai-secondary-accent: #a855f7;
-    --lexai-tertiary-accent: #6366f1;
-    --lexai-brand-navy: #0f172a;
+    /* Luminous Purple Primary & Secondary Accents */
+    --lexai-primary: #A855F7;
+    --lexai-primary-bright: #C084FC;
+    --lexai-primary-deep: #7C3AED;
+    --lexai-primary-accent: #A855F7;
+    --lexai-secondary-accent: #C084FC;
+    --lexai-tertiary-accent: #7C3AED;
+    --lexai-brand-navy: #08070D;
 
-    /* Semantic Colors */
-    --lexai-success: #10b981;
-    --lexai-danger: #ef4444;
-    --lexai-warning: #f87171;
+    /* Semantic Status Colors */
+    --lexai-success: #10B981;
+    --lexai-danger: #EF4444;
+    --lexai-warning: #F59E0B;
 
-    /* Base theme mappings for compatibility */
+    /* Standard Mappings */
     --midnight-base: var(--lexai-background);
     --midnight-surface: var(--lexai-surface);
     --midnight-card: var(--lexai-surface);
-    
+    --midnight-elevated: var(--lexai-surface-elevated);
+
+    --primary: var(--lexai-primary);
+    --primary-bright: var(--lexai-primary-bright);
+    --primary-deep: var(--lexai-primary-deep);
     --saffron: var(--lexai-primary-accent);
     --electric-indigo: var(--lexai-secondary-accent);
     --emerald: var(--lexai-success);
     --crimson: var(--lexai-danger);
-    
+
     --text-primary: var(--lexai-foreground);
     --text-secondary: var(--lexai-secondary-foreground);
     --text-muted: var(--lexai-muted-foreground);
@@ -126,37 +143,11 @@
     --radius-xl: 24px;
     --radius-hero: 30px;
 
-    /* LexUI direct compatibility mapping */
+    /* Direct UI Theme Compatibility */
     --background: var(--lexai-background);
+    --background-secondary: var(--lexai-background-secondary);
     --surface: var(--lexai-surface);
-    --foreground: var(--lexai-foreground);
-    --secondary-foreground: var(--lexai-secondary-foreground);
-    --muted-foreground: var(--lexai-muted-foreground);
-    --border: var(--lexai-border);
-    --input: var(--lexai-input);
-    --hover: var(--lexai-hover);
-    --selected: var(--lexai-selected);
-  }
-
-  .light {
-    /* GPT Color Specification - Light Mode */
-    --lexai-background: #F7F8FA;
-    --lexai-surface: #FFFFFF;
-    --lexai-foreground: #171923;
-    --lexai-secondary-foreground: #667085;
-    --lexai-muted-foreground: #98A2B3;
-    --lexai-border: #E4E7EC;
-    --lexai-input: #F9FAFB;
-    --lexai-hover: #F2F4F7;
-    --lexai-selected: #EEF2FF;
-    
-    --lexai-success: #10b981;
-    --lexai-danger: #ef4444;
-    --lexai-warning: #b91c1c;
-
-    /* LexUI light mode compatibility mapping */
-    --background: var(--lexai-background);
-    --surface: var(--lexai-surface);
+    --surface-elevated: var(--lexai-surface-elevated);
     --foreground: var(--lexai-foreground);
     --secondary-foreground: var(--lexai-secondary-foreground);
     --muted-foreground: var(--lexai-muted-foreground);
@@ -169,7 +160,8 @@
   body {
     background-color: var(--lexai-background);
     color: var(--lexai-foreground);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
   }
 
   /* Force dark color scheme for native browser inputs & controls */
@@ -180,7 +172,6 @@
 
 /* ==========================================================================
    Input & Autofill Dark Theme Protection
-   Prevents browser default user-agent white autofill/focus background boxes
    ========================================================================== */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -190,11 +181,11 @@ textarea:-webkit-autofill,
 textarea:-webkit-autofill:hover,
 textarea:-webkit-autofill:focus,
 select:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 1000px #070a12 inset !important;
-  box-shadow: 0 0 0 1000px #070a12 inset !important;
-  -webkit-text-fill-color: #f8fafc !important;
-  color: #f8fafc !important;
-  caret-color: #f8fafc !important;
+  -webkit-box-shadow: 0 0 0 1000px #100D18 inset !important;
+  box-shadow: 0 0 0 1000px #100D18 inset !important;
+  -webkit-text-fill-color: #F8F7FC !important;
+  color: #F8F7FC !important;
+  caret-color: #F8F7FC !important;
   transition: background-color 5000000s ease-in-out 0s;
   background-clip: content-box !important;
 }
@@ -202,10 +193,10 @@ select:-webkit-autofill {
 input:-moz-autofill,
 input:-moz-autofill:hover,
 input:-moz-autofill:focus {
-  box-shadow: 0 0 0 1000px #070a12 inset !important;
-  -moz-text-fill-color: #f8fafc !important;
-  color: #f8fafc !important;
-  caret-color: #f8fafc !important;
+  box-shadow: 0 0 0 1000px #100D18 inset !important;
+  -moz-text-fill-color: #F8F7FC !important;
+  color: #F8F7FC !important;
+  caret-color: #F8F7FC !important;
 }
 
 /* Ensure no white background leak on input focus/active states */
@@ -213,55 +204,59 @@ input:focus,
 input:active,
 input:focus-visible {
   background-color: transparent !important;
-  color: #f8fafc !important;
+  color: #F8F7FC !important;
 }
 
-/* Background Atmosphere & Ambient Lighting (Non-Gradient Theme Aligned) */
+/* ==========================================================================
+   Background Atmosphere & Ambient Lighting (Black + Luminous Purple)
+   ========================================================================== */
 .lexai-ambient-bg {
   position: relative;
   background-color: var(--lexai-background);
   background-image: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(2, 132, 199, 0.12), transparent),
-    radial-gradient(ellipse 60% 40% at 85% 15%, rgba(168, 85, 247, 0.04), transparent),
-    radial-gradient(ellipse 50% 30% at 15% 70%, rgba(16, 185, 129, 0.03), transparent);
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(168, 85, 247, 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 20%, rgba(192, 132, 252, 0.06), transparent),
+    radial-gradient(ellipse 50% 30% at 10% 75%, rgba(124, 58, 237, 0.05), transparent);
 }
 
 .lexai-grid-pattern {
-  background-size: 32px 32px;
+  background-size: 36px 36px;
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    linear-gradient(to right, rgba(168, 85, 247, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(168, 85, 247, 0.035) 1px, transparent 1px);
 }
 
-/* Signature LexAI System (Non-Gradient Adaptation) */
+/* Signature Gradient Texts (Loopy & Logo Refined) */
 .lexai-signature-gradient {
-  background: var(--lexai-primary-accent);
+  background: linear-gradient(180deg, #FFFFFF 0%, #E9D5FF 65%, #C084FC 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .lexai-signature-text {
-  color: var(--lexai-foreground);
-  background: none;
-  -webkit-text-fill-color: initial;
-  background-clip: unset;
+  background: linear-gradient(180deg, #FFFFFF 0%, #E9D5FF 65%, #C084FC 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.lexai-saffron-text {
+.lexai-purple-gradient {
+  background: linear-gradient(135deg, #C084FC 0%, #A855F7 50%, #7C3AED 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lexai-saffron-text,
+.lexai-primary-text {
   color: var(--lexai-primary-accent);
-  background: none;
-  -webkit-text-fill-color: initial;
-  background-clip: unset;
 }
 
 .lexai-electric-text {
   color: var(--lexai-secondary-accent);
-  background: none;
-  -webkit-text-fill-color: initial;
-  background-clip: unset;
 }
 
 /* Surface System */
 .lexai-surface-glass {
-  background: rgba(21, 23, 28, 0.85);
+  background: rgba(21, 17, 31, 0.80);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--lexai-border);
@@ -269,21 +264,20 @@ input:focus-visible {
 }
 
 .lexai-surface-elevated {
-  background: var(--lexai-surface);
+  background: var(--lexai-surface-elevated);
   border: 1px solid var(--lexai-border);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
 }
 
 .lexai-surface-card {
   background: var(--lexai-surface);
   border: 1px solid var(--lexai-border);
-  transition: all 0.25s ease-in-out;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .lexai-surface-card:hover {
-  background: var(--lexai-surface);
-  border-color: var(--lexai-primary-accent);
-  box-shadow: 0 12px 30px rgba(2, 132, 199, 0.1);
+  border-color: rgba(168, 85, 247, 0.45);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(168, 85, 247, 0.12);
   transform: translateY(-2px);
 }
 
@@ -295,7 +289,7 @@ input:focus-visible {
 
 .lexai-surface-input:focus-within, .lexai-surface-input:focus {
   border-color: var(--lexai-primary-accent);
-  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2), 0 0 20px rgba(2, 132, 199, 0.15);
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.25), 0 0 15px rgba(168, 85, 247, 0.15);
   outline: none;
 }
 
@@ -304,26 +298,21 @@ input:focus-visible {
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--lexai-border);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(2, 132, 199, 0.1);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(168, 85, 247, 0.12);
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
   background: var(--lexai-background);
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.15);
-  border-radius: 9999px;
-}
-
 ::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.2);
+  background: rgba(168, 85, 247, 0.2);
   border-radius: 9999px;
 }
 
@@ -331,92 +320,236 @@ input:focus-visible {
   background: var(--lexai-primary-accent);
 }
 
-/* Typography Hierarchy Classes */
-.display-xl {
-  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
-  font-size: 3.5rem;
-  line-height: 1.1;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
+  /* Typography Hierarchy Classes (Loopy SaaS inspired) */
+  .display-2xl {
+    font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+    font-size: clamp(3rem, 6vw + 1rem, 5rem);
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
 
-.display-lg {
-  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
-  font-size: 2.75rem;
-  line-height: 1.15;
-  font-weight: 700;
-  letter-spacing: -0.015em;
-}
+  .display-xl {
+    font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+    font-size: clamp(2.5rem, 4.5vw + 1rem, 4.25rem);
+    line-height: 1.08;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
 
-.heading-xl {
-  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
-  font-size: 2rem;
-  line-height: 1.25;
-  font-weight: 700;
-}
+  .display-lg {
+    font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+    font-size: clamp(2rem, 3.5vw + 0.5rem, 3.25rem);
+    line-height: 1.14;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
 
-.heading-lg {
-  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
-  font-size: 1.5rem;
-  line-height: 1.3;
-  font-weight: 600;
-}
+  .heading-xl {
+    font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+    font-size: clamp(1.75rem, 2.5vw + 0.5rem, 2.5rem);
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
 
-.heading-md {
-  font-family: 'Inter', sans-serif;
-  font-size: 1.25rem;
-  line-height: 1.4;
-  font-weight: 600;
-}
+  .heading-lg {
+    font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+    font-size: clamp(1.25rem, 1.8vw + 0.2rem, 1.75rem);
+    line-height: 1.28;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
 
-.body-lg {
-  font-family: 'Inter', sans-serif;
-  font-size: 1.125rem;
-  line-height: 1.6;
-  font-weight: 400;
-}
+  .heading-md {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.35;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
 
-.body-md {
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  line-height: 1.5;
-  font-weight: 400;
-}
+  .body-lg {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(1.0625rem, 0.5vw + 1rem, 1.25rem);
+    line-height: 1.65;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
 
-.body-sm {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  font-weight: 400;
-}
+  .body-md {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    font-weight: 400;
+  }
 
-.caption-text {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  line-height: 1.4;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-}
+  .body-sm {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  .caption-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
 
 .hindi-text {
   font-family: 'Noto Sans Devanagari', sans-serif;
 }
 
-/* LexUI Custom shadow & animation utilities compatibility */
-.shadow-premium {
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 8px -1px rgba(15, 23, 42, 0.02);
+/* ==========================================================================
+   Chat Input Border Animation: Travelling Bright White Light
+   ========================================================================== */
+@property --border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
 }
 
-.dark .shadow-premium {
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35), 0 2px 8px -1px rgba(0, 0, 0, 0.25);
+@keyframes borderRotate {
+  0% {
+    --border-angle: 0deg;
+  }
+  100% {
+    --border-angle: 360deg;
+  }
 }
 
+.travelling-light-border {
+  position: relative;
+  border-radius: 1rem; /* 16px matching rounded-2xl */
+}
+
+/* Base border track with rotating high-intensity travelling white light segment */
+.travelling-light-border::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--border-angle),
+    rgba(255, 255, 255, 0.95) 0deg,
+    rgba(240, 220, 255, 0.85) 12deg,
+    rgba(192, 132, 252, 0.45) 28deg,
+    rgba(124, 58, 237, 0.15) 50deg,
+    rgba(48, 36, 63, 0.6) 80deg,
+    rgba(48, 36, 63, 0.6) 310deg,
+    rgba(168, 85, 247, 0.25) 335deg,
+    rgba(220, 180, 255, 0.75) 350deg,
+    rgba(255, 255, 255, 0.95) 360deg
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  animation: borderRotate 5s linear infinite;
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+/* Outer soft white/violet atmospheric glow segment */
+.travelling-light-border::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--border-angle),
+    rgba(255, 255, 255, 0.5) 0deg,
+    rgba(192, 132, 252, 0.3) 25deg,
+    transparent 55deg,
+    transparent 320deg,
+    rgba(192, 132, 252, 0.3) 345deg,
+    rgba(255, 255, 255, 0.5) 360deg
+  );
+  filter: blur(4px);
+  pointer-events: none;
+  z-index: 0;
+  animation: borderRotate 5s linear infinite;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+/* Enhanced visibility on focus-within */
+.travelling-light-border:focus-within::before {
+  opacity: 1;
+}
+
+.travelling-light-border:focus-within::after {
+  opacity: 0.85;
+  filter: blur(6px);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .travelling-light-border::before,
+  .travelling-light-border::after {
+    animation: none;
+    background: rgba(168, 85, 247, 0.4);
+    opacity: 0.7;
+  }
+}
+
+/* ==========================================================================
+   Glowing Scales of Justice Background Animation
+   ========================================================================== */
+@keyframes scalesGlowPulse {
+  0% {
+    opacity: 0.08;
+    filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.05));
+    transform: scale(0.99);
+  }
+  30% {
+    opacity: 0.18;
+    filter: drop-shadow(0 0 25px rgba(192, 132, 252, 0.25));
+  }
+  50% {
+    opacity: 0.28;
+    filter: drop-shadow(0 0 45px rgba(230, 210, 255, 0.4)) drop-shadow(0 0 75px rgba(168, 85, 247, 0.3));
+    transform: scale(1.01);
+  }
+  75% {
+    opacity: 0.16;
+    filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.18));
+  }
+  100% {
+    opacity: 0.08;
+    filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.05));
+    transform: scale(0.99);
+  }
+}
+
+.scales-glowing-pulse {
+  animation: scalesGlowPulse 8.5s ease-in-out infinite;
+  will-change: opacity, filter, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scales-glowing-pulse {
+    animation: none;
+    opacity: 0.12;
+    filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.15));
+    transform: none;
+  }
+}
+
+/* Animation utilities */
 @keyframes pulseSlow {
   0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
+  50% { opacity: 0.85; }
 }
 
 .animate-pulse-slow {
-  animation: pulseSlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulseSlow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

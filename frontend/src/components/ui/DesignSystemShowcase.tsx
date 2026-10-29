@@ -30,35 +30,35 @@ export const DesignSystemShowcase: React.FC = () => {
   };
 
   return (
-    <div className="lexai-ambient-bg lexai-grid-pattern min-h-screen text-[#F8FAFC] pb-24">
+    <div className="lexai-ambient-bg lexai-grid-pattern min-h-screen text-[#F8F7FC] pb-24">
       {/* Top Banner / Internal Header */}
-      <header className="sticky top-0 z-50 lexai-surface-glass border-b border-white/10 px-6 py-4">
+      <header className="sticky top-0 z-50 bg-[#08070D]/85 backdrop-blur-xl border-b border-[#30243F] px-6 py-4">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF9933] via-[#E11D48] to-[#6366F1] flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7C3AED] via-[#A855F7] to-[#C084FC] flex items-center justify-center shadow-lg shadow-purple-500/25">
               <Scale className="w-5 h-5 text-white" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="font-display font-extrabold text-xl tracking-tight text-white">LEXAI-INDIA</h1>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-widest">
-                  Phase 1 Internal Foundation
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#A855F7]/15 text-[#C084FC] border border-[#A855F7]/30 uppercase tracking-widest">
+                  Design System 2.0
                 </span>
               </div>
-              <p className="text-xs text-slate-400">Visual Identity, Design Tokens & Reusable UI Component Showcase</p>
+              <p className="text-xs text-[#AAA3BB]">Black & Luminous Purple Visual Identity & Component Registry</p>
             </div>
           </div>
 
           {/* Quick Tab Selector */}
-          <div className="flex flex-wrap items-center gap-1 bg-[#070A12]/80 p-1 rounded-xl border border-slate-800 text-xs">
+          <div className="flex flex-wrap items-center gap-1 bg-[#100D18] p-1 rounded-xl border border-[#30243F] text-xs">
             {(['all', 'colors', 'surfaces', 'typography', 'buttons', 'inputs'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-3 py-1.5 rounded-lg capitalize transition-all font-medium ${
+                className={`px-3 py-1.5 rounded-lg capitalize transition-all font-medium cursor-pointer ${
                   activeTab === tab 
-                    ? 'bg-indigo-600 text-white shadow-md' 
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                    ? 'bg-[#A855F7] text-white shadow-md shadow-purple-500/20' 
+                    : 'text-[#AAA3BB] hover:text-white hover:bg-white/5'
                 }`}
               >
                 {tab}
@@ -72,20 +72,20 @@ export const DesignSystemShowcase: React.FC = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 space-y-16">
         
         {/* Intro Hero Badge */}
-        <div className="lexai-surface-glass rounded-2xl p-8 border border-indigo-500/20 relative overflow-hidden">
-          <div className="absolute -right-16 -top-16 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-saffron-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="bg-[#15111F] rounded-3xl p-8 border border-[#30243F] relative overflow-hidden shadow-2xl shadow-purple-950/20">
+          <div className="absolute -right-16 -top-16 w-64 h-64 bg-[#A855F7]/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-[#7C3AED]/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="space-y-2 max-w-2xl">
-              <Badge variant="saffron" icon={<Sparkles className="w-3.5 h-3.5" />} pulse>
-                LexAI India — Design System 1.0
+            <div className="space-y-3 max-w-2xl">
+              <Badge variant="primary" icon={<Sparkles className="w-3.5 h-3.5" />} pulse>
+                LexAI India — Visual Identity 2.0
               </Badge>
               <h2 className="display-lg text-white font-display">
                 Legal Trust meets <GradientText variant="signature">Artificial Intelligence</GradientText>
               </h2>
-              <p className="body-md text-slate-300">
-                A custom Midnight Legal Indigo visual identity tailored for Indian legal awareness. Non-generic, secure, atmospheric, and highly functional.
+              <p className="body-md text-[#AAA3BB]">
+                A bespoke Black and Luminous Purple visual foundation engineered for Indian legal awareness. Professional, futuristic, accessible, and highly refined.
               </p>
             </div>
 
@@ -99,87 +99,96 @@ export const DesignSystemShowcase: React.FC = () => {
         {/* 1. COLOR SYSTEM */}
         {(activeTab === 'all' || activeTab === 'colors') && (
           <section className="space-y-6">
-            <div className="flex items-center gap-3 border-b border-white/10 pb-3">
-              <Palette className="w-6 h-6 text-[#FF9933]" />
+            <div className="flex items-center gap-3 border-b border-[#30243F] pb-3">
+              <Palette className="w-6 h-6 text-[#C084FC]" />
               <h3 className="heading-xl text-white font-display">1. LexAI Color System & Design Tokens</h3>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {/* Midnight Base */}
-              <div className="bg-[#070A12] border border-slate-800 rounded-xl p-4 space-y-3 shadow-lg">
-                <div className="h-16 rounded-lg bg-[#070A12] border border-slate-700 flex items-center justify-center font-mono text-xs text-slate-300">#070A12</div>
+              {/* Background */}
+              <div className="bg-[#08070D] border border-[#30243F] rounded-2xl p-4 space-y-3 shadow-lg">
+                <div className="h-16 rounded-xl bg-[#08070D] border border-[#30243F] flex items-center justify-center font-mono text-xs text-[#AAA3BB]">#08070D</div>
                 <div>
-                  <h4 className="font-semibold text-sm text-white">Midnight Base</h4>
-                  <p className="text-xs text-slate-400">Canvas & deep background foundation</p>
+                  <h4 className="font-semibold text-sm text-white">Background</h4>
+                  <p className="text-xs text-[#AAA3BB]">Canvas & deep base foundation</p>
                 </div>
               </div>
 
-              {/* Midnight Surface */}
-              <div className="bg-[#080B14] border border-slate-800 rounded-xl p-4 space-y-3 shadow-lg">
-                <div className="h-16 rounded-lg bg-[#080B14] border border-slate-700 flex items-center justify-center font-mono text-xs text-slate-300">#080B14</div>
+              {/* Surface */}
+              <div className="bg-[#15111F] border border-[#30243F] rounded-2xl p-4 space-y-3 shadow-lg">
+                <div className="h-16 rounded-xl bg-[#15111F] border border-[#30243F] flex items-center justify-center font-mono text-xs text-[#AAA3BB]">#15111F</div>
                 <div>
-                  <h4 className="font-semibold text-sm text-white">Midnight Surface</h4>
-                  <p className="text-xs text-slate-400">Elevated container background</p>
+                  <h4 className="font-semibold text-sm text-white">Surface</h4>
+                  <p className="text-xs text-[#AAA3BB]">Base container & card surface</p>
                 </div>
               </div>
 
-              {/* Midnight Card */}
-              <div className="bg-[#0B1020] border border-slate-800 rounded-xl p-4 space-y-3 shadow-lg">
-                <div className="h-16 rounded-lg bg-[#0B1020] border border-slate-700 flex items-center justify-center font-mono text-xs text-slate-300">#0B1020</div>
+              {/* Surface Elevated */}
+              <div className="bg-[#1C1728] border border-[#30243F] rounded-2xl p-4 space-y-3 shadow-lg">
+                <div className="h-16 rounded-xl bg-[#1C1728] border border-[#30243F] flex items-center justify-center font-mono text-xs text-[#AAA3BB]">#1C1728</div>
                 <div>
-                  <h4 className="font-semibold text-sm text-white">Midnight Card</h4>
-                  <p className="text-xs text-slate-400">Interactive card surface</p>
+                  <h4 className="font-semibold text-sm text-white">Surface Elevated</h4>
+                  <p className="text-xs text-[#AAA3BB]">Elevated cards & user bubbles</p>
                 </div>
               </div>
 
-              {/* Saffron */}
-              <div className="bg-[#0B1020] border border-saffron-500/30 rounded-xl p-4 space-y-3 shadow-lg shadow-saffron-500/5">
-                <div className="h-16 rounded-lg bg-[#FF9933] flex items-center justify-center font-mono text-xs text-[#070A12] font-bold">#FF9933</div>
+              {/* Primary Purple */}
+              <div className="bg-[#15111F] border border-[#A855F7]/40 rounded-2xl p-4 space-y-3 shadow-lg shadow-purple-500/10">
+                <div className="h-16 rounded-xl bg-[#A855F7] flex items-center justify-center font-mono text-xs text-white font-bold">#A855F7</div>
                 <div>
-                  <h4 className="font-semibold text-sm text-[#FF9933]">Saffron (Primary Accent)</h4>
-                  <p className="text-xs text-slate-400">Legal awareness, Indian identity, CTAs</p>
+                  <h4 className="font-semibold text-sm text-[#C084FC]">Primary (Luminous Purple)</h4>
+                  <p className="text-xs text-[#AAA3BB]">Key CTAs, active states, brand accent</p>
                 </div>
               </div>
 
-              {/* Electric Indigo */}
-              <div className="bg-[#0B1020] border border-indigo-500/30 rounded-xl p-4 space-y-3 shadow-lg shadow-indigo-500/5">
-                <div className="h-16 rounded-lg bg-[#6366F1] flex items-center justify-center font-mono text-xs text-white font-bold">#6366F1</div>
+              {/* Primary Bright */}
+              <div className="bg-[#15111F] border border-[#C084FC]/40 rounded-2xl p-4 space-y-3 shadow-lg">
+                <div className="h-16 rounded-xl bg-[#C084FC] flex items-center justify-center font-mono text-xs text-[#08070D] font-bold">#C084FC</div>
                 <div>
-                  <h4 className="font-semibold text-sm text-[#818CF8]">Electric Indigo (AI)</h4>
-                  <p className="text-xs text-slate-400">AI intelligence & interactive focus</p>
+                  <h4 className="font-semibold text-sm text-[#D8B4FE]">Primary Bright</h4>
+                  <p className="text-xs text-[#AAA3BB]">Text highlights, icons & glows</p>
+                </div>
+              </div>
+
+              {/* Primary Deep */}
+              <div className="bg-[#15111F] border border-[#7C3AED]/40 rounded-2xl p-4 space-y-3 shadow-lg">
+                <div className="h-16 rounded-xl bg-[#7C3AED] flex items-center justify-center font-mono text-xs text-white font-bold">#7C3AED</div>
+                <div>
+                  <h4 className="font-semibold text-sm text-white">Primary Deep</h4>
+                  <p className="text-xs text-[#AAA3BB]">Gradients & pressed interaction</p>
                 </div>
               </div>
 
               {/* Emerald */}
-              <div className="bg-[#0B1020] border border-emerald-500/30 rounded-xl p-4 space-y-3 shadow-lg">
-                <div className="h-16 rounded-lg bg-[#10B981] flex items-center justify-center font-mono text-xs text-[#070A12] font-bold">#10B981</div>
+              <div className="bg-[#15111F] border border-emerald-500/30 rounded-2xl p-4 space-y-3 shadow-lg">
+                <div className="h-16 rounded-xl bg-[#10B981] flex items-center justify-center font-mono text-xs text-[#08070D] font-bold">#10B981</div>
                 <div>
-                  <h4 className="font-semibold text-sm text-[#34D399]">Emerald (Trust / Verified)</h4>
-                  <p className="text-xs text-slate-400">Verified legal sources & safe states</p>
+                  <h4 className="font-semibold text-sm text-[#34D399]">Emerald (Verified Trust)</h4>
+                  <p className="text-xs text-[#AAA3BB]">Statutory groundings & successes</p>
                 </div>
               </div>
 
               {/* Crimson */}
-              <div className="bg-[#0B1020] border border-crimson-500/30 rounded-xl p-4 space-y-3 shadow-lg">
-                <div className="h-16 rounded-lg bg-[#E11D48] flex items-center justify-center font-mono text-xs text-white font-bold">#E11D48</div>
+              <div className="bg-[#15111F] border border-rose-500/30 rounded-2xl p-4 space-y-3 shadow-lg">
+                <div className="h-16 rounded-xl bg-[#EF4444] flex items-center justify-center font-mono text-xs text-white font-bold">#EF4444</div>
                 <div>
-                  <h4 className="font-semibold text-sm text-[#F43F5E]">Crimson (SOS / Urgent)</h4>
-                  <p className="text-xs text-slate-400">Emergency guidance & critical alerts</p>
+                  <h4 className="font-semibold text-sm text-rose-400">Crimson (SOS Emergency)</h4>
+                  <p className="text-xs text-[#AAA3BB]">Urgent helpline & alert warnings</p>
                 </div>
               </div>
             </div>
 
             {/* Signature LexAI Gradient */}
-            <div className="p-6 rounded-2xl bg-[#080B14] border border-white/10 space-y-4">
+            <div className="p-6 rounded-2xl bg-[#15111F] border border-[#30243F] space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-display font-semibold text-white">Signature LexAI Gradient Accent</h4>
-                  <p className="text-xs text-slate-400">Saffron → Crimson → Electric Indigo → Deep Indigo</p>
+                  <p className="text-xs text-[#AAA3BB]">White → Bright Violet → Luminous Purple</p>
                 </div>
-                <Badge variant="glass">Rare Brand Highlight</Badge>
+                <Badge variant="primary">Brand Highlight</Badge>
               </div>
 
-              <div className="h-12 rounded-xl lexai-signature-gradient flex items-center justify-center font-semibold text-white shadow-xl text-sm tracking-wide">
+              <div className="h-12 rounded-xl bg-gradient-to-r from-white via-[#C084FC] to-[#A855F7] flex items-center justify-center font-semibold text-[#08070D] shadow-xl text-sm tracking-wide">
                 LexAI Signature Accent Gradient
               </div>
             </div>
@@ -189,8 +198,8 @@ export const DesignSystemShowcase: React.FC = () => {
         {/* 2. SURFACE SYSTEM */}
         {(activeTab === 'all' || activeTab === 'surfaces') && (
           <section className="space-y-6">
-            <div className="flex items-center gap-3 border-b border-white/10 pb-3">
-              <Layers className="w-6 h-6 text-[#6366F1]" />
+            <div className="flex items-center gap-3 border-b border-[#30243F] pb-3">
+              <Layers className="w-6 h-6 text-[#C084FC]" />
               <h3 className="heading-xl text-white font-display">2. LexAI Surface & Elevation System</h3>
             </div>
 
@@ -198,48 +207,48 @@ export const DesignSystemShowcase: React.FC = () => {
               {/* Glass Surface */}
               <Card variant="glass" className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase text-indigo-400">Glass Surface</span>
+                  <span className="text-xs font-semibold uppercase text-[#C084FC]">Glass Surface</span>
                   <Badge variant="glass">Blur 16px</Badge>
                 </div>
                 <h4 className="font-semibold text-white">LexAI Glass Surface</h4>
-                <p className="text-xs text-slate-300">
-                  Utilizes subtle transparency (`rgba(8,11,20,0.75)`), backdrop blur, and fine 1px light border. Ideal for floating bars and headers.
+                <p className="text-xs text-[#AAA3BB]">
+                  Utilizes subtle transparency (`rgba(21, 17, 31, 0.8)`), backdrop blur, and fine 1px violet border. Ideal for floating bars and headers.
                 </p>
               </Card>
 
               {/* Elevated Surface */}
               <Card variant="elevated" className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase text-slate-400">Elevated Surface</span>
-                  <Badge variant="neutral">Solid #0B1020</Badge>
+                  <span className="text-xs font-semibold uppercase text-[#AAA3BB]">Elevated Surface</span>
+                  <Badge variant="neutral">Solid #1C1728</Badge>
                 </div>
                 <h4 className="font-semibold text-white">LexAI Elevated Surface</h4>
-                <p className="text-xs text-slate-400">
-                  Solid elevated container `#0B1020` with soft deep shadow. Used for major tool containers and sidebar panels.
+                <p className="text-xs text-[#AAA3BB]">
+                  Solid elevated container `#1C1728` with soft deep shadow. Used for major tool containers and sidebar panels.
                 </p>
               </Card>
 
               {/* Interactive Card */}
               <Card variant="card" hoverable className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase text-saffron-400">Interactive Card</span>
-                  <Badge variant="saffron">Hover Glow</Badge>
+                  <span className="text-xs font-semibold uppercase text-[#C084FC]">Interactive Card</span>
+                  <Badge variant="primary">Hover Glow</Badge>
                 </div>
                 <h4 className="font-semibold text-white">LexAI Interactive Card</h4>
-                <p className="text-xs text-slate-400">
-                  Features hover translation, border highlight (`indigo-500/35`), and subtle lighting lift on cursor hover.
+                <p className="text-xs text-[#AAA3BB]">
+                  Features hover translation, border highlight (`#A855F7/50`), and subtle purple lighting lift on cursor hover.
                 </p>
               </Card>
 
               {/* Modal Surface */}
               <Card variant="modal" className="space-y-3 md:col-span-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase text-emerald-400">Modal Overlay Surface</span>
+                  <span className="text-xs font-semibold uppercase text-[#34D399]">Modal Overlay Surface</span>
                   <Badge variant="emerald">24px Blur + Deep Shadow</Badge>
                 </div>
                 <h4 className="font-semibold text-white">LexAI Modal Surface</h4>
-                <p className="text-xs text-slate-300">
-                  Heavy backdrop blur (`24px`), custom Indigo border aura, and maximum contrast for legal overlays, simulator popovers, and dialogs.
+                <p className="text-xs text-[#AAA3BB]">
+                  Heavy backdrop blur (`24px`), custom purple border aura, and maximum contrast for legal overlays, simulator popovers, and dialogs.
                 </p>
               </Card>
             </div>
@@ -249,43 +258,43 @@ export const DesignSystemShowcase: React.FC = () => {
         {/* 3. TYPOGRAPHY SYSTEM */}
         {(activeTab === 'all' || activeTab === 'typography') && (
           <section className="space-y-6">
-            <div className="flex items-center gap-3 border-b border-white/10 pb-3">
-              <Type className="w-6 h-6 text-[#10B981]" />
+            <div className="flex items-center gap-3 border-b border-[#30243F] pb-3">
+              <Type className="w-6 h-6 text-[#34D399]" />
               <h3 className="heading-xl text-white font-display">3. Typography Hierarchy & Hindi Support</h3>
             </div>
 
-            <div className="lexai-surface-elevated rounded-2xl p-6 space-y-6">
+            <div className="bg-[#15111F] rounded-2xl p-6 border border-[#30243F] space-y-6">
               <div className="space-y-4">
                 <div>
-                  <span className="text-xs font-mono text-slate-400">Display XL — Outfit / Plus Jakarta Sans (56px / 800)</span>
+                  <span className="text-xs font-mono text-[#AAA3BB]">Display XL — Outfit / Plus Jakarta Sans (56px / 800)</span>
                   <h2 className="display-xl text-white">Protecting Citizen Rights</h2>
                 </div>
 
                 <div>
-                  <span className="text-xs font-mono text-slate-400">Display LG — Outfit / Plus Jakarta Sans (44px / 700)</span>
+                  <span className="text-xs font-mono text-[#AAA3BB]">Display LG — Outfit / Plus Jakarta Sans (44px / 700)</span>
                   <h3 className="display-lg text-white">Your Personal Legal Assistant</h3>
                 </div>
 
                 <div>
-                  <span className="text-xs font-mono text-slate-400">Heading XL — (32px / 700)</span>
+                  <span className="text-xs font-mono text-[#AAA3BB]">Heading XL — (32px / 700)</span>
                   <h4 className="heading-xl text-white">India-First Legal Awareness Engine</h4>
                 </div>
 
                 <div>
-                  <span className="text-xs font-mono text-slate-400">Heading LG — (24px / 600)</span>
+                  <span className="text-xs font-mono text-[#AAA3BB]">Heading LG — (24px / 600)</span>
                   <h5 className="heading-lg text-white">Know your rights before you need them</h5>
                 </div>
 
                 <div>
-                  <span className="text-xs font-mono text-slate-400">Body LG — Inter (18px / 400)</span>
-                  <p className="body-lg text-slate-200">
+                  <span className="text-xs font-mono text-[#AAA3BB]">Body LG — Inter (18px / 400)</span>
+                  <p className="body-lg text-[#D4CFE2]">
                     LexAI-India provides instant, jurisdiction-aware guidance across fundamental rights, police stops, consumer rights, and legal procedures.
                   </p>
                 </div>
 
                 <div>
-                  <span className="text-xs font-mono text-slate-400">Hindi / Devanagari — Noto Sans Devanagari</span>
-                  <p className="text-xl hindi-text text-[#FF9933] font-medium leading-relaxed">
+                  <span className="text-xs font-mono text-[#AAA3BB]">Hindi / Devanagari — Noto Sans Devanagari</span>
+                  <p className="text-xl hindi-text text-[#C084FC] font-medium leading-relaxed">
                     लेक्सएआई-इंडिया: आपका व्यक्तिगत कानूनी सहायक। कानून की शक्ति, हर नागरिक के साथ।
                   </p>
                 </div>
@@ -297,9 +306,9 @@ export const DesignSystemShowcase: React.FC = () => {
         {/* 4. BUTTON SYSTEM */}
         {(activeTab === 'all' || activeTab === 'buttons') && (
           <section className="space-y-6">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <div className="flex items-center justify-between border-b border-[#30243F] pb-3">
               <div className="flex items-center gap-3">
-                <MousePointer className="w-6 h-6 text-[#FF9933]" />
+                <MousePointer className="w-6 h-6 text-[#C084FC]" />
                 <h3 className="heading-xl text-white font-display">4. Reusable Button System</h3>
               </div>
               <Button size="sm" variant="ghost" onClick={toggleLoading}>
@@ -308,70 +317,70 @@ export const DesignSystemShowcase: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {/* Primary Saffron Button */}
-              <div className="lexai-surface-card rounded-xl p-4 space-y-3">
-                <span className="text-xs font-mono text-slate-400">Primary (Saffron)</span>
+              {/* Primary Purple Button */}
+              <div className="bg-[#15111F] border border-[#30243F] rounded-2xl p-5 space-y-3">
+                <span className="text-xs font-mono text-[#AAA3BB]">Primary (Luminous Purple)</span>
                 <div>
                   <Button variant="primary" className="w-full" isLoading={buttonLoading}>
                     Primary Action
                   </Button>
                 </div>
-                <p className="text-xs text-slate-400">Main call-to-actions & primary steps</p>
+                <p className="text-xs text-[#AAA3BB]">Main call-to-actions & primary steps</p>
               </div>
 
-              {/* AI Electric Button */}
-              <div className="lexai-surface-card rounded-xl p-4 space-y-3">
-                <span className="text-xs font-mono text-slate-400">AI Button (Electric Indigo)</span>
+              {/* AI Button */}
+              <div className="bg-[#15111F] border border-[#30243F] rounded-2xl p-5 space-y-3">
+                <span className="text-xs font-mono text-[#AAA3BB]">AI Button (Purple Gradient)</span>
                 <div>
                   <Button variant="ai" className="w-full" leftIcon={<Sparkles className="w-4 h-4" />} isLoading={buttonLoading}>
                     Ask LexAI Assistant
                   </Button>
                 </div>
-                <p className="text-xs text-slate-400">AI generation & prompt triggers</p>
+                <p className="text-xs text-[#AAA3BB]">AI generation & prompt triggers</p>
               </div>
 
               {/* Secondary Button */}
-              <div className="lexai-surface-card rounded-xl p-4 space-y-3">
-                <span className="text-xs font-mono text-slate-400">Secondary (Glass Surface)</span>
+              <div className="bg-[#15111F] border border-[#30243F] rounded-2xl p-5 space-y-3">
+                <span className="text-xs font-mono text-[#AAA3BB]">Secondary</span>
                 <div>
                   <Button variant="secondary" className="w-full" isLoading={buttonLoading}>
                     Secondary Option
                   </Button>
                 </div>
-                <p className="text-xs text-slate-400">Supporting actions & dialog cancels</p>
+                <p className="text-xs text-[#AAA3BB]">Supporting actions & dialog cancels</p>
               </div>
 
               {/* Success Emerald Button */}
-              <div className="lexai-surface-card rounded-xl p-4 space-y-3">
-                <span className="text-xs font-mono text-slate-400">Success (Verified Emerald)</span>
+              <div className="bg-[#15111F] border border-[#30243F] rounded-2xl p-5 space-y-3">
+                <span className="text-xs font-mono text-[#AAA3BB]">Success (Verified Emerald)</span>
                 <div>
                   <Button variant="success" className="w-full" leftIcon={<CheckCircle2 className="w-4 h-4" />} isLoading={buttonLoading}>
                     Confirm Legal Right
                   </Button>
                 </div>
-                <p className="text-xs text-slate-400">Verified actions & confirmations</p>
+                <p className="text-xs text-[#AAA3BB]">Verified actions & confirmations</p>
               </div>
 
               {/* Danger Crimson Button */}
-              <div className="lexai-surface-card rounded-xl p-4 space-y-3">
-                <span className="text-xs font-mono text-slate-400">Danger / Urgent (Crimson)</span>
+              <div className="bg-[#15111F] border border-[#30243F] rounded-2xl p-5 space-y-3">
+                <span className="text-xs font-mono text-[#AAA3BB]">Danger / Urgent (Crimson)</span>
                 <div>
                   <Button variant="danger" className="w-full" leftIcon={<AlertTriangle className="w-4 h-4" />} isLoading={buttonLoading}>
                     SOS Emergency Assistance
                   </Button>
                 </div>
-                <p className="text-xs text-slate-400">Urgent legal SOS & warnings</p>
+                <p className="text-xs text-[#AAA3BB]">Urgent legal SOS & warnings</p>
               </div>
 
               {/* Ghost Button */}
-              <div className="lexai-surface-card rounded-xl p-4 space-y-3">
-                <span className="text-xs font-mono text-slate-400">Ghost Variant</span>
+              <div className="bg-[#15111F] border border-[#30243F] rounded-2xl p-5 space-y-3">
+                <span className="text-xs font-mono text-[#AAA3BB]">Ghost Variant</span>
                 <div>
                   <Button variant="ghost" className="w-full" rightIcon={<ChevronRight className="w-4 h-4" />}>
                     Learn More Details
                   </Button>
                 </div>
-                <p className="text-xs text-slate-400">Subtle inline links & navigation</p>
+                <p className="text-xs text-[#AAA3BB]">Subtle inline links & navigation</p>
               </div>
             </div>
           </section>
@@ -380,19 +389,19 @@ export const DesignSystemShowcase: React.FC = () => {
         {/* 5. INPUT & COMMAND CENTER SYSTEM */}
         {(activeTab === 'all' || activeTab === 'inputs') && (
           <section className="space-y-6">
-            <div className="flex items-center gap-3 border-b border-white/10 pb-3">
-              <Search className="w-6 h-6 text-[#6366F1]" />
+            <div className="flex items-center gap-3 border-b border-[#30243F] pb-3">
+              <Search className="w-6 h-6 text-[#C084FC]" />
               <h3 className="heading-xl text-white font-display">5. Input System & Chat Command Center Preview</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Default Input */}
-              <div className="lexai-surface-elevated rounded-2xl p-6 space-y-4">
+              <div className="bg-[#15111F] border border-[#30243F] rounded-2xl p-6 space-y-4">
                 <h4 className="font-semibold text-white">Standard Form Input Fields</h4>
                 <Input
                   label="Search Statutes or IPC Sections"
                   placeholder="e.g. IPC Section 354 or Motor Vehicles Act"
-                  leftIcon={<Search className="w-4 h-4" />}
+                  leftIcon={<Search className="w-4 h-4 text-[#AAA3BB]" />}
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   helperText="Search officially verified legal codes"
@@ -413,14 +422,14 @@ export const DesignSystemShowcase: React.FC = () => {
                 />
               </div>
 
-              {/* Future Chat Command Center Preview */}
-              <div className="lexai-surface-elevated rounded-2xl p-6 space-y-4">
+              {/* Chat Command Center Preview */}
+              <div className="bg-[#15111F] border border-[#30243F] rounded-2xl p-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-semibold text-white">Chat Command Center Input</h4>
-                  <Badge variant="electric">Primary App Surface</Badge>
+                  <Badge variant="primary">Primary App Surface</Badge>
                 </div>
-                <p className="text-xs text-slate-400">
-                  The central interactive entry point of LexAI-India. Engineered with Electric Indigo focus glow & quick Legal Prompt triggers.
+                <p className="text-xs text-[#AAA3BB]">
+                  The central interactive entry point of LexAI-India. Engineered with purple focus glow & quick Legal Prompt triggers.
                 </p>
 
                 <CommandCenterInput
@@ -435,3 +444,4 @@ export const DesignSystemShowcase: React.FC = () => {
     </div>
   );
 };
+export default DesignSystemShowcase;

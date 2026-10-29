@@ -19,11 +19,11 @@ export const OnboardingStepIndicator: React.FC<OnboardingStepIndicatorProps> = (
       {/* Visual step line and nodes */}
       <div className="relative flex items-center justify-between">
         {/* Background Track Line */}
-        <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-800 -translate-y-1/2 z-0" />
+        <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#30243F] -translate-y-1/2 z-0" />
         
         {/* Active Progress Fill Line */}
         <div 
-          className="absolute top-1/2 left-0 h-0.5 bg-gradient-to-r from-[#FF9933] to-[#6366F1] -translate-y-1/2 transition-all duration-500 ease-out z-0"
+          className="absolute top-1/2 left-0 h-0.5 bg-gradient-to-r from-[#7C3AED] to-[#A855F7] -translate-y-1/2 transition-all duration-500 ease-out z-0"
           style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
         />
 
@@ -36,10 +36,10 @@ export const OnboardingStepIndicator: React.FC<OnboardingStepIndicatorProps> = (
               <div 
                 className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold border-2 transition-all duration-300 ${
                   isCompleted 
-                    ? 'bg-[#10B981] border-[#10B981] text-[#070A12]' 
+                    ? 'bg-[#10B981] border-[#10B981] text-[#08070D]' 
                     : isActive 
-                      ? 'bg-[#0B1020] border-[#FF9933] text-[#FF9933] scale-110 shadow-lg shadow-saffron-500/20' 
-                      : 'bg-[#070A12] border-slate-700 text-slate-500'
+                      ? 'bg-[#1C1728] border-[#A855F7] text-[#C084FC] scale-110 shadow-lg shadow-purple-500/25' 
+                      : 'bg-[#100D18] border-[#30243F] text-[#AAA3BB]'
                 }`}
               >
                 {isCompleted ? (
@@ -52,10 +52,10 @@ export const OnboardingStepIndicator: React.FC<OnboardingStepIndicatorProps> = (
               <span 
                 className={`text-[9px] font-semibold uppercase tracking-wider mt-1.5 transition-colors duration-200 ${
                   isActive 
-                    ? 'text-[#FF9933]' 
+                    ? 'text-[#C084FC]' 
                     : isCompleted 
-                      ? 'text-emerald-400' 
-                      : 'text-slate-500'
+                      ? 'text-[#34D399]' 
+                      : 'text-[#AAA3BB]'
                 }`}
               >
                 {step.label}
@@ -67,3 +67,4 @@ export const OnboardingStepIndicator: React.FC<OnboardingStepIndicatorProps> = (
     </div>
   );
 };
+export default OnboardingStepIndicator;

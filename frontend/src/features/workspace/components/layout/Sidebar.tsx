@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   Plus, MessageSquare, BookOpen, Bookmark, PenTool,
   MapPin, AlertOctagon, ChevronLeft, ChevronRight, 
-  History, Settings, Pin, PinOff, Trash2, User, ChevronDown, X, LogOut 
+  History, Settings, Pin, PinOff, Trash2, User, ChevronDown, X, LogOut, Scale 
 } from 'lucide-react';
 import { useAuth } from '../../../../context/AuthContext';
 import type { Conversation } from '../../types/chat';
@@ -114,24 +114,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
         onClick={() => {
           onSelectConversation(conv.id);
         }}
-        className={`group relative flex items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs transition-all duration-150 cursor-pointer ${
+        className={`group relative flex items-center justify-between rounded-xl px-2.5 py-1.5 text-left text-xs transition-all duration-150 cursor-pointer ${
           isActive 
-            ? 'bg-selected text-foreground font-semibold border border-border/40 shadow-sm' 
-            : 'text-secondary-foreground hover:bg-hover hover:text-foreground border border-transparent'
+            ? 'bg-[#1C1728] text-white font-semibold border border-[#30243F] shadow-sm shadow-purple-950/20' 
+            : 'text-[#AAA3BB] hover:bg-[#15111F] hover:text-white border border-transparent'
         }`}
       >
         <div className="flex items-center gap-2 overflow-hidden flex-1">
-          <MessageSquare className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-brand-gold-550 dark:text-brand-gold-300' : 'text-muted-foreground'}`} />
+          <MessageSquare className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-[#C084FC]' : 'text-[#AAA3BB]/60'}`} />
           <span className="truncate leading-tight pr-4">
             {conv.title}
           </span>
         </div>
 
         {/* Floating actions on hover */}
-        <div className="absolute right-1.5 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-hover dark:bg-slate-900 p-0.5 rounded-md border border-border shadow-sm">
+        <div className="absolute right-1.5 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-[#15111F] p-0.5 rounded-lg border border-[#30243F] shadow-sm">
           <button
             onClick={(e) => handlePinClick(conv.id, e)}
-            className="p-0.5 rounded text-muted-foreground hover:text-brand-gold-550 dark:hover:text-brand-gold-300"
+            className="p-1 rounded text-[#AAA3BB] hover:text-[#C084FC] transition-colors"
             title={conv.pinned ? "Unpin Conversation" : "Pin Conversation"}
             aria-label={conv.pinned ? "Unpin conversation" : "Pin conversation"}
           >
@@ -139,7 +139,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
           <button
             onClick={(e) => handleDeleteClick(conv.id, e)}
-            className="p-0.5 rounded text-muted-foreground hover:text-red-500"
+            className="p-1 rounded text-[#AAA3BB] hover:text-rose-400 transition-colors"
             title="Delete Conversation"
             aria-label="Delete conversation"
           >
@@ -149,7 +149,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Small pin indicator if pinned and not hovered */}
         {conv.pinned && (
-          <Pin className="h-2.5 w-2.5 text-brand-gold-550 dark:text-brand-gold-400 absolute right-2 group-hover:hidden shrink-0" />
+          <Pin className="h-2.5 w-2.5 text-[#C084FC] absolute right-2 group-hover:hidden shrink-0" />
         )}
       </div>
     );
@@ -159,7 +159,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     if (items.length === 0) return null;
     return (
       <div className="space-y-1 mt-3 first:mt-0">
-        <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground px-2.5">
+        <span className="text-[9px] font-bold uppercase tracking-wider text-[#AAA3BB]/70 px-2.5">
           {title}
         </span>
         <div className="space-y-[2px]">
@@ -171,36 +171,40 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside 
-      className={`relative hidden h-screen shrink-0 border-r border-border bg-surface text-foreground transition-all duration-300 md:flex flex-col ${
+      className={`relative hidden h-screen shrink-0 border-r border-[#30243F] bg-[#08070D] text-[#F8F7FC] transition-all duration-300 md:flex flex-col ${
         isCollapsed ? 'w-16' : 'w-64'
       }`}
     >
       {/* Brand Header */}
-      <div className="flex h-14 items-center justify-between border-b border-border px-4">
+      <div className="flex h-14 items-center justify-between border-b border-[#30243F] px-4">
         {!isCollapsed && (
           <>
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => onSelectPanel(null)}>
-              <img src="/assets/logo.jpg" alt="LexAI Logo" className="h-8 w-8 rounded-lg object-cover" />
-              <span className="font-sans font-bold text-lg text-foreground">
-                LexAI<span className="text-brand-gold-550 dark:text-brand-gold-300">.in</span>
+            <div className="flex items-center gap-2.5 cursor-pointer group" onClick={() => onSelectPanel(null)}>
+              <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#A855F7] flex items-center justify-center shadow-md shadow-purple-500/20">
+                <Scale className="h-4 w-4 text-white" />
+              </div>
+              <span className="font-sans font-bold text-base text-white group-hover:text-[#C084FC] transition-colors">
+                LexAI<span className="text-[#A855F7]">.in</span>
               </span>
             </div>
             <button
               onClick={onToggleCollapse}
-              className="rounded-lg p-1 text-secondary-foreground hover:bg-hover hover:text-foreground transition-colors cursor-pointer"
+              className="rounded-lg p-1.5 text-[#AAA3BB] hover:bg-[#15111F] hover:text-white transition-colors cursor-pointer"
               aria-label="Collapse sidebar"
             >
-              <ChevronLeft className="h-4.5 w-4.5" />
+              <ChevronLeft className="h-4 w-4" />
             </button>
           </>
         )}
         {isCollapsed && (
-          <img 
-            src="/assets/logo.jpg" 
-            alt="LexAI Logo" 
-            className="mx-auto h-8 w-8 rounded-lg object-cover cursor-pointer"
+          <button 
+            className="mx-auto h-8 w-8 rounded-xl bg-gradient-to-br from-[#7C3AED] to-[#A855F7] flex items-center justify-center text-white shadow-md shadow-purple-500/20 cursor-pointer"
             onClick={onToggleCollapse}
-          />
+            title="Expand sidebar"
+            aria-label="Expand sidebar"
+          >
+            <Scale className="h-4 w-4" />
+          </button>
         )}
       </div>
 
@@ -209,7 +213,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {menuItems.map((group, gIdx) => (
           <div key={gIdx} className="space-y-1">
             {!isCollapsed && (
-              <h3 className="px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <h3 className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#AAA3BB]/70">
                 {group.group}
               </h3>
             )}
@@ -223,17 +227,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <button
                     key={iIdx}
                     onClick={() => onSelectPanel(item.id)}
-                    className={`flex w-full items-center gap-3 rounded-lg py-2 px-3 text-left transition-all duration-150 group relative ${
+                    className={`flex w-full items-center gap-3 rounded-xl py-2 px-3 text-left transition-all duration-150 group relative cursor-pointer ${
                       isActive 
-                        ? 'bg-selected text-foreground font-semibold border-l-2 border-brand-gold-550' 
+                        ? 'bg-[#1C1728] text-white font-semibold border-l-2 border-[#A855F7] shadow-sm' 
                         : item.highlight
-                          ? 'border border-red-500/20 bg-red-500/5 text-red-500 hover:bg-red-500/10'
-                          : 'text-secondary-foreground hover:bg-hover hover:text-foreground'
+                          ? 'border border-rose-500/25 bg-rose-500/08 text-rose-400 hover:bg-rose-500/15'
+                          : 'text-[#AAA3BB] hover:bg-[#15111F] hover:text-white'
                     }`}
                     title={isCollapsed ? `${item.label} - ${item.description}` : undefined}
                   >
-                    <IconComponent className={`h-4.5 w-4.5 shrink-0 ${
-                      isActive ? 'text-brand-gold-550 dark:text-brand-gold-300' : item.highlight ? 'text-red-500 animate-pulse' : 'text-muted-foreground'
+                    <IconComponent className={`h-4 w-4 shrink-0 ${
+                      isActive ? 'text-[#C084FC]' : item.highlight ? 'text-rose-400 animate-pulse' : 'text-[#AAA3BB]'
                     }`} />
                     
                     {!isCollapsed && (
@@ -244,7 +248,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
                     {/* Tooltip for collapsed mode */}
                     {isCollapsed && (
-                      <div className="absolute left-16 z-50 hidden rounded-md bg-slate-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:block group-hover:opacity-100 whitespace-nowrap shadow-md pointer-events-none">
+                      <div className="absolute left-16 z-50 hidden rounded-lg bg-[#15111F] border border-[#30243F] px-2.5 py-1 text-xs text-white opacity-0 transition-opacity group-hover:block group-hover:opacity-100 whitespace-nowrap shadow-xl pointer-events-none">
                         {item.label}
                       </div>
                     )}
@@ -260,30 +264,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {isCollapsed ? (
             <button
               onClick={onToggleCollapse}
-              className="flex w-full items-center justify-center rounded-lg py-2 text-muted-foreground hover:bg-hover hover:text-foreground transition-all duration-150"
+              className="flex w-full items-center justify-center rounded-xl py-2 text-[#AAA3BB] hover:bg-[#15111F] hover:text-white transition-all duration-150 cursor-pointer"
               title="Chat History"
             >
-              <History className="h-4.5 w-4.5" />
+              <History className="h-4 w-4" />
             </button>
           ) : (
             <div className="space-y-1">
               <button
                 onClick={() => setIsHistoryExpanded(!isHistoryExpanded)}
-                className="flex w-full items-center justify-between px-3 py-1 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+                className="flex w-full items-center justify-between px-3 py-1.5 text-left text-[10px] font-bold uppercase tracking-wider text-[#AAA3BB]/70 hover:text-white transition-colors cursor-pointer"
                 aria-label={isHistoryExpanded ? "Collapse chat history" : "Expand chat history"}
               >
                 <span>History</span>
                 {isHistoryExpanded ? (
-                  <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                  <ChevronDown className="h-3 w-3 text-[#AAA3BB]" />
                 ) : (
-                  <ChevronRight className="h-3 w-3 text-muted-foreground" />
+                  <ChevronRight className="h-3 w-3 text-[#AAA3BB]" />
                 )}
               </button>
 
               {isHistoryExpanded && (
                 <div className="space-y-3 px-1">
                   {conversations.length === 0 ? (
-                    <div className="text-center py-4 text-[10px] text-muted-foreground">
+                    <div className="text-center py-4 text-[10px] text-[#AAA3BB]/60">
                       No past conversations
                     </div>
                   ) : (
@@ -303,23 +307,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Bottom Account Area */}
-      <div className="border-t border-border p-3 mt-auto bg-background/30 flex flex-col items-center relative" ref={accountMenuRef}>
+      <div className="border-t border-[#30243F] p-3 mt-auto bg-[#08070D] flex flex-col items-center relative" ref={accountMenuRef}>
         <div className="flex w-full items-center justify-between">
           <button
             onClick={() => setAccountMenuOpen(!accountMenuOpen)}
-            className={`flex items-center gap-2 overflow-hidden hover:bg-hover rounded-lg p-1 transition-colors text-left focus:outline-none focus:ring-1 focus:ring-brand-gold-550 flex-1 mr-2 ${
-              accountMenuOpen ? 'bg-hover' : ''
+            className={`flex items-center gap-2 overflow-hidden hover:bg-[#15111F] rounded-xl p-1.5 transition-colors text-left focus:outline-none focus:ring-1 focus:ring-[#A855F7] flex-1 mr-2 cursor-pointer ${
+              accountMenuOpen ? 'bg-[#15111F]' : ''
             }`}
             title="Account Options"
             aria-label="Open account menu"
             aria-expanded={accountMenuOpen}
             aria-haspopup="true"
           >
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-hover text-secondary-foreground">
-              <User className="h-4 w-4" />
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-[#1C1728] border border-[#30243F] text-[#C084FC]">
+              <User className="h-3.5 w-3.5" />
             </div>
             {!isCollapsed && (
-              <span className="text-xs font-semibold text-secondary-foreground truncate">
+              <span className="text-xs font-semibold text-[#D4CFE2] truncate">
                 {isAuthenticated ? (user?.name || user?.email || 'Citizen User') : 'Guest Mode'}
               </span>
             )}
@@ -328,8 +332,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {!isCollapsed && (
             <button
               onClick={() => onSelectPanel('settings')}
-              className={`p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-hover transition-colors focus:outline-none focus:ring-1 focus:ring-brand-gold-550 ${
-                activePanel === 'settings' ? 'bg-selected text-brand-gold-550 dark:text-brand-gold-300' : ''
+              className={`p-1.5 rounded-xl text-[#AAA3BB] hover:text-white hover:bg-[#15111F] transition-colors focus:outline-none focus:ring-1 focus:ring-[#A855F7] cursor-pointer ${
+                activePanel === 'settings' ? 'bg-[#1C1728] text-[#C084FC]' : ''
               }`}
               title="Settings"
               aria-label="Open settings"
@@ -341,13 +345,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Account Menu Popover */}
         {accountMenuOpen && (
-          <div className={`absolute bottom-full mb-2 w-48 rounded-xl border border-border bg-surface p-1.5 shadow-lg z-50 animate-in fade-in slide-in-from-bottom-2 duration-150 ${
+          <div className={`absolute bottom-full mb-2 w-48 rounded-2xl border border-[#30243F] bg-[#15111F] p-1.5 shadow-2xl shadow-purple-950/40 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150 backdrop-blur-xl ${
             isCollapsed ? 'left-2' : 'left-3'
           }`}>
-            <div className="px-2.5 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider truncate">
+            <div className="px-2.5 py-1.5 text-[10px] font-bold text-[#AAA3BB] uppercase tracking-wider truncate">
               {isAuthenticated ? (user?.email || 'Logged In') : 'Guest Mode'}
             </div>
-            <div className="h-[1px] bg-border my-1 mx-1" />
+            <div className="h-[1px] bg-[#30243F] my-1 mx-1" />
             {isAuthenticated ? (
               <button
                 onClick={() => {
@@ -355,7 +359,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   logout();
                   window.location.href = '/login';
                 }}
-                className="w-full text-left flex items-center gap-2 px-2.5 py-2 text-xs text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 rounded-lg transition-colors font-medium focus:outline-none cursor-pointer"
+                className="w-full text-left flex items-center gap-2 px-2.5 py-2 text-xs text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 rounded-xl transition-colors font-medium focus:outline-none cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Sign Out</span>
@@ -367,7 +371,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     setAccountMenuOpen(false);
                     window.location.href = '/login';
                   }}
-                  className="w-full text-left px-2.5 py-2 text-xs text-secondary-foreground hover:bg-hover hover:text-foreground rounded-lg transition-colors font-medium focus:outline-none focus:bg-hover focus:text-foreground cursor-pointer"
+                  className="w-full text-left px-2.5 py-2 text-xs text-[#D4CFE2] hover:bg-[#1C1728] hover:text-white rounded-xl transition-colors font-medium focus:outline-none cursor-pointer"
                 >
                   Sign in
                 </button>
@@ -376,7 +380,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     setAccountMenuOpen(false);
                     window.location.href = '/signup';
                   }}
-                  className="w-full text-left px-2.5 py-2 text-xs text-secondary-foreground hover:bg-hover hover:text-foreground rounded-lg transition-colors font-medium focus:outline-none focus:bg-hover focus:text-foreground cursor-pointer"
+                  className="w-full text-left px-2.5 py-2 text-xs text-[#D4CFE2] hover:bg-[#1C1728] hover:text-white rounded-xl transition-colors font-medium focus:outline-none cursor-pointer"
                 >
                   Create account
                 </button>
@@ -388,32 +392,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Delete Individual Conversation Confirmation Modal */}
       {deleteConfirmId && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 shadow-premium border border-border space-y-4 animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+          <div className="bg-[#15111F] rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-[#30243F] space-y-4 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-start justify-between">
-              <h4 className="text-sm font-bold text-foreground">
+              <h4 className="text-sm font-bold text-white">
                 Delete this conversation?
               </h4>
               <button 
                 onClick={() => setDeleteConfirmId(null)}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-[#AAA3BB] hover:text-white cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <p className="text-xs text-secondary-foreground leading-relaxed">
+            <p className="text-xs text-[#AAA3BB] leading-relaxed">
               This will permanently delete this conversation from your session cache.
             </p>
             <div className="flex justify-end gap-2 pt-2">
               <button
                 onClick={() => setDeleteConfirmId(null)}
-                className="px-3 py-1.5 rounded-lg border border-border text-xs font-bold text-secondary-foreground bg-surface hover:bg-hover"
+                className="px-3.5 py-1.5 rounded-xl border border-[#30243F] text-xs font-semibold text-[#D4CFE2] bg-[#100D18] hover:bg-[#1C1728] cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-red-650 hover:bg-red-500 transition-colors"
+                className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-white bg-rose-600 hover:bg-rose-500 transition-colors cursor-pointer"
               >
                 Delete
               </button>

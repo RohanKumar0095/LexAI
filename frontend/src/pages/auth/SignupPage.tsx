@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth, AuthApiError } from '../../context/AuthContext';
 import { AuthLayout } from '../../components/auth/AuthLayout';
-import { Input } from '../../components/ui/Input';
-import { Button } from '../../components/ui/Button';
 import { PasswordInput } from '../../components/auth/PasswordInput';
-import { Mail, User, Phone, ArrowRight, ShieldCheck, Briefcase, Compass } from 'lucide-react';
+import { Mail, User, Phone, ArrowRight, Briefcase, Compass, Loader2 } from 'lucide-react';
 
 export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -99,14 +97,14 @@ export const SignupPage: React.FC = () => {
           err.message.toLowerCase().includes('already exists') ||
           err.message.toLowerCase().includes('registered')
         ) {
-          setErrors({ email: err.message });
+          setErrors({ email: 'An account with this email already exists' });
         } else {
-          setErrors({ form: err.message });
+          setErrors({ general: err.message });
         }
       } else if (err instanceof Error) {
-        setErrors({ form: err.message });
+        setErrors({ general: err.message });
       } else {
-        setErrors({ form: 'Sign up failed. Please try again.' });
+        setErrors({ general: 'Registration failed. Please try again.' });
       }
     } finally {
       setIsLoading(false);
@@ -118,197 +116,259 @@ export const SignupPage: React.FC = () => {
     navigate('/app');
   };
 
-  const clearFieldError = (fieldName: string) => {
-    if (errors[fieldName] || errors.form) {
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next[fieldName];
-        delete next.form;
-        return next;
-      });
-    }
-  };
-
   return (
     <AuthLayout
-      title={persona === 'citizen' ? "Create Citizen Account" : "Lawyer Pre-Access Registration"}
+      title={persona === 'citizen' ? "Create Account" : "Advocate Portal"}
       subtitle={
         persona === 'citizen'
-          ? "Join LexAI-India and unlock a customized workspace, state-specific legal answers, and case simulation tools."
-          : "Register your practice and request verification access for the upcoming lawyer platform."
+          ? "Join LexAI to access statutory guides, complaint drafts & daily laws."
+          : "Advocate registration with Bar Council credentials will open soon."
       }
-      badgeText={persona === 'citizen' ? "Citizen Onboarding Portal" : "Advocate Enrollment Space"}
-      badgeVariant={persona === 'citizen' ? "saffron" : "electric"}
+      cardWidth="max-w-[450px]"
     >
-      {/* Persona Selector Tabs (Disable lawyer flow cleanly) */}
-      <div className="grid grid-cols-2 gap-2 p-1 bg-[#070A12] rounded-xl border border-slate-800 mb-6">
+      {/* Persona Selector Tabs */}
+      <div 
+        className="grid grid-cols-2 gap-1.5 p-1 rounded-xl border mb-6"
+        style={{
+          backgroundColor: 'rgba(10, 8, 16, 0.92)',
+          borderColor: 'rgba(192, 132, 252, 0.16)'
+        }}
+      >
         <button
           type="button"
           onClick={() => setPersona('citizen')}
-          className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-semibold transition-all ${
+          className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-medium transition-all cursor-pointer ${
             persona === 'citizen'
-              ? 'bg-[#FF9933] text-[#070A12] shadow-md shadow-saffron-500/20'
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
+              ? 'bg-[#7C22E8] text-white shadow-md shadow-purple-600/30'
+              : 'text-[#B8AEC9] hover:text-[#FAF8FF] hover:bg-white/5'
           }`}
         >
           <User className="w-3.5 h-3.5" />
-          <span>Citizen Portal</span>
+          <span>Citizen</span>
         </button>
 
         <button
           type="button"
           onClick={() => setPersona('lawyer')}
-          className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-semibold transition-all ${
+          className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-medium transition-all cursor-pointer ${
             persona === 'lawyer'
-              ? 'bg-[#6366F1] text-white shadow-md shadow-indigo-500/20'
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
+              ? 'bg-[#7C22E8] text-white shadow-md shadow-purple-600/30'
+              : 'text-[#B8AEC9] hover:text-[#FAF8FF] hover:bg-white/5'
           }`}
         >
           <Briefcase className="w-3.5 h-3.5" />
-          <span>Lawyer / Advocate</span>
+          <span>Advocate</span>
         </button>
       </div>
 
       {persona === 'lawyer' ? (
-        /* Disabled Lawyer registration view */
-        <div className="space-y-4 p-5 rounded-2xl bg-indigo-950/20 border border-indigo-500/30 text-center animate-in fade-in">
-          <Briefcase className="w-10 h-10 text-indigo-400 mx-auto animate-pulse" />
-          <h3 className="text-sm font-semibold text-white">Advocate Registration Coming in Phase 4</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Lawyer verification requires integration with State Bar Councils. This module is currently closed for development.
+        <div 
+          className="space-y-4 p-5 rounded-xl border text-center animate-in fade-in"
+          style={{
+            backgroundColor: 'rgba(12, 10, 20, 0.95)',
+            borderColor: 'rgba(192, 132, 252, 0.18)'
+          }}
+        >
+          <Briefcase className="w-9 h-9 text-[#C084FC] mx-auto" />
+          <h3 className="text-sm font-semibold text-white">Advocate Registration Coming Soon</h3>
+          <p className="text-xs text-[#B8AEC9] leading-relaxed">
+            The Bar Council Verification module and Case Management workflows are scheduled for the Phase 4 release.
           </p>
           <div className="pt-2">
-            <Button
-              variant="secondary"
-              size="sm"
+            <button
+              type="button"
               onClick={() => setPersona('citizen')}
-              className="w-full text-xs"
+              className="w-full py-2.5 px-4 rounded-xl border border-[#30243F] hover:border-[#A855F7]/50 bg-[#151020] hover:bg-[#1C1530] text-xs font-medium text-[#FAF8FF] transition-all cursor-pointer"
             >
               Sign Up as Citizen Instead
-            </Button>
+            </button>
           </div>
         </div>
       ) : (
-        /* Citizen registration form */
-        <form onSubmit={handleSubmit} className="space-y-4 animate-in fade-in">
-          {errors.form && (
-            <p className="text-xs text-rose-400 font-medium text-center">{errors.form}</p>
+        <form onSubmit={handleSubmit} className="space-y-3.5 animate-in fade-in text-left">
+          {errors.general && (
+            <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-400">
+              {errors.general}
+            </div>
           )}
 
-          <Input
-            label="Full Name"
-            type="text"
-            placeholder="Rohan Kumar"
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value);
-              clearFieldError('name');
-            }}
-            errorText={errors.name}
-            leftIcon={<User className="w-4 h-4 text-slate-500" />}
-            required
-          />
+          {/* Full Name Field */}
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-[#B8AEC9]">
+              Full Name
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#B8AEC9]">
+                <User className="w-4 h-4" />
+              </div>
+              <input
+                type="text"
+                placeholder="Rohit Sharma"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (errors.name) setErrors(prev => ({ ...prev, name: '' }));
+                }}
+                className={`w-full pl-10 pr-3.5 py-2 rounded-xl text-xs text-[#F7F4FC] placeholder-[#B8AEC9]/50 transition-all outline-none focus:ring-1 focus:ring-[#A855F7] ${
+                  errors.name ? 'border-red-500' : 'border'
+                }`}
+                style={{
+                  backgroundColor: 'rgba(10, 8, 16, 0.92)',
+                  borderColor: errors.name ? '#EF4444' : 'rgba(192, 132, 252, 0.22)',
+                }}
+                required
+              />
+            </div>
+            {errors.name && <p className="text-[11px] text-red-400">{errors.name}</p>}
+          </div>
 
-          <Input
-            label="Email Address"
-            type="email"
-            placeholder="name@example.com"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              clearFieldError('email');
-            }}
-            errorText={errors.email}
-            leftIcon={<Mail className="w-4 h-4 text-slate-500" />}
-            required
-          />
+          {/* Email Address Field */}
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-[#B8AEC9]">
+              Email Address
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#B8AEC9]">
+                <Mail className="w-4 h-4" />
+              </div>
+              <input
+                type="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.email) setErrors(prev => ({ ...prev, email: '' }));
+                }}
+                className={`w-full pl-10 pr-3.5 py-2 rounded-xl text-xs text-[#F7F4FC] placeholder-[#B8AEC9]/50 transition-all outline-none focus:ring-1 focus:ring-[#A855F7] ${
+                  errors.email ? 'border-red-500' : 'border'
+                }`}
+                style={{
+                  backgroundColor: 'rgba(10, 8, 16, 0.92)',
+                  borderColor: errors.email ? '#EF4444' : 'rgba(192, 132, 252, 0.22)',
+                }}
+                required
+              />
+            </div>
+            {errors.email && <p className="text-[11px] text-red-400">{errors.email}</p>}
+          </div>
 
-          <Input
-            label="Phone Number (Optional)"
-            type="tel"
-            placeholder="e.g. +91 98765 43210"
-            value={phone}
-            onChange={(e) => {
-              setPhone(e.target.value);
-              clearFieldError('phone');
-            }}
-            errorText={errors.phone}
-            leftIcon={<Phone className="w-4 h-4 text-slate-500" />}
-          />
+          {/* Phone Field */}
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-[#B8AEC9]">
+              Phone Number <span className="text-[#B8AEC9]/60 font-normal">(Optional)</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#B8AEC9]">
+                <Phone className="w-4 h-4" />
+              </div>
+              <input
+                type="tel"
+                placeholder="+91 98765 43210"
+                value={phone}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  if (errors.phone) setErrors(prev => ({ ...prev, phone: '' }));
+                }}
+                className={`w-full pl-10 pr-3.5 py-2 rounded-xl text-xs text-[#F7F4FC] placeholder-[#B8AEC9]/50 transition-all outline-none focus:ring-1 focus:ring-[#A855F7] ${
+                  errors.phone ? 'border-red-500' : 'border'
+                }`}
+                style={{
+                  backgroundColor: 'rgba(10, 8, 16, 0.92)',
+                  borderColor: errors.phone ? '#EF4444' : 'rgba(192, 132, 252, 0.22)',
+                }}
+              />
+            </div>
+            {errors.phone && <p className="text-[11px] text-red-400">{errors.phone}</p>}
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Password Field */}
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-[#B8AEC9]">
+              Password
+            </label>
             <PasswordInput
-              label="Password"
-              placeholder="Min 6 chars"
+              placeholder="••••••••••••"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
-                clearFieldError('password');
+                if (errors.password) setErrors(prev => ({ ...prev, password: '' }));
               }}
               errorText={errors.password}
-              helperText="Must be at least 6 characters"
               required
             />
+          </div>
 
+          {/* Confirm Password Field */}
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-[#B8AEC9]">
+              Confirm Password
+            </label>
             <PasswordInput
-              label="Confirm Password"
-              placeholder="Repeat password"
+              placeholder="••••••••••••"
               value={confirmPassword}
               onChange={(e) => {
                 setConfirmPassword(e.target.value);
-                clearFieldError('confirmPassword');
+                if (errors.confirmPassword) setErrors(prev => ({ ...prev, confirmPassword: '' }));
               }}
               errorText={errors.confirmPassword}
               required
             />
           </div>
 
-          {/* Secure indicator badge */}
-          <div className="flex items-center gap-2 justify-center py-2 px-3 rounded-lg bg-emerald-500/5 border border-emerald-500/10 text-[10px] text-emerald-400">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>DPDP-compliant encrypted authentication</span>
-          </div>
-
-          <Button
+          {/* PRIMARY CREATE ACCOUNT BUTTON — Vivid Purple #7C22E8 */}
+          <button
             type="submit"
-            variant="primary"
-            size="lg"
-            className="w-full mt-2"
-            isLoading={isLoading}
-            rightIcon={<ArrowRight className="w-4 h-4 text-[#070A12]" />}
+            disabled={isLoading}
+            className="w-full mt-2 py-3 px-5 rounded-xl font-semibold text-xs tracking-wide text-white transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-lg hover:brightness-110 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{
+              backgroundColor: '#7C22E8',
+              boxShadow: '0 8px 24px -4px rgba(124, 34, 232, 0.45)',
+            }}
           >
-            Create Account
-          </Button>
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin text-white" />
+            ) : (
+              <>
+                <span>Create Free Account</span>
+                <ArrowRight className="w-3.5 h-3.5 text-white" />
+              </>
+            )}
+          </button>
 
-          {/* Divider */}
-          <div className="relative my-6 text-center">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-800" />
-            </div>
-            <span className="relative px-3 bg-[#080B14] text-[10px] text-slate-500 uppercase tracking-widest">
-              Or explore without account
+          {/* Separator */}
+          <div className="relative my-3 flex items-center justify-center">
+            <div className="border-t border-[#30243F]/60 w-full" />
+            <span 
+              className="px-3 text-[10px] text-[#B8AEC9] uppercase tracking-wider shrink-0 font-medium"
+              style={{ backgroundColor: 'rgba(15, 12, 24, 0.88)' }}
+            >
+              or continue without account
             </span>
           </div>
 
-          {/* Guest Mode Option */}
+          {/* Instant Guest Mode CTA */}
           <button
             type="button"
             onClick={handleGuestAccess}
-            className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 active:bg-white/15 border border-slate-800 text-sm font-semibold text-slate-200 transition-all duration-200 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-xl border border-[#30243F] hover:border-[#A855F7]/50 text-xs font-medium text-[#FAF8FF] transition-all cursor-pointer flex items-center justify-center gap-2 hover:bg-white/5"
+            style={{
+              backgroundColor: 'rgba(10, 8, 16, 0.92)'
+            }}
           >
-            <Compass className="w-4 h-4 text-[#FF9933]" />
-            <span>Continue in Guest Mode</span>
+            <Compass className="w-3.5 h-3.5 text-[#C084FC]" />
+            <span>Explore as Guest Citizen</span>
           </button>
 
-          {/* Bottom Link */}
-          <p className="text-center text-xs text-slate-400 pt-4">
+          {/* Footer Navigation to Login */}
+          <div className="text-center pt-2 text-xs text-[#B8AEC9]">
             Already have an account?{' '}
-            <Link to="/login" className="text-[#FF9933] hover:text-[#FFAA54] font-semibold transition-colors">
+            <Link to="/login" className="text-[#C084FC] hover:text-[#D8B4FE] font-medium transition-colors">
               Sign In
             </Link>
-          </p>
+          </div>
         </form>
       )}
     </AuthLayout>
   );
 };
+export default SignupPage;

@@ -43,12 +43,12 @@ export function App() {
           <Route 
             path="/design-system" 
             element={
-              <div className="relative">
-                <div className="sticky top-0 z-50 bg-[#070A12] border-b border-indigo-500/30 px-6 py-2 flex items-center justify-between text-xs">
-                  <span className="text-indigo-400 font-semibold">Phase 1 Internal Design System Showcase</span>
+              <div className="relative bg-[#08070D]">
+                <div className="sticky top-0 z-50 bg-[#08070D] border-b border-[#30243F] px-6 py-2.5 flex items-center justify-between text-xs">
+                  <span className="text-[#C084FC] font-semibold">Phase 1 Internal Design System Showcase</span>
                   <a
                     href="/"
-                    className="px-3 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors"
+                    className="px-3.5 py-1.5 rounded-xl bg-[#A855F7] hover:bg-[#9333EA] text-white font-medium transition-colors"
                   >
                     ← Back to Public Home
                   </a>

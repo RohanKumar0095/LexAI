@@ -12,10 +12,10 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
   // Show non-intrusive loading indicator while initial session / token verification completes
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#070A12] flex items-center justify-center">
+      <div className="min-h-screen bg-[#08070D] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-xs text-slate-400 font-medium">Loading LexAI...</span>
+          <div className="w-10 h-10 border-2 border-[#A855F7] border-t-transparent rounded-full animate-spin" />
+          <span className="text-xs text-[#AAA3BB] font-medium">Loading LexAI...</span>
         </div>
       </div>
     );
@@ -28,3 +28,4 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
   
   return <>{children}</>;
 };
+export default AuthGuard;

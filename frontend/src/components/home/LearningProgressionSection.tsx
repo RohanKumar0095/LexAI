@@ -1,8 +1,6 @@
 import React from 'react';
-import { BookOpen, Flame, Award, Lock, ShieldCheck, CheckCircle2, Sparkles } from 'lucide-react';
-import { Badge } from '../ui/Badge';
+import { Flame, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { Card } from '../ui/Card';
-import { GradientText } from '../ui/GradientText';
 
 export const LearningProgressionSection: React.FC = () => {
   const milestones = [
@@ -13,55 +11,64 @@ export const LearningProgressionSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 relative bg-[#080B14] border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
+    <section className="py-24 relative bg-[#0D0918]/95 border-t border-[#C084FC]/15">
+      {/* Background illumination */}
+      <div className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[500px] h-[300px] bg-[#A855F7]/07 rounded-full blur-[140px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 relative z-10">
         
-        {/* Header */}
+        {/* Header — Loopy SaaS Hierarchy */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
-          <Badge variant="saffron" icon={<BookOpen className="w-3.5 h-3.5" />}>
-            Ethical & Prestigious Learning Paradigm
-          </Badge>
+          <span className="caption-text text-[#C084FC] inline-block font-semibold tracking-wider">
+            Ethical Learning Paradigm
+          </span>
           <h2 className="heading-xl text-white font-display">
-            Legal Awareness for Everyone — <GradientText variant="saffron">No Coercive Streaks</GradientText>
+            Legal Literacy for Everyone — <span className="lexai-signature-gradient">Zero Coercive Streaks</span>
           </h2>
-          <p className="body-md text-slate-300">
-            At LexAI, basic legal literacy is a fundamental right. Daily Law snippets remain 100% FREE for every citizen without forcing payments or streak maintenance.
+          <p className="body-md text-[#AAA1BC] max-w-2xl mx-auto leading-relaxed">
+            At LexAI, legal literacy is a fundamental right. Daily Law snippets remain 100% free forever for every Indian citizen without paywalls or punitive streak loss.
           </p>
         </div>
 
         {/* Core Principles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card variant="glass" className="space-y-3 border-emerald-500/30">
-            <div className="flex items-center gap-2 text-emerald-400 font-semibold text-sm">
-              <ShieldCheck className="w-5 h-5" />
-              <span>100% Free Daily Legal Awareness</span>
+          <Card variant="elevated" className="space-y-4 border-[#C084FC]/15 bg-[#151020] p-6 rounded-2xl shadow-lg shadow-black/50 hover:border-[#A855F7]/40 hover:bg-[#1C1530] transition-all">
+            <div className="flex items-center gap-3 text-[#C084FC] font-semibold text-sm">
+              <div className="w-9 h-9 rounded-xl bg-[#A855F7]/10 flex items-center justify-center border border-[#A855F7]/25">
+                <ShieldCheck className="w-4 h-4 text-[#C084FC]" />
+              </div>
+              <span className="text-white font-medium text-base">100% Free Daily Legal Awareness</span>
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Every citizen receives short, understandable daily legal insights every morning. It never requires a paid subscription or forced streak to read.
+            <p className="text-xs text-[#AAA1BC] leading-relaxed">
+              Every citizen receives short, understandable daily legal insights every morning. It never requires a paid subscription or forced streak maintenance to read.
             </p>
-            <div className="pt-2 text-[11px] text-emerald-300 font-medium bg-emerald-950/40 p-2.5 rounded-lg border border-emerald-800/40">
-              "Did you know? You have the right to ask why you are being detained under CrPC Section 50."
+            <div className="pt-2 text-xs text-[#D8B4FE] font-medium bg-[#A855F7]/10 p-3.5 rounded-xl border border-[#A855F7]/20">
+              "Did you know? Under CrPC Section 50, police must immediately inform an arrested person of the full particulars of the offence."
             </div>
           </Card>
 
-          <Card variant="glass" className="space-y-3 border-saffron-500/30">
-            <div className="flex items-center gap-2 text-saffron font-semibold text-sm">
-              <Flame className="w-5 h-5" />
-              <span>Optional 30-Day Legal Literacy Milestone</span>
+          <Card variant="elevated" className="space-y-4 border-[#C084FC]/15 bg-[#151020] p-6 rounded-2xl shadow-lg shadow-black/50 hover:border-[#A855F7]/40 hover:bg-[#1C1530] transition-all">
+            <div className="flex items-center gap-3 text-[#C084FC] font-semibold text-sm">
+              <div className="w-9 h-9 rounded-xl bg-[#A855F7]/10 flex items-center justify-center border border-[#A855F7]/25">
+                <Flame className="w-4 h-4 text-[#A855F7]" />
+              </div>
+              <span className="text-white font-medium text-base">Optional 30-Day Legal Literacy Milestone</span>
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-[#AAA1BC] leading-relaxed">
               For citizens who want to dive deeper, optional daily challenges award XP, badges, and unlock the prestigious 30-Day LexAI Legal Vault.
             </p>
-            <div className="pt-2 flex items-center justify-between text-[11px] text-saffron font-medium bg-saffron/5 p-2.5 rounded-lg border border-saffron/20">
+            <div className="pt-2 flex items-center justify-between text-xs text-[#D8B4FE] font-medium bg-[#A855F7]/10 p-3 rounded-xl border border-[#A855F7]/20">
               <span>Current Milestone: 30-Day Vault Program</span>
-              <Badge variant="saffron">+20 XP Daily</Badge>
+              <span className="text-[10px] font-semibold uppercase tracking-wider bg-[#A855F7]/20 text-[#C084FC] px-2 py-0.5 rounded-full border border-[#A855F7]/30">
+                +20 XP Daily
+              </span>
             </div>
           </Card>
         </div>
 
         {/* 30-Day Milestone Timeline */}
         <div className="space-y-6 pt-4">
-          <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wider text-center">
+          <h3 className="caption-text text-[#AAA1BC] text-center">
             30-Day Legal Literacy Progression Milestone
           </h3>
 
@@ -69,43 +76,39 @@ export const LearningProgressionSection: React.FC = () => {
             {milestones.map((m, idx) => (
               <div
                 key={idx}
-                className={`lexai-surface-card rounded-2xl p-5 border space-y-3 relative overflow-hidden ${
-                  m.hero ? 'border-saffron-500/50 bg-saffron-950/20' : 'border-white/10'
+                className={`rounded-2xl p-5 border space-y-3 relative overflow-hidden transition-all duration-300 shadow-lg shadow-black/50 ${
+                  m.hero 
+                    ? 'border-[#A855F7]/60 bg-[#1C1530] shadow-purple-950/30' 
+                    : 'border-[#C084FC]/15 bg-[#151020] hover:border-[#A855F7]/40'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-saffron-400 bg-saffron-500/10 px-2.5 py-1 rounded-full border border-saffron-500/20">
+                  <span className="text-xs font-bold text-[#C084FC] bg-[#A855F7]/15 px-2.5 py-1 rounded-full border border-[#A855F7]/30">
                     {m.day}
                   </span>
-                  {m.hero ? <Award className="w-5 h-5 text-saffron" /> : <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+                  {m.hero && (
+                    <span className="text-[10px] uppercase tracking-wider font-semibold bg-[#A855F7] text-white px-2 py-0.5 rounded-full shadow-sm shadow-purple-500/30">
+                      Vault Milestone
+                    </span>
+                  )}
                 </div>
 
-                <div>
-                  <h4 className="font-semibold text-white text-sm">{m.title}</h4>
-                  <p className="text-xs text-slate-400 mt-1">{m.reward}</p>
+                <div className="space-y-1">
+                  <h4 className="font-semibold text-sm text-white">{m.title}</h4>
+                  <p className="text-xs text-[#AAA1BC] leading-relaxed">{m.reward}</p>
                 </div>
 
-                {m.hero && (
-                  <div className="pt-2 text-[11px] text-saffron-300 font-medium flex items-center gap-1">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Unlocks Exclusive Legal Vault</span>
-                  </div>
-                )}
+                <div className="flex items-center gap-1.5 text-[11px] text-[#C084FC] pt-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#C084FC]" />
+                  <span>Verified Path</span>
+                </div>
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Future Certification Notice */}
-        <div className="lexai-surface-card rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 border border-slate-800">
-          <div className="flex items-center gap-2">
-            <Lock className="w-4 h-4 text-indigo-400 shrink-0" />
-            <span>Future Concept: Publicly Verifiable Legal Literacy Certificates and Proctored Knowledge Examinations will be introduced in V3+.</span>
-          </div>
-          <Badge variant="electric">V3+ Future Scope</Badge>
         </div>
 
       </div>
     </section>
   );
 };
+export default LearningProgressionSection;

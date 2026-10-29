@@ -3,8 +3,10 @@ import { DailyLawCard } from '../home/DailyLawCard';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { TypingIndicator } from './TypingIndicator';
+import { ChatGeometricBackground } from './ChatGeometricBackground';
+import { ChatScalesBackground } from './ChatScalesBackground';
 import type { Message } from '../../types/chat';
-import { X, Sparkles } from 'lucide-react';
+import { X, Sparkles, Scale } from 'lucide-react';
 
 interface ChatScreenProps {
   messages: Message[];
@@ -38,7 +40,6 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({
   onBookmarkMessage,
   onInspectTrace
 }) => {
-
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom of messages
@@ -51,38 +52,40 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({
   const hasMessages = messages.length > 0;
 
   return (
-    <div className="flex h-full w-full overflow-hidden bg-background text-foreground transition-colors duration-200">
+    <div className="flex h-full w-full overflow-hidden bg-[#08070D] text-[#F8F7FC] transition-colors duration-200 relative">
       
       {/* LEFT PORTION: The Chat Area (Splits or stays full width) */}
       <div className={`flex flex-col h-full transition-all duration-300 relative ${
-        activePanelNode ? 'w-full md:w-[45%] border-r border-border' : 'w-full'
+        activePanelNode ? 'w-full md:w-[45%] border-r border-[#30243F]' : 'w-full'
       }`}>
         
+        {/* Subtle Geometric Background Motif & Glowing Scales of Justice */}
+        <ChatGeometricBackground />
+        <ChatScalesBackground />
+
         {/* Messages Scroll Area */}
         <div 
           ref={scrollRef}
-          className="flex-1 overflow-y-auto px-2 py-4 space-y-2 sm:px-6 select-text flex flex-col bg-background"
+          className="flex-1 overflow-y-auto px-2 py-4 space-y-2 sm:px-6 select-text flex flex-col relative z-10"
         >
           {!hasMessages ? (
             <div className="flex-1 flex flex-col items-center justify-center py-6 md:py-10 animate-in fade-in duration-300">
               <div className="w-full max-w-xl px-4 flex flex-col items-center text-center">
                 {/* Brand Logo & Title */}
                 <div className="flex flex-col items-center mb-6">
-                  <img 
-                    src="/assets/logo.jpg" 
-                    alt="LexAI Logo" 
-                    className="h-16 w-16 rounded-xl object-cover mb-4" 
-                  />
-                  <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-                    LexAI India
+                  <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-[#7C3AED] via-[#A855F7] to-[#C084FC] flex items-center justify-center shadow-xl shadow-purple-500/25 mb-4 border border-[#C084FC]/30">
+                    <Scale className="w-8 h-8 text-white" />
+                  </div>
+                  <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl font-display">
+                    LexAI <span className="text-[#C084FC]">India</span>
                   </h1>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mt-1.5">
+                  <p className="text-xs font-semibold text-[#AAA3BB] uppercase tracking-widest mt-1.5">
                     Your Personal AI Legal Assistant
                   </p>
                 </div>
 
-                {/* Today's Law content (cardless) */}
-                <div className="w-full mb-6">
+                {/* Today's Law content */}
+                <div className="w-full mb-6 bg-[#15111F]/80 backdrop-blur-md rounded-2xl p-5 border border-[#30243F] shadow-lg shadow-purple-950/15">
                   <DailyLawCard 
                     onReadMore={onStartLearning}
                     onAskLex={onSelectQuickPrompt}
@@ -115,21 +118,20 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({
               ))}
               {isTyping && <TypingIndicator />}
             </div>
-
           )}
         </div>
 
         {/* Floating suggestion if split workspace is active */}
         {activePanelNode && (
-          <div className="hidden md:flex px-6 py-2 bg-indigo-500/5 text-[10px] text-indigo-650 dark:text-indigo-400 font-semibold items-center gap-1 border-t border-border bg-surface">
-            <Sparkles className="h-3 w-3 shrink-0 animate-pulse" />
+          <div className="hidden md:flex px-6 py-2 bg-[#15111F] text-xs text-[#C084FC] font-semibold items-center gap-1.5 border-t border-[#30243F] relative z-10">
+            <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#A855F7] animate-pulse" />
             <span>Ask follow-ups here based on the {activePanelId?.replace('-', ' ')} panel output.</span>
           </div>
         )}
 
         {/* Input Bar Section */}
         {hasMessages && (
-          <div className="border-t border-border bg-surface/70 backdrop-blur-md shrink-0">
+          <div className="border-t border-[#30243F] bg-[#08070D]/90 backdrop-blur-md shrink-0 relative z-10">
             <ChatInput
               onSendMessage={onSendMessage}
               explainMode={explainMode}
@@ -143,27 +145,28 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({
 
       {/* RIGHT PORTION: The Tool Panel Workspace (Desktop: splits screen, Mobile: full-screen overlay) */}
       {activePanelNode && (
-        <div className="fixed inset-0 z-40 flex flex-col bg-surface md:static md:w-[55%] md:flex md:animate-in md:slide-in-from-right-12 md:duration-300 border-l border-border">
+        <div className="fixed inset-0 z-40 flex flex-col bg-[#100D18] md:static md:w-[55%] md:flex md:animate-in md:slide-in-from-right-12 md:duration-300 border-l border-[#30243F]">
           {/* Workspace Panel Header */}
-          <div className="flex h-14 items-center justify-between border-b border-border bg-background/50 px-4 shrink-0">
-            <div className="flex items-center gap-2">
-              <span className="inline-block h-2 w-2 rounded-full bg-brand-gold-550"></span>
-              <h3 className="text-sm font-bold text-foreground uppercase tracking-wide">
+          <div className="flex h-14 items-center justify-between border-b border-[#30243F] bg-[#15111F] px-4 shrink-0">
+            <div className="flex items-center gap-2.5">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#A855F7] animate-pulse"></span>
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider">
                 {activePanelId?.replace('-', ' ')} Workspace
               </h3>
             </div>
             
             <button
               onClick={onClosePanel}
-              className="rounded-lg p-1.5 text-secondary-foreground hover:bg-hover hover:text-foreground transition-colors"
+              className="rounded-lg p-1.5 text-[#AAA3BB] hover:bg-[#1C1728] hover:text-white transition-colors cursor-pointer"
               title="Close Workspace"
+              aria-label="Close Workspace"
             >
               <X className="h-4.5 w-4.5" />
             </button>
           </div>
 
           {/* Workspace Content Panel container */}
-          <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-background/30">
+          <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-[#08070D]/50">
             {activePanelNode}
           </div>
         </div>

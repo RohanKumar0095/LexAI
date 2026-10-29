@@ -27,9 +27,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   const isError = Boolean(errorText);
   const isSuccess = Boolean(successText);
 
-  let borderStateStyles = "border-slate-800 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20";
+  let borderStateStyles = "border-[#30243F] focus-within:border-[#A855F7] focus-within:ring-2 focus-within:ring-[#A855F7]/25";
   if (isError) {
-    borderStateStyles = "border-rose-600/80 focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/20";
+    borderStateStyles = "border-rose-500/80 focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/20";
   } else if (isSuccess) {
     borderStateStyles = "border-emerald-500/80 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20";
   }
@@ -37,14 +37,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   return (
     <div className="w-full flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={inputId} className="text-xs font-medium uppercase tracking-wider text-slate-300">
+        <label htmlFor={inputId} className="text-xs font-medium uppercase tracking-wider text-[#D4CFE2]">
           {label}
         </label>
       )}
 
-      <div className={`relative flex items-center bg-[#070A12]/90 rounded-md border ${borderStateStyles} transition-all duration-200 ${disabled ? 'opacity-50 cursor-not-allowed bg-slate-900/50' : 'hover:border-slate-700'} ${className}`}>
+      <div className={`relative flex items-center bg-[#100D18] rounded-xl border ${borderStateStyles} transition-all duration-200 ${disabled ? 'opacity-50 cursor-not-allowed bg-[#15111F]' : 'hover:border-[#30243F]/80'} ${className}`}>
         {leftIcon && (
-          <div className="pl-3.5 text-slate-400 shrink-0 select-none">
+          <div className="pl-3.5 text-[#AAA3BB] shrink-0 select-none">
             {leftIcon}
           </div>
         )}
@@ -54,25 +54,33 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           id={inputId}
           disabled={disabled}
           style={{ colorScheme: 'dark' }}
-          className="w-full bg-transparent px-3.5 py-2.5 text-sm text-[#F8FAFC] placeholder-slate-500 focus:outline-none focus:bg-transparent active:bg-transparent disabled:cursor-not-allowed"
+          className="w-full bg-transparent px-3.5 py-2.5 text-sm text-[#F8F7FC] placeholder-[#AAA3BB]/60 focus:outline-none focus:bg-transparent active:bg-transparent disabled:cursor-not-allowed"
           {...props}
         />
 
         {rightIcon && (
-          <div className="pr-3.5 text-slate-400 shrink-0 select-none">
+          <div className="pr-3 text-[#AAA3BB] shrink-0 select-none">
             {rightIcon}
           </div>
         )}
       </div>
 
-      {errorText && (
-        <p className="text-xs text-rose-400 font-medium mt-0.5">{errorText}</p>
+      {isError && (
+        <p className="text-xs text-rose-400 font-medium mt-0.5 animate-in fade-in duration-200">
+          {errorText}
+        </p>
       )}
-      {!errorText && successText && (
-        <p className="text-xs text-emerald-400 font-medium mt-0.5">{successText}</p>
+
+      {isSuccess && (
+        <p className="text-xs text-emerald-400 font-medium mt-0.5 animate-in fade-in duration-200">
+          {successText}
+        </p>
       )}
-      {!errorText && !successText && helperText && (
-        <p className="text-xs text-slate-400 mt-0.5">{helperText}</p>
+
+      {helperText && !isError && !isSuccess && (
+        <p className="text-xs text-[#AAA3BB] mt-0.5">
+          {helperText}
+        </p>
       )}
     </div>
   );

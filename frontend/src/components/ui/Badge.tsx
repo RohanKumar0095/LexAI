@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type BadgeVariant = 'saffron' | 'electric' | 'emerald' | 'crimson' | 'glass' | 'neutral';
+export type BadgeVariant = 'saffron' | 'electric' | 'emerald' | 'crimson' | 'glass' | 'neutral' | 'primary';
 
 export interface BadgeProps {
   variant?: BadgeVariant;
@@ -11,28 +11,30 @@ export interface BadgeProps {
 }
 
 export const Badge: React.FC<BadgeProps> = ({
-  variant = 'saffron',
+  variant = 'primary',
   icon,
   children,
   pulse = false,
   className = '',
 }) => {
   const variantStyles: Record<BadgeVariant, string> = {
-    saffron: 'bg-saffron/10 text-saffron border-saffron/30',
-    electric: 'bg-electric/10 text-electric border-electric/30',
-    emerald: 'bg-emerald/10 text-emerald border-emerald/30',
-    crimson: 'bg-crimson/10 text-crimson border-crimson/30',
-    glass: 'bg-white/5 text-text-primary border-white/10 backdrop-blur-md',
-    neutral: 'bg-slate-800/80 text-slate-300 border-slate-700',
+    primary: 'bg-[#A855F7]/15 text-[#C084FC] border-[#A855F7]/30',
+    saffron: 'bg-[#A855F7]/15 text-[#C084FC] border-[#A855F7]/30',
+    electric: 'bg-[#7C3AED]/20 text-[#D8B4FE] border-[#C084FC]/30',
+    emerald: 'bg-[#10B981]/15 text-[#34D399] border-[#10B981]/30',
+    crimson: 'bg-[#EF4444]/15 text-[#F87171] border-[#EF4444]/30',
+    glass: 'bg-[#15111F]/80 text-[#F8F7FC] border-[#30243F] backdrop-blur-md',
+    neutral: 'bg-[#1C1728] text-[#AAA3BB] border-[#30243F]',
   };
 
   const pulseColors: Record<BadgeVariant, string> = {
-    saffron: 'bg-saffron',
-    electric: 'bg-electric',
-    emerald: 'bg-emerald',
-    crimson: 'bg-crimson',
-    glass: 'bg-white',
-    neutral: 'bg-slate-400',
+    primary: 'bg-[#A855F7]',
+    saffron: 'bg-[#A855F7]',
+    electric: 'bg-[#C084FC]',
+    emerald: 'bg-[#10B981]',
+    crimson: 'bg-[#EF4444]',
+    glass: 'bg-[#C084FC]',
+    neutral: 'bg-[#AAA3BB]',
   };
 
   return (

@@ -26,12 +26,8 @@ export const HomePage: React.FC = () => {
     }
   };
 
-  const handleOpenAuth = (persona: 'citizen' | 'lawyer' = 'citizen') => {
-    if (persona === 'citizen') {
-      navigate('/login');
-    } else {
-      navigate('/login');
-    }
+  const handleOpenAuth = (_persona: 'citizen' | 'lawyer' = 'citizen') => {
+    navigate('/login');
   };
 
   const handleToggleLang = () => {
@@ -39,7 +35,7 @@ export const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="lexai-ambient-bg lexai-grid-pattern min-h-screen text-[#F8FAFC] selection:bg-indigo-500/30">
+    <div className="lexai-ambient-bg lexai-grid-pattern min-h-screen text-[#F8F7FC] selection:bg-[#A855F7]/30">
       
       {/* Shell Header */}
       <Header
@@ -80,3 +76,4 @@ export const HomePage: React.FC = () => {
     </div>
   );
 };
+export default HomePage;

@@ -33,25 +33,25 @@ export const StateDistrictSelector: React.FC<StateDistrictSelectorProps> = ({
   };
 
   const selectContainerClass = (hasError: boolean) => 
-    `relative flex items-center bg-[#070A12]/90 rounded-md border ${
+    `relative flex items-center bg-[#100D18] rounded-xl border ${
       hasError 
-        ? 'border-rose-600/80 focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/20' 
-        : 'border-slate-800 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20'
-    } transition-all duration-200 hover:border-slate-700 w-full`;
+        ? 'border-rose-500/80 focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/20' 
+        : 'border-[#30243F] focus-within:border-[#A855F7] focus-within:ring-2 focus-within:ring-[#A855F7]/25'
+    } transition-all duration-200 hover:border-[#30243F]/80 w-full`;
 
   const selectElementClass = 
-    "w-full bg-transparent px-3.5 py-2.5 text-sm text-[#F8FAFC] focus:outline-none appearance-none cursor-pointer pr-10";
+    "w-full bg-transparent px-3.5 py-2.5 text-sm text-[#F8F7FC] focus:outline-none appearance-none cursor-pointer pr-10";
 
   return (
     <div className="space-y-4">
       {/* State Selector */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium uppercase tracking-wider text-slate-300">
+        <label className="text-xs font-medium uppercase tracking-wider text-[#D4CFE2]">
           State / Union Territory
         </label>
         
         <div className={selectContainerClass(!!stateError)}>
-          <div className="pl-3.5 text-slate-400 shrink-0 select-none">
+          <div className="pl-3.5 text-[#AAA3BB] shrink-0 select-none">
             <MapPin className="w-4 h-4" />
           </div>
           
@@ -60,16 +60,16 @@ export const StateDistrictSelector: React.FC<StateDistrictSelectorProps> = ({
             onChange={handleStateChange}
             className={selectElementClass}
           >
-            <option value="" className="bg-[#080B14] text-slate-500">Select State/UT</option>
+            <option value="" className="bg-[#15111F] text-[#AAA3BB]">Select State/UT</option>
             {statesAndDistricts.map((state) => (
-              <option key={state.code} value={state.name} className="bg-[#080B14] text-[#F8FAFC]">
+              <option key={state.code} value={state.name} className="bg-[#15111F] text-[#F8F7FC]">
                 {state.name}
               </option>
             ))}
           </select>
 
           {/* Custom Chevron Indicator */}
-          <div className="absolute right-3.5 pointer-events-none text-slate-400">
+          <div className="absolute right-3.5 pointer-events-none text-[#AAA3BB]">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
@@ -83,16 +83,16 @@ export const StateDistrictSelector: React.FC<StateDistrictSelectorProps> = ({
 
       {/* District Selector */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium uppercase tracking-wider text-slate-300">
+        <label className="text-xs font-medium uppercase tracking-wider text-[#D4CFE2]">
           District
         </label>
         
         <div 
           className={`${selectContainerClass(!!districtError)} ${
-            !selectedState ? 'opacity-50 cursor-not-allowed bg-slate-900/50' : ''
+            !selectedState ? 'opacity-50 cursor-not-allowed bg-[#15111F]' : ''
           }`}
         >
-          <div className="pl-3.5 text-slate-400 shrink-0 select-none">
+          <div className="pl-3.5 text-[#AAA3BB] shrink-0 select-none">
             <MapPin className="w-4 h-4" />
           </div>
           
@@ -102,18 +102,18 @@ export const StateDistrictSelector: React.FC<StateDistrictSelectorProps> = ({
             disabled={!selectedState}
             className={selectElementClass}
           >
-            <option value="" className="bg-[#080B14] text-slate-500">
-              {selectedState ? "Select District" : "Select State First"}
+            <option value="" className="bg-[#15111F] text-[#AAA3BB]">
+              {selectedState ? 'Select District' : 'Select State First'}
             </option>
-            {districts.map((district) => (
-              <option key={district} value={district} className="bg-[#080B14] text-[#F8FAFC]">
-                {district}
+            {districts.map((dist) => (
+              <option key={dist} value={dist} className="bg-[#15111F] text-[#F8F7FC]">
+                {dist}
               </option>
             ))}
           </select>
 
           {/* Custom Chevron Indicator */}
-          <div className="absolute right-3.5 pointer-events-none text-slate-400">
+          <div className="absolute right-3.5 pointer-events-none text-[#AAA3BB]">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
@@ -127,3 +127,4 @@ export const StateDistrictSelector: React.FC<StateDistrictSelectorProps> = ({
     </div>
   );
 };
+export default StateDistrictSelector;

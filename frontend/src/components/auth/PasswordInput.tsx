@@ -28,12 +28,12 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
       type={showPassword ? "text" : "password"}
       errorText={errorText}
       helperText={helperText}
-      leftIcon={<Lock className="w-4 h-4 text-slate-500" />}
+      leftIcon={<Lock className="w-4 h-4 text-[#B8AEC9]" />}
       rightIcon={
         <button
           type="button"
           onClick={togglePasswordVisibility}
-          className="p-1 rounded hover:bg-white/5 text-slate-400 hover:text-white transition-colors"
+          className="p-1 rounded hover:bg-white/5 text-[#B8AEC9] hover:text-[#F7F4FC] transition-colors cursor-pointer"
           tabIndex={-1}
           aria-label={showPassword ? "Hide password" : "Show password"}
         >

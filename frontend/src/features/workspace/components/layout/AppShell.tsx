@@ -31,7 +31,6 @@ interface AppShellProps {
   children: React.ReactNode;
 }
 
-
 export const AppShell: React.FC<AppShellProps> = ({
   theme,
   setTheme,
@@ -58,7 +57,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   children
 }) => {
   return (
-    <div className={`flex h-screen w-screen overflow-hidden ${theme === 'dark' ? 'dark' : ''}`}>
+    <div className="flex h-screen w-screen overflow-hidden bg-[#08070D] text-[#F8F7FC] dark">
       {/* Desktop Collapsible Left Sidebar */}
       <Sidebar
         isCollapsed={isSidebarCollapsed}
@@ -86,7 +85,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       />
 
       {/* Main Content Pane */}
-      <div className="flex flex-1 flex-col h-full overflow-hidden bg-background text-foreground transition-colors duration-250">
+      <div className="flex flex-1 flex-col h-full overflow-hidden bg-[#08070D] text-[#F8F7FC] transition-colors duration-200">
         
         {/* Top Header */}
         <Header
@@ -105,9 +104,8 @@ export const AppShell: React.FC<AppShellProps> = ({
           isProcessing={isProcessing}
         />
 
-
-        {/* Workspace Children Screen View */}
-        <main className="flex-1 overflow-hidden relative bg-background">
+        {/* View / Screen Body */}
+        <main className="flex-1 overflow-hidden relative">
           {children}
         </main>
       </div>
