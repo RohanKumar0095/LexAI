@@ -7,6 +7,7 @@ import { ChatGeometricBackground } from './ChatGeometricBackground';
 import { ChatScalesBackground } from './ChatScalesBackground';
 import type { Message } from '../../types/chat';
 import { X, Sparkles, Scale } from 'lucide-react';
+import { LEXAI_LOGO_URL } from '../../../../constants/brand';
 
 interface ChatScreenProps {
   messages: Message[];
@@ -70,22 +71,26 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({
         >
           {!hasMessages ? (
             <div className="flex-1 flex flex-col items-center justify-center py-6 md:py-10 animate-in fade-in duration-300">
-              <div className="w-full max-w-xl px-4 flex flex-col items-center text-center">
-                {/* Brand Logo & Title */}
-                <div className="flex flex-col items-center mb-6">
-                  <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-[#7C3AED] via-[#A855F7] to-[#C084FC] flex items-center justify-center shadow-xl shadow-purple-500/25 mb-4 border border-[#C084FC]/30">
-                    <Scale className="w-8 h-8 text-white" />
+              <div className="w-full max-w-2xl px-4 flex flex-col items-center text-center">
+                {/* Official LexAI India Brand Logo */}
+                <div className="mb-5 flex items-center justify-center">
+                  <div className="relative w-14 h-14 rounded-2xl overflow-hidden border border-[#A855F7]/30 shadow-xl shadow-purple-950/40">
+                    <img 
+                      src={LEXAI_LOGO_URL} 
+                      alt="LexAI-India Logo" 
+                      className="w-full h-full object-cover" 
+                      onError={(e) => {
+                        (e.target as HTMLElement).style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#7C3AED] via-[#A855F7] to-[#C084FC] flex items-center justify-center">
+                      <Scale className="w-6 h-6 text-white" />
+                    </div>
                   </div>
-                  <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl font-display">
-                    LexAI <span className="text-[#C084FC]">India</span>
-                  </h1>
-                  <p className="text-xs font-semibold text-[#AAA3BB] uppercase tracking-widest mt-1.5">
-                    Your Personal AI Legal Assistant
-                  </p>
                 </div>
 
-                {/* Today's Law content */}
-                <div className="w-full mb-6 bg-[#15111F]/80 backdrop-blur-md rounded-2xl p-5 border border-[#30243F] shadow-lg shadow-purple-950/15">
+                {/* Daily Legal Question directly on background (Cardless, minimal presentation) */}
+                <div className="w-full mb-8">
                   <DailyLawCard 
                     onReadMore={onStartLearning}
                     onAskLex={onSelectQuickPrompt}

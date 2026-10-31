@@ -1,5 +1,6 @@
 import React from 'react';
 import { Bell, Globe, Workflow } from 'lucide-react';
+import { LEXAI_LOGO_URL } from '../../../../constants/brand';
 import type { Notification } from '../../types/user';
 
 interface HeaderProps {
@@ -55,7 +56,17 @@ export const Header: React.FC<HeaderProps> = ({
           </h2>
         </div>
 
-        <div className="flex items-center md:hidden font-sans">
+        <div className="flex items-center gap-2 md:hidden font-sans">
+          <div className="relative h-6 w-6 rounded-md overflow-hidden border border-[#A855F7]/30 shadow-sm shrink-0">
+            <img 
+              src={LEXAI_LOGO_URL} 
+              alt="LexAI-India Logo" 
+              className="w-full h-full object-cover" 
+              onError={(e) => {
+                (e.target as HTMLElement).style.display = 'none';
+              }}
+            />
+          </div>
           <span className="text-base font-bold text-white">
             LexAI<span className="text-[#A855F7]">.in</span>
           </span>

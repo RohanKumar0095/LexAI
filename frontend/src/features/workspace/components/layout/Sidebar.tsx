@@ -5,6 +5,7 @@ import {
   History, Settings, Pin, PinOff, Trash2, User, ChevronDown, X, LogOut, Scale 
 } from 'lucide-react';
 import { useAuth } from '../../../../context/AuthContext';
+import { LEXAI_LOGO_URL } from '../../../../constants/brand';
 import type { Conversation } from '../../types/chat';
 
 interface SidebarProps {
@@ -180,8 +181,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {!isCollapsed && (
           <>
             <div className="flex items-center gap-2.5 cursor-pointer group" onClick={() => onSelectPanel(null)}>
-              <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#A855F7] flex items-center justify-center shadow-md shadow-purple-500/20">
-                <Scale className="h-4 w-4 text-white" />
+              <div className="relative h-7 w-7 rounded-lg overflow-hidden border border-[#A855F7]/30 shadow-md shadow-purple-950/40 group-hover:border-[#C084FC]/60 transition-all shrink-0">
+                <img 
+                  src={LEXAI_LOGO_URL} 
+                  alt="LexAI-India Logo" 
+                  className="w-full h-full object-cover" 
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
+                />
+                <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#7C3AED] via-[#A855F7] to-[#C084FC] flex items-center justify-center">
+                  <Scale className="h-3.5 w-3.5 text-white" />
+                </div>
               </div>
               <span className="font-sans font-bold text-base text-white group-hover:text-[#C084FC] transition-colors">
                 LexAI<span className="text-[#A855F7]">.in</span>
@@ -198,12 +209,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
         {isCollapsed && (
           <button 
-            className="mx-auto h-8 w-8 rounded-xl bg-gradient-to-br from-[#7C3AED] to-[#A855F7] flex items-center justify-center text-white shadow-md shadow-purple-500/20 cursor-pointer"
+            className="mx-auto h-8 w-8 rounded-xl overflow-hidden border border-[#A855F7]/30 shadow-md shadow-purple-950/40 hover:border-[#C084FC]/60 transition-all cursor-pointer relative group flex items-center justify-center p-0"
             onClick={onToggleCollapse}
             title="Expand sidebar"
             aria-label="Expand sidebar"
           >
-            <Scale className="h-4 w-4" />
+            <img 
+              src={LEXAI_LOGO_URL} 
+              alt="LexAI-India Logo" 
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" 
+              onError={(e) => {
+                (e.target as HTMLElement).style.display = 'none';
+              }}
+            />
+            <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#7C3AED] via-[#A855F7] to-[#C084FC] flex items-center justify-center">
+              <Scale className="h-4 w-4 text-white" />
+            </div>
           </button>
         )}
       </div>

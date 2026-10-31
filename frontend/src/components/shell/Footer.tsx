@@ -1,7 +1,8 @@
 import React from 'react';
 import { Scale, Shield, Heart } from 'lucide-react';
+import { LEXAI_LOGO_URL } from '../../constants/brand';
 
-const LOGO_ASSET_URL = "/assets/logo.jpg";
+const LOGO_ASSET_URL = LEXAI_LOGO_URL;
 
 export const Footer: React.FC = () => {
   return (

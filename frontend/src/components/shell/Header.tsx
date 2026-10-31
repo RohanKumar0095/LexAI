@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Scale, Globe, Sparkles, Menu, X, ArrowRight } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { LEXAI_LOGO_URL } from '../../constants/brand';
 
 export interface HeaderProps {
   onOpenAuth: (persona?: 'citizen' | 'lawyer') => void;
@@ -11,7 +12,7 @@ export interface HeaderProps {
   showingDesignSystem: boolean;
 }
 
-const LOGO_ASSET_URL = "/assets/logo.jpg"; 
+const LOGO_ASSET_URL = LEXAI_LOGO_URL; 
 
 export const Header: React.FC<HeaderProps> = ({
   onEnterApp,

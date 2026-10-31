@@ -1,11 +1,12 @@
 import React from 'react';
+import { LEXAI_LOGO_URL } from '../../../../constants/brand';
 
 export const WelcomeSection: React.FC = () => {
   return (
     <div className="text-center max-w-2xl mx-auto mb-8 px-4">
       <div className="flex justify-center mb-4">
         <img 
-          src="/assets/logo.jpg" 
+          src={LEXAI_LOGO_URL} 
           alt="LexAI Logo" 
           className="h-16 w-16 rounded-2xl shadow-lg object-cover border border-slate-200 dark:border-slate-800" 
         />

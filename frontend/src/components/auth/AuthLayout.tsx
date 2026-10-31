@@ -2,6 +2,7 @@ import React from 'react';
 import { Scale, ShieldCheck, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CelestialBackground } from './CelestialBackground';
+import { LEXAI_LOGO_URL } from '../../constants/brand';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -12,7 +13,7 @@ interface AuthLayoutProps {
   cardWidth?: string;
 }
 
-const LOGO_ASSET_URL = "/assets/logo.jpg"; 
+const LOGO_ASSET_URL = LEXAI_LOGO_URL; 
 
 export const AuthLayout: React.FC<AuthLayoutProps> = ({
   children,
