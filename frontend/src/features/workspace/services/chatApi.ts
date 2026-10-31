@@ -4,14 +4,14 @@ import type { Message, Citation, PipelineTrace } from '../types/chat';
 export interface ChatApiRequest {
   query: string;
   conversation_id?: string;
-  explain_mode?: 'simple' | 'detailed' | 'case-analysis' | 'technical';
+  explain_mode?: 'simple' | 'detailed';
   trace_id?: string;
 }
 
 export async function sendChatMessage(
   messageText: string,
   _history: Message[],
-  explainMode: 'simple' | 'detailed' | 'case-analysis' | 'technical' = 'simple',
+  explainMode: 'simple' | 'detailed' = 'simple',
   conversationId?: string,
   traceId?: string
 ): Promise<Message> {

@@ -12,8 +12,8 @@ import { LEXAI_LOGO_URL } from '../../../../constants/brand';
 interface ChatScreenProps {
   messages: Message[];
   isTyping: boolean;
-  explainMode: 'simple' | 'detailed' | 'case-analysis' | 'technical';
-  onChangeExplainMode: (mode: 'simple' | 'detailed' | 'case-analysis' | 'technical') => void;
+  explainMode: 'simple' | 'detailed';
+  onChangeExplainMode: (mode: 'simple' | 'detailed') => void;
   onSendMessage: (text: string) => void;
   onSelectQuickPrompt: (text: string) => void;
   onStartLearning: () => void;

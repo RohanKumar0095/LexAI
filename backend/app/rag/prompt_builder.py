@@ -107,12 +107,24 @@ class LegalPromptBuilder:
         """
         sources: List[LegalSource] = []
 
-        mode_instructions = {
-            "simple": "Explain in simple, everyday language for an ordinary citizen without legalese.",
-            "detailed": "Provide structured breakdown with all requirements, conditions, and distinctions from the evidence.",
-            "case-analysis": "Focus on judicial rulings, ratios, findings of the court, and section interpretations in the text.",
-            "technical": "Preserve formal statutory terminology and precise procedural wording from the text."
-        }.get(explain_mode, "Provide a clear and accurate explanation.")
+        if explain_mode == "detailed":
+            mode_directives = (
+                "DETAILED MODE DIRECTIVES:\n"
+                "- Provide a comprehensive, in-depth legal explanation answering the user's inquiry thoroughly.\n"
+                "- Explain applicable statutory provisions, legal sections, and the legal reasoning behind each rule in depth.\n"
+                "- Elaborate on all substantive conditions, procedural requirements, safeguards, and statutory exceptions present in the evidence.\n"
+                "- Discuss the rights and obligations of the individuals involved, including practical illustrations or real-world application where grounded in the evidence.\n"
+                "- In the JSON output, generate a thorough multi-sentence summary, rich key_points with full legal context, detailed steps, conditions, exceptions, and practical important_notes."
+            )
+        else:  # "simple" (default)
+            mode_directives = (
+                "SIMPLE MODE DIRECTIVES:\n"
+                "- Provide a straightforward, accessible answer in everyday English for an ordinary citizen without requiring legal expertise.\n"
+                "- Explain legal concepts in plain language. Avoid unnecessarily complicated legalese; briefly clarify any essential legal term in simple words.\n"
+                "- Keep explanations reasonably concise and directly focused on answering the user's actual question.\n"
+                "- Maintain legal accuracy without omitting crucial statutory qualifications or safeguards.\n"
+                "- In the JSON output, generate a crisp 1-2 sentence direct summary, clear and easy-to-understand key_points in plain bullet points, keeping procedural steps or conditions simple and accessible."
+            )
 
         evidence_blocks = []
         for idx, chunk in enumerate(chunks, 1):
@@ -179,7 +191,9 @@ Text:
         )
 
         user_prompt = f"""User Legal Question: {query}
-Explanation Preference: {explain_mode} ({mode_instructions})
+Explanation Preference: {explain_mode.upper()}
+
+{mode_directives}
 
 {status_directive}
 
@@ -189,8 +203,9 @@ ACCEPTED EVIDENCE PASSAGES:
 Remember:
 1. Base your output ONLY on the accepted evidence passages above.
 2. Focus exclusively on the provision(s) that directly answer the question. Do not bundle unrelated provisions.
-3. Every item in key_points, steps, conditions, exceptions, and important_notes MUST specify its exact source_ids (e.g. ["EVIDENCE_1"]).
-4. Output ONLY the JSON object. No Markdown code fences, no conversational prose."""
+3. Adhere strictly to the {explain_mode.upper()} MODE DIRECTIVES above.
+4. Every item in key_points, steps, conditions, exceptions, and important_notes MUST specify its exact source_ids (e.g. ["EVIDENCE_1"]).
+5. Output ONLY the JSON object. No Markdown code fences, no conversational prose."""
 
         return TRANSFORMATION_SYSTEM_PROMPT, user_prompt, sources
 
@@ -290,10 +305,14 @@ Remember:
             )
 
     @staticmethod
-    def format_structured_answer_to_markdown(structured: StructuredLegalAnswer, is_partial: bool = False) -> str:
+    def format_structured_answer_to_markdown(
+        structured: StructuredLegalAnswer,
+        is_partial: bool = False,
+        explain_mode: str = "simple"
+    ) -> str:
         """
         Converts the structured legal answer into clean, accessible markdown for display.
-        Uses double newlines to ensure headings and list items never concatenate into literal asterisks.
+        Uses appropriate headings and structure based on the selected explanation mode (simple vs detailed).
         """
         parts = []
 
@@ -303,32 +322,34 @@ Remember:
         if structured.summary:
             parts.append(f"{structured.summary}\n")
 
+        is_detailed = (explain_mode == "detailed")
+
         if structured.key_points:
-            parts.append("### Key Legal Findings\n")
+            parts.append("### Detailed Legal Analysis & Key Provisions\n" if is_detailed else "### Key Takeaways\n")
             for kp in structured.key_points:
                 parts.append(f"* {kp.text}")
             parts.append("")
 
         if structured.steps:
-            parts.append("### Procedure & Steps\n")
+            parts.append("### Procedural Requirements & Steps\n" if is_detailed else "### Practical Steps\n")
             for idx, step in enumerate(structured.steps, 1):
                 parts.append(f"{idx}. {step.text}")
             parts.append("")
 
         if structured.conditions:
-            parts.append("### Conditions & Requirements\n")
+            parts.append("### Applicable Conditions & Criteria\n" if is_detailed else "### Important Conditions\n")
             for cond in structured.conditions:
                 parts.append(f"* {cond.text}")
             parts.append("")
 
         if structured.exceptions:
-            parts.append("### Exceptions & Provisos\n")
+            parts.append("### Exceptions, Provisos & Safeguards\n" if is_detailed else "### Exceptions to Note\n")
             for exc in structured.exceptions:
                 parts.append(f"* {exc.text}")
             parts.append("")
 
         if structured.important_notes:
-            parts.append("### Important Notes\n")
+            parts.append("### Practical Implications & Notes\n" if is_detailed else "### Important Points to Remember\n")
             for note in structured.important_notes:
                 parts.append(f"* {note.text}")
             parts.append("")

@@ -7,7 +7,7 @@ export const useChat = () => {
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState<boolean>(false);
-  const [explainMode, setExplainMode] = useState<'simple' | 'detailed' | 'case-analysis' | 'technical'>('simple');
+  const [explainMode, setExplainMode] = useState<'simple' | 'detailed'>('simple');
 
   const [activeTraceId, setActiveTraceId] = useState<string | null>(null);
   const [latestTraceId, setLatestTraceId] = useState<string | null>(null);

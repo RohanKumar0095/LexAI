@@ -82,7 +82,7 @@ export interface Message {
   followUps?: string[];
   roadmapId?: string;
   evidenceChecklist?: string[];
-  explainMode?: 'simple' | 'detailed' | 'case-analysis' | 'technical'; // Updated to Simple, Detailed, Case Analysis, Technical
+  explainMode?: 'simple' | 'detailed';
   traceId?: string;
   evidenceState?: 'sufficient' | 'partial' | 'insufficient' | 'validation_failed';
   structuredAnswer?: StructuredLegalAnswer;

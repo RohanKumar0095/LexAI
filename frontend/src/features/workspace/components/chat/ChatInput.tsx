@@ -6,15 +6,13 @@ export const OFFICIAL_LEGAL_RESOURCE_URL = 'https://www.indiacode.nic.in';
 
 const explanationOptions = [
   { value: 'simple', label: 'Simple' },
-  { value: 'detailed', label: 'Detailed' },
-  { value: 'case-analysis', label: 'Case Analysis' },
-  { value: 'technical', label: 'Technical' }
+  { value: 'detailed', label: 'Detailed' }
 ] as const;
 
 interface ChatInputProps {
   onSendMessage: (text: string) => void;
-  explainMode: 'simple' | 'detailed' | 'case-analysis' | 'technical';
-  onChangeExplainMode: (mode: 'simple' | 'detailed' | 'case-analysis' | 'technical') => void;
+  explainMode: 'simple' | 'detailed';
+  onChangeExplainMode: (mode: 'simple' | 'detailed') => void;
   onSelectQuickPrompt: (text: string) => void;
   disabled: boolean;
 }
@@ -89,7 +87,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     }
   }, [inputText]);
 
-  const handleSelectMode = (value: 'simple' | 'detailed' | 'case-analysis' | 'technical') => {
+  const handleSelectMode = (value: 'simple' | 'detailed') => {
     onChangeExplainMode(value);
     setDropdownOpen(false);
   };

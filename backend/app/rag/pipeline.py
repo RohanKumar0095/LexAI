@@ -306,10 +306,11 @@ class LegalRAGPipeline:
                 evidence_state = "partial"
                 is_partial = True
 
-            # Format clean, accessible markdown for display
+            # Format clean, accessible markdown for display based on explain_mode
             answer = LegalPromptBuilder.format_structured_answer_to_markdown(
                 structured_ans,
-                is_partial=is_partial
+                is_partial=is_partial,
+                explain_mode=explain_mode or "simple"
             )
 
             # Source Provenance Validation:

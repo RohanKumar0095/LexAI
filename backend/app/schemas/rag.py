@@ -71,7 +71,7 @@ class StructuredLegalAnswer(BaseModel):
 class ChatRequest(BaseModel):
     query: str = Field(..., min_length=1, description="Legal query or factual scenario")
     conversation_id: Optional[str] = Field(default=None, description="Optional conversation session ID")
-    explain_mode: Optional[str] = Field(default="simple", description="Explanation mode: simple, detailed, case-analysis, technical")
+    explain_mode: Optional[str] = Field(default="simple", description="Explanation mode: simple or detailed")
     trace_id: Optional[str] = Field(default=None, description="Optional client-generated or correlated telemetry trace ID")
 
 
