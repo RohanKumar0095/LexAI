@@ -32,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-between border-b border-[#30243F] bg-[#08070D]/90 px-4 backdrop-blur-md transition-colors duration-200">
+    <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-between bg-[#08070D]/90 px-4 backdrop-blur-md transition-colors duration-200">
       {/* Left: Mobile Toggle & Title */}
       <div className="flex items-center gap-3">
         <button

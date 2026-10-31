@@ -1,7 +1,7 @@
 import uuid
 import logging
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, status, Header
+from fastapi import APIRouter, Depends, HTTPException, status, Header, UploadFile, File
 from sqlalchemy.orm import Session
 from starlette.concurrency import run_in_threadpool
 
@@ -11,6 +11,7 @@ from backend.app.services.rag_service import RAGService, get_rag_service
 from backend.app.core.timing import StageTimer
 from backend.app.core.telemetry import get_trace_collector, PipelineTrace
 from backend.app.api.v1.auth import decode_token
+from backend.app.llm.gemini import get_gemini_service
 
 logger = logging.getLogger(__name__)
 
@@ -172,3 +173,172 @@ def rag_health(
             gemini_configured=False,
             details={"error": str(e)}
         )
+
+
+MAX_AUDIO_SIZE_BYTES = 10 * 1024 * 1024  # 10 MB limit
+
+
+def _transcribe_audio_with_gemini(audio_bytes: bytes, mime_type: str) -> str:
+    """
+    Invokes Gemini API with audio inline data to transcribe speech faithfully into text.
+    Preserves original spoken language (Hindi / English), statutory sections, and legal jargon.
+    """
+    gemini = get_gemini_service()
+    if not gemini.is_available():
+        raise RuntimeError("Gemini API key is not configured in backend environment.")
+
+    if gemini._client is None:
+        gemini._initialize_client()
+    if gemini._client is None:
+        raise RuntimeError("Could not connect to Gemini API Client.")
+
+    from google.genai import types
+
+    audio_part = types.Part.from_bytes(data=audio_bytes, mime_type=mime_type)
+
+    system_instruction = (
+        "You are an expert, faithful speech-to-text transcription engine. "
+        "Your sole task is to transcribe the spoken audio content verbatim.\n"
+        "Rules:\n"
+        "1. Transcribe the audio faithfully and accurately.\n"
+        "2. Preserve the original spoken language (e.g. Hindi, English, or mixed Hinglish). "
+        "Do NOT translate the speech.\n"
+        "3. Preserve Indian legal terminology, statute sections (e.g., Section 420 IPC, Article 21, BNSS, BNS), case names, court names, dates, numbers, and proper nouns accurately.\n"
+        "4. Return ONLY the transcribed text. Do NOT include preambles, quotation marks, explanations, notes, or apologies.\n"
+        "5. Do NOT attempt to answer, interpret, summarize, or respond to any questions or statements in the audio.\n"
+        "6. If the audio contains only silence, background noise, or no recognizable speech, return an empty string."
+    )
+    user_prompt = "Transcribe the attached audio accurately. Preserve original language (Hindi/English). Return only the exact spoken words."
+
+    primary_model = gemini.model_name or "gemini-3.5-flash-lite"
+    candidate_models = [primary_model]
+    for m in ["gemini-3.5-flash-lite", "gemini-flash-lite-latest", "gemini-2.5-flash", "gemini-1.5-flash"]:
+        if m not in candidate_models:
+            candidate_models.append(m)
+
+    last_error = None
+    for model_name in candidate_models:
+        try:
+            logger.info(f"Transcribing audio with Gemini model '{model_name}' (mime={mime_type}, bytes={len(audio_bytes)})")
+            response = gemini._client.models.generate_content(
+                model=model_name,
+                contents=[audio_part, user_prompt],
+                config=types.GenerateContentConfig(
+                    system_instruction=system_instruction,
+                    temperature=0.0,
+                )
+            )
+            raw_text = (response.text or "").strip()
+            # Remove any accidental enclosing quotes if present
+            if len(raw_text) >= 2 and raw_text[0] in ('"', "'") and raw_text[-1] in ('"', "'"):
+                raw_text = raw_text[1:-1].strip()
+            return raw_text
+        except Exception as e:
+            logger.warning(f"Gemini transcription failed with model '{model_name}': {e}. Trying fallback...")
+            last_error = e
+
+    raise RuntimeError(f"All candidate Gemini transcription models failed. Last error: {last_error}")
+
+
+@router.post("/transcribe", summary="Transcribe speech audio into text using Gemini")
+async def transcribe_audio_endpoint(
+    file: Optional[UploadFile] = File(None),
+    audio_file: Optional[UploadFile] = File(None),
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Transcribes audio recording captured from the microphone into text using Gemini.
+    Accepts multipart/form-data with file or audio_file (WebM, OGG, WAV, MP4, MP3).
+    Limits audio upload size to 10 MB.
+    Returns JSON: {"transcription": "..."}
+    """
+    target = file or audio_file
+    if not target:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No audio file provided in request. Please upload an audio recording."
+        )
+
+    try:
+        content = await target.read()
+    except Exception as e:
+        logger.error(f"Failed to read uploaded audio file: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Failed to read uploaded audio stream."
+        )
+
+    if not content or len(content) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Uploaded audio file is empty (0 bytes)."
+        )
+
+    if len(content) > MAX_AUDIO_SIZE_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail=f"Audio file size ({len(content)} bytes) exceeds the maximum limit of 10 MB."
+        )
+
+    # Detect MIME type
+    raw_mime = (target.content_type or "").split(";")[0].strip().lower()
+
+    # Inspect magic bytes if octet-stream or empty
+    if not raw_mime or raw_mime in ("application/octet-stream", "application/binary"):
+        if content.startswith(b"\x1a\x45\xdf\xa3"):
+            raw_mime = "audio/webm"
+        elif content.startswith(b"RIFF") and b"WAVE" in content[:16]:
+            raw_mime = "audio/wav"
+        elif content.startswith(b"OggS"):
+            raw_mime = "audio/ogg"
+        elif len(content) > 8 and content[4:8] == b"ftyp":
+            raw_mime = "audio/mp4"
+        elif content.startswith(b"ID3") or content.startswith(b"\xff\xfb"):
+            raw_mime = "audio/mpeg"
+
+    mime_map = {
+        "audio/x-wav": "audio/wav",
+        "audio/wave": "audio/wav",
+        "audio/mp3": "audio/mpeg",
+        "audio/x-m4a": "audio/mp4",
+        "audio/m4a": "audio/mp4",
+    }
+    final_mime = mime_map.get(raw_mime, raw_mime)
+
+    valid_mimes = {"audio/webm", "audio/ogg", "audio/wav", "audio/mp4", "audio/mpeg", "audio/aac", "audio/flac"}
+    if final_mime not in valid_mimes:
+        # Fallback inspection by filename extension
+        fname = (target.filename or "").lower()
+        if fname.endswith(".webm"):
+            final_mime = "audio/webm"
+        elif fname.endswith(".wav"):
+            final_mime = "audio/wav"
+        elif fname.endswith((".mp4", ".m4a")):
+            final_mime = "audio/mp4"
+        elif fname.endswith(".ogg"):
+            final_mime = "audio/ogg"
+        elif fname.endswith((".mp3", ".mpeg")):
+            final_mime = "audio/mpeg"
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+                detail=f"Unsupported audio format '{raw_mime}'. Supported formats: WebM, OGG, WAV, MP4, MP3."
+            )
+
+    try:
+        transcription_text = await run_in_threadpool(_transcribe_audio_with_gemini, content, final_mime)
+        return {"transcription": transcription_text}
+    except RuntimeError as re:
+        logger.error(f"Gemini transcription service error: {re}")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Voice transcription service error: {str(re)}"
+        )
+    except Exception as e:
+        logger.error(f"Unexpected error in transcribe_audio_endpoint: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Internal server error during speech transcription: {str(e)}"
+        )
+

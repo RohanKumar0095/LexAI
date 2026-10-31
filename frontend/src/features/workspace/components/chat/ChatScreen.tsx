@@ -131,7 +131,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({
 
         {/* Input Bar Section */}
         {hasMessages && (
-          <div className="border-t border-[#30243F] bg-[#08070D]/90 backdrop-blur-md shrink-0 relative z-10">
+          <div className="bg-[#08070D]/90 backdrop-blur-md shrink-0 relative z-10">
             <ChatInput
               onSendMessage={onSendMessage}
               explainMode={explainMode}
