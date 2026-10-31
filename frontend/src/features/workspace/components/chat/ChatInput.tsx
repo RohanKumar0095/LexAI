@@ -116,7 +116,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
       {/* Main Elevated Input Box with Travelling White Light Border */}
       <div className="travelling-light-border w-full">
-        <form onSubmit={handleSubmit} className="relative z-10 rounded-2xl bg-[#15111F] transition-all focus-within:ring-1 focus-within:ring-[#A855F7]/40 shadow-xl shadow-purple-950/20 overflow-hidden">
+        <form onSubmit={handleSubmit} className="relative z-10 rounded-2xl bg-[#15111F] transition-all focus-within:ring-1 focus-within:ring-[#A855F7]/40 shadow-xl shadow-purple-950/20">
           {isRecording || isTranscribing ? (
             /* Voice Recording Interface (ChatGPT-Style) */
             <div className="flex items-center justify-between px-4 py-3 min-h-[58px] gap-3">
@@ -248,12 +248,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                       aria-haspopup="listbox"
                     >
                       <span>Explain: {currentMode.label}</span>
-                      <ChevronDown className="h-3 w-3 opacity-70 text-[#C084FC]" />
+                      <ChevronDown className={`h-3 w-3 text-[#C084FC] transition-transform duration-200 ${dropdownOpen ? 'rotate-180 opacity-100' : 'opacity-70'}`} />
                     </button>
 
                     {dropdownOpen && (
                       <div 
-                        className="absolute left-0 bottom-full mb-2 w-40 rounded-xl border border-[#30243F] bg-[#15111F] p-1.5 shadow-2xl shadow-purple-950/40 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150 backdrop-blur-xl"
+                        className="absolute left-0 bottom-full mb-2 w-36 rounded-xl border border-[#30243F] bg-[#15111F] p-1.5 shadow-2xl shadow-purple-950/50 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150 backdrop-blur-xl"
                         role="listbox"
                         aria-label="Explanation mode options"
                       >
@@ -261,26 +261,28 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                           Explanation Style
                         </div>
                         <div className="h-[1px] bg-[#30243F] my-1 mx-1" />
-                        {explanationOptions.map((opt) => {
-                          const isSelected = explainMode === opt.value;
-                          return (
-                            <button
-                              key={opt.value}
-                              type="button"
-                              onClick={() => handleSelectMode(opt.value)}
-                              className={`flex w-full items-center justify-between px-2.5 py-1.5 text-left text-xs rounded-lg transition-colors cursor-pointer ${
-                                isSelected 
-                                  ? 'bg-[#A855F7]/20 text-[#C084FC] font-semibold border border-[#A855F7]/30' 
-                                  : 'text-[#D4CFE2] hover:bg-[#1C1728] hover:text-white'
-                              }`}
-                              role="option"
-                              aria-selected={isSelected}
-                            >
-                              <span>{opt.label}</span>
-                              {isSelected && <Check className="h-3 w-3 text-[#C084FC]" />}
-                            </button>
-                          );
-                        })}
+                        <div className="space-y-0.5">
+                          {explanationOptions.map((opt) => {
+                            const isSelected = explainMode === opt.value;
+                            return (
+                              <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => handleSelectMode(opt.value)}
+                                className={`flex w-full items-center gap-2 px-2 py-1.5 text-left text-xs rounded-lg transition-colors cursor-pointer ${
+                                  isSelected 
+                                    ? 'bg-[#A855F7]/20 text-white font-semibold border border-[#A855F7]/30 shadow-sm' 
+                                    : 'text-[#D4CFE2] hover:bg-[#1C1728] hover:text-white border border-transparent'
+                                }`}
+                                role="option"
+                                aria-selected={isSelected}
+                              >
+                                <Check className={`h-3.5 w-3.5 shrink-0 ${isSelected ? 'text-[#C084FC] opacity-100' : 'opacity-0'}`} />
+                                <span>{opt.label}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
                     )}
                   </div>
