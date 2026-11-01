@@ -4,7 +4,7 @@ import hashlib
 import logging
 from typing import List, Dict, Any, Tuple
 from pathlib import Path
-import fitz  # PyMuPDF
+import pymupdf
 from backend.app.legal.metadata import extract_legal_metadata_from_text
 from backend.app.schemas.legal import LegalDocumentCreate
 
@@ -79,7 +79,7 @@ class DocumentParser:
             content_bytes = path.read_bytes()
             doc_id = self.compute_document_id(str(path), content_bytes)
 
-            doc = fitz.open(stream=content_bytes, filetype="pdf")
+            doc = pymupdf.open(stream=content_bytes, filetype="pdf")
             pages: List[ParsedPage] = []
             full_text_list = []
 

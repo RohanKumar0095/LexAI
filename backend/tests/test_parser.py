@@ -1,5 +1,5 @@
 import os
-import fitz
+import pymupdf
 import pytest
 from pathlib import Path
 from backend.app.rag.parser import DocumentParser, ParsedDocument
@@ -47,7 +47,7 @@ def test_extract_legal_metadata():
 def test_parse_pdf(tmp_path):
     # Create a small synthetic PDF using PyMuPDF for testing
     pdf_path = tmp_path / "test_judgment.pdf"
-    doc = fitz.open()
+    doc = pymupdf.open()
     page = doc.new_page()
     page.insert_text(
         (50, 72),

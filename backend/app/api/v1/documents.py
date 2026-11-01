@@ -3,7 +3,7 @@ import logging
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form, Body
 from sqlalchemy.orm import Session
-import fitz  # PyMuPDF
+import pymupdf
 
 from backend.app.core.database import get_db
 from backend.app.models.legal import LegalDocument
@@ -56,7 +56,7 @@ async def analyze_document(
         try:
             content_bytes = await file.read()
             if file.filename and file.filename.lower().endswith(".pdf"):
-                doc = fitz.open(stream=content_bytes, filetype="pdf")
+                doc = pymupdf.open(stream=content_bytes, filetype="pdf")
                 pages_count = len(doc)
                 extracted_pages = []
                 for p_idx in range(min(pages_count, 10)):  # First 10 pages for analysis

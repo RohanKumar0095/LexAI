@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     
     # Database (PostgreSQL)
-    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/lexai_db"
+    DATABASE_URL: str = "sqlite:///./backend/lexai_legal.db"
     
     # Supabase Authentication Configuration
     SUPABASE_URL: Optional[str] = None
