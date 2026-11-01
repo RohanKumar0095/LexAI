@@ -5,13 +5,19 @@
  */
 
 import { API_BASE_URL } from '../../../services/apiClient';
-import type { Conversation } from '../types/chat';
 import type { DailyLaw, Scenario } from '../types/legal';
 import { mockDailyLaws } from '../data/mockLaws';
-import { mockConversations } from '../data/mockChats';
 import { mockScenarios } from '../data/mockScenarios';
 
-import { sendChatMessage, getPipelineTrace } from './chatApi';
+import { 
+  sendChatMessage, 
+  getPipelineTrace,
+  fetchUserConversations,
+  fetchConversationDetails,
+  renameUserConversation,
+  deleteUserConversation,
+  clearAllUserConversations
+} from './chatApi';
 import { getTodayLaw } from './dailyLawApi';
 import { analyzeDocument, type DocumentAnalysisResult } from './documentApi';
 import { generateComplaint, type ComplaintData } from './complaintApi';
@@ -21,6 +27,11 @@ import { loginApi, signupApi, logoutApi, getMeApi } from '../../../services/auth
 export {
   sendChatMessage,
   getPipelineTrace,
+  fetchUserConversations,
+  fetchConversationDetails,
+  renameUserConversation,
+  deleteUserConversation,
+  clearAllUserConversations,
   getTodayLaw,
   analyzeDocument,
   generateComplaint,
@@ -28,7 +39,6 @@ export {
   type DocumentAnalysisResult,
   type ComplaintData,
 };
-
 
 export const apiService = {
   /**
@@ -53,15 +63,13 @@ export const apiService = {
   generateComplaint,
   generateRoadmap,
 
-
-  // Fallback and mock helpers
-  getChatHistory(): Promise<Conversation[]> {
-    return Promise.resolve(mockConversations);
-  },
-
-  getConversations(): Promise<Conversation[]> {
-    return Promise.resolve(mockConversations);
-  },
+  // Supabase-backed persistent chat history
+  getChatHistory: fetchUserConversations,
+  getConversations: fetchUserConversations,
+  fetchConversationDetails,
+  renameConversation: renameUserConversation,
+  deleteConversation: deleteUserConversation,
+  clearAllConversations: clearAllUserConversations,
 
   getScenarios(): Promise<Scenario[]> {
     return Promise.resolve(mockScenarios);

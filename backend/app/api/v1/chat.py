@@ -1,13 +1,15 @@
 import uuid
 import logging
-from typing import Optional
+from typing import Optional, List, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, status, Header, UploadFile, File
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from starlette.concurrency import run_in_threadpool
 
 from backend.app.core.database import get_db
 from backend.app.schemas.rag import ChatRequest, ChatResponse, HealthResponse
 from backend.app.services.rag_service import RAGService, get_rag_service
+from backend.app.services.supabase_chat_service import get_supabase_chat_service
 from backend.app.core.timing import StageTimer
 from backend.app.core.telemetry import get_trace_collector, PipelineTrace
 from backend.app.api.v1.auth import decode_token
@@ -17,6 +19,34 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+
+def get_authenticated_user_id(authorization: Optional[str], db: Session) -> Optional[str]:
+    """
+    Resolves the verified user identity from Authorization header.
+    Checks Supabase Auth first, then falls back to local token validation.
+    """
+    if not authorization:
+        return None
+    try:
+        supabase_service = get_supabase_chat_service()
+        auth_info = supabase_service.verify_token(authorization)
+        if auth_info and auth_info.get("user_id"):
+            return auth_info["user_id"]
+    except Exception as e:
+        logger.warning(f"Supabase token verification check failed: {e}")
+
+    try:
+        local_user = decode_token(authorization, db)
+        if local_user:
+            return local_user.id
+    except Exception as e:
+        logger.warning(f"Local token decoding check failed: {e}")
+
+    return None
+
+
+class RenameConversationRequest(BaseModel):
+    title: str = Field(..., min_length=1, max_length=200, description="Updated conversation title")
 
 
 @router.post("/chat", response_model=ChatResponse, summary="Submit legal query to RAG pipeline")
@@ -32,6 +62,7 @@ async def rag_chat(
     2. Reranks evidence chunks with cross-encoder.
     3. Prompts Gemini with grounded evidence.
     4. Returns plain language legal answer with structured sources.
+    5. Persists authenticated user conversations and messages to Supabase permanently.
     Offloaded to worker threadpool to avoid blocking FastAPI event loop.
     Fully instrumented for real-time telemetry trace observability.
     """
@@ -46,11 +77,7 @@ async def rag_chat(
     collector = get_trace_collector()
 
     # Identify user (if authenticated)
-    user_id = None
-    if authorization:
-        user = decode_token(authorization, db)
-        if user:
-            user_id = user.id
+    user_id = get_authenticated_user_id(authorization, db)
 
     collector.init_trace(trace_id=trace_id, conversation_id=request.conversation_id, user_id=user_id)
 
@@ -80,12 +107,40 @@ async def rag_chat(
         status_msg="Session context resolved"
     )
 
+    supabase_service = get_supabase_chat_service()
+    active_conv_id = request.conversation_id
+
+    # If user is authenticated and Supabase is configured, ensure conversation exists & save user message
+    if user_id and supabase_service.is_configured():
+        try:
+            words = request.query.strip().split()
+            title = " ".join(words[:5]) + ("..." if len(words) > 5 else "")
+            conv = supabase_service.create_or_get_conversation(
+                user_id=user_id,
+                title=title or "Legal Inquiry",
+                conversation_id=active_conv_id
+            )
+            active_conv_id = conv["id"]
+
+            supabase_service.save_message(
+                user_id=user_id,
+                conversation_id=active_conv_id,
+                role="user",
+                content=request.query,
+                metadata={
+                    "explain_mode": request.explain_mode or "simple",
+                    "trace_id": trace_id
+                }
+            )
+        except Exception as e:
+            logger.warning(f"Could not persist user message to Supabase: {e}")
+
     timer = StageTimer("chat_endpoint")
     try:
         response = await run_in_threadpool(
             rag_service.process_chat,
             query=request.query,
-            conversation_id=request.conversation_id,
+            conversation_id=active_conv_id,
             db=db,
             explain_mode=request.explain_mode,
             timer=timer,
@@ -93,6 +148,37 @@ async def rag_chat(
         )
         timer.finish(log_output=True)
         response.trace_id = trace_id
+        if active_conv_id:
+            response.conversation_id = active_conv_id
+
+        # If user is authenticated, persist the completed assistant response to Supabase
+        if user_id and active_conv_id and supabase_service.is_configured():
+            try:
+                sources_meta = []
+                for s in (response.sources or []):
+                    if hasattr(s, "model_dump"):
+                        sources_meta.append(s.model_dump())
+                    elif isinstance(s, dict):
+                        sources_meta.append(s)
+
+                struct_meta = response.structured_answer.model_dump() if (response.structured_answer and hasattr(response.structured_answer, "model_dump")) else None
+
+                supabase_service.save_message(
+                    user_id=user_id,
+                    conversation_id=active_conv_id,
+                    role="assistant",
+                    content=response.answer,
+                    metadata={
+                        "citations": sources_meta,
+                        "structured_answer": struct_meta,
+                        "evidence_state": response.evidence_state,
+                        "explain_mode": request.explain_mode or "simple",
+                        "trace_id": trace_id
+                    }
+                )
+            except Exception as e:
+                logger.error(f"Failed to persist assistant response to Supabase: {e}")
+
         return response
     except Exception as e:
         logger.error(f"Error processing RAG chat request: {e}", exc_info=True)
@@ -101,6 +187,131 @@ async def rag_chat(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while processing the legal query. Please check server logs."
         )
+
+
+@router.get("/conversations", summary="List conversations for authenticated user")
+def list_user_conversations(
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Returns all conversations belonging to the verified user from Supabase.
+    """
+    user_id = get_authenticated_user_id(authorization, db)
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required to access conversation history."
+        )
+
+    supabase_service = get_supabase_chat_service()
+    if not supabase_service.is_configured():
+        return []
+
+    return supabase_service.list_conversations(user_id)
+
+
+@router.get("/conversations/{conversation_id}", summary="Get conversation details and messages")
+def get_user_conversation(
+    conversation_id: str,
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Returns conversation details and chronological messages for the authenticated user.
+    Enforces user ownership.
+    """
+    user_id = get_authenticated_user_id(authorization, db)
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required to view this conversation."
+        )
+
+    supabase_service = get_supabase_chat_service()
+    conv = supabase_service.get_conversation(user_id, conversation_id)
+    if not conv:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found or access denied."
+        )
+
+    return conv
+
+
+@router.patch("/conversations/{conversation_id}", summary="Rename a conversation")
+def rename_user_conversation(
+    conversation_id: str,
+    body: RenameConversationRequest,
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Renames a conversation belonging to the authenticated user.
+    """
+    user_id = get_authenticated_user_id(authorization, db)
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required to update this conversation."
+        )
+
+    supabase_service = get_supabase_chat_service()
+    updated = supabase_service.update_conversation_title(user_id, conversation_id, body.title)
+    if not updated:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found or access denied."
+        )
+
+    return updated
+
+
+@router.delete("/conversations/{conversation_id}", summary="Delete a conversation")
+def delete_user_conversation(
+    conversation_id: str,
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Deletes a conversation and all its associated messages for the authenticated user.
+    """
+    user_id = get_authenticated_user_id(authorization, db)
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required to delete this conversation."
+        )
+
+    supabase_service = get_supabase_chat_service()
+    success = supabase_service.delete_conversation(user_id, conversation_id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found or access denied."
+        )
+
+    return {"status": "success", "message": "Conversation deleted successfully"}
+
+
+@router.delete("/conversations", summary="Clear all conversations for authenticated user")
+def clear_all_user_conversations(
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Deletes all conversations and messages belonging to the authenticated user.
+    """
+    user_id = get_authenticated_user_id(authorization, db)
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required to clear conversations."
+        )
+
+    supabase_service = get_supabase_chat_service()
+    success = supabase_service.clear_all_conversations(user_id)
+    return {"status": "success", "cleared": success}
 
 
 @router.get("/trace/{trace_id}", response_model=PipelineTrace, summary="Get telemetry trace for a RAG request")

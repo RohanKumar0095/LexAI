@@ -1,11 +1,183 @@
 import { API_BASE_URL, getJsonHeaders } from '../../../services/apiClient';
-import type { Message, Citation, PipelineTrace } from '../types/chat';
+import type { Message, Citation, PipelineTrace, Conversation } from '../types/chat';
 
 export interface ChatApiRequest {
   query: string;
   conversation_id?: string;
   explain_mode?: 'simple' | 'detailed';
   trace_id?: string;
+}
+
+export function getAuthToken(): string | null {
+  return localStorage.getItem('lexai_access_token') || localStorage.getItem('lexai_auth_token') || null;
+}
+
+export function computeDateGroup(dateStr?: string): 'today' | 'yesterday' | 'week' | 'older' {
+  if (!dateStr) return 'today';
+  const d = new Date(dateStr);
+  const now = new Date();
+  
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const dStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const diffDays = Math.round((todayStart - dStart) / (1000 * 60 * 60 * 24));
+
+  if (diffDays <= 0) return 'today';
+  if (diffDays === 1) return 'yesterday';
+  if (diffDays <= 7) return 'week';
+  return 'older';
+}
+
+export function formatTime(dateStr?: string): string {
+  if (!dateStr) return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  try {
+    return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } catch {
+    return '';
+  }
+}
+
+export function mapSupabaseMessage(raw: any): Message {
+  const meta = raw.metadata || {};
+  return {
+    id: raw.id,
+    role: raw.role as 'user' | 'assistant',
+    content: raw.content || '',
+    timestamp: formatTime(raw.created_at),
+    citations: meta.citations,
+    structuredAnswer: meta.structured_answer,
+    evidenceState: meta.evidence_state,
+    explainMode: meta.explain_mode || 'simple',
+    traceId: meta.trace_id,
+    conversationId: raw.conversation_id,
+  };
+}
+
+export function mapSupabaseConversation(raw: any): Conversation {
+  const msgs = Array.isArray(raw.messages) ? raw.messages.map(mapSupabaseMessage) : [];
+  const lastMsg = msgs[msgs.length - 1];
+  const preview = lastMsg
+    ? lastMsg.content.substring(0, 65).replace(/\n/g, ' ') + (lastMsg.content.length > 65 ? '...' : '')
+    : '';
+
+  return {
+    id: raw.id,
+    title: raw.title || 'Legal Inquiry',
+    category: 'General',
+    timestamp: formatTime(raw.updated_at || raw.created_at),
+    preview,
+    dateGroup: computeDateGroup(raw.updated_at || raw.created_at),
+    pinned: false,
+    messages: msgs,
+  };
+}
+
+export async function fetchUserConversations(tokenOverride?: string): Promise<Conversation[]> {
+  const token = tokenOverride || getAuthToken();
+  if (!token) return [];
+
+  const headers = getJsonHeaders(token);
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/v1/rag/conversations`, {
+      method: 'GET',
+      headers,
+    });
+    if (!res.ok) {
+      return [];
+    }
+    const data = await res.json();
+    if (Array.isArray(data)) {
+      return data.map(mapSupabaseConversation);
+    }
+    return [];
+  } catch (err) {
+    console.warn('Failed to load user conversations from Supabase:', err);
+    return [];
+  }
+}
+
+export async function fetchConversationDetails(
+  conversationId: string,
+  tokenOverride?: string
+): Promise<{ conversation: Conversation; messages: Message[] } | null> {
+  const token = tokenOverride || getAuthToken();
+  if (!token) return null;
+
+  const headers = getJsonHeaders(token);
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/v1/rag/conversations/${conversationId}`, {
+      method: 'GET',
+      headers,
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const conv = mapSupabaseConversation(data);
+    return {
+      conversation: conv,
+      messages: conv.messages,
+    };
+  } catch (err) {
+    console.warn(`Failed to load conversation ${conversationId} from Supabase:`, err);
+    return null;
+  }
+}
+
+export async function renameUserConversation(
+  conversationId: string,
+  title: string,
+  tokenOverride?: string
+): Promise<boolean> {
+  const token = tokenOverride || getAuthToken();
+  if (!token) return false;
+
+  const headers = getJsonHeaders(token);
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/v1/rag/conversations/${conversationId}`, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ title }),
+    });
+    return res.ok;
+  } catch (err) {
+    console.warn(`Failed to rename conversation ${conversationId}:`, err);
+    return false;
+  }
+}
+
+export async function deleteUserConversation(
+  conversationId: string,
+  tokenOverride?: string
+): Promise<boolean> {
+  const token = tokenOverride || getAuthToken();
+  if (!token) return false;
+
+  const headers = getJsonHeaders(token);
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/v1/rag/conversations/${conversationId}`, {
+      method: 'DELETE',
+      headers,
+    });
+    return res.ok;
+  } catch (err) {
+    console.warn(`Failed to delete conversation ${conversationId}:`, err);
+    return false;
+  }
+}
+
+export async function clearAllUserConversations(tokenOverride?: string): Promise<boolean> {
+  const token = tokenOverride || getAuthToken();
+  if (!token) return false;
+
+  const headers = getJsonHeaders(token);
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/v1/rag/conversations`, {
+      method: 'DELETE',
+      headers,
+    });
+    return res.ok;
+  } catch (err) {
+    console.warn('Failed to clear all conversations:', err);
+    return false;
+  }
 }
 
 export async function sendChatMessage(
@@ -15,7 +187,7 @@ export async function sendChatMessage(
   conversationId?: string,
   traceId?: string
 ): Promise<Message> {
-  const token = localStorage.getItem('lexai_auth_token');
+  const token = getAuthToken();
   const headers = getJsonHeaders(token);
 
   const response = await fetch(`${API_BASE_URL}/api/v1/rag/chat`, {
@@ -84,11 +256,12 @@ export async function sendChatMessage(
     traceId: data.trace_id || traceId,
     evidenceState: data.evidence_state,
     structuredAnswer: data.structured_answer,
+    conversationId: data.conversation_id || conversationId,
   };
 }
 
 export async function getPipelineTrace(traceId: string): Promise<PipelineTrace | null> {
-  const token = localStorage.getItem('lexai_auth_token');
+  const token = getAuthToken();
   const headers = getJsonHeaders(token);
 
   try {
@@ -104,4 +277,3 @@ export async function getPipelineTrace(traceId: string): Promise<PipelineTrace |
     return null;
   }
 }
-

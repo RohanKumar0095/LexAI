@@ -86,6 +86,7 @@ export interface Message {
   traceId?: string;
   evidenceState?: 'sufficient' | 'partial' | 'insufficient' | 'validation_failed';
   structuredAnswer?: StructuredLegalAnswer;
+  conversationId?: string;
 }
 
 export interface Conversation {
