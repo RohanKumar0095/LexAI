@@ -46,6 +46,9 @@ export const RagInspectorPanel: React.FC<RagInspectorPanelProps> = ({
       return;
     }
 
+    setTrace(null);
+    setErrorMsg(null);
+
     let isMounted = true;
 
     const fetchTrace = async () => {
@@ -253,7 +256,7 @@ export const RagInspectorPanel: React.FC<RagInspectorPanelProps> = ({
                 <div className="p-2 rounded-lg bg-surface border border-border/40 text-center">
                   <div className="text-[10px] font-medium text-muted-foreground uppercase">Stages</div>
                   <div className="text-sm font-bold text-foreground mt-0.5">
-                    {completedCount} / {stages.length || 11}
+                    {completedCount} / {stages.length || 12}
                   </div>
                 </div>
 
@@ -269,7 +272,7 @@ export const RagInspectorPanel: React.FC<RagInspectorPanelProps> = ({
                 <div className="p-2 rounded-lg bg-surface border border-border/40 text-center">
                   <div className="text-[10px] font-medium text-muted-foreground uppercase">Active Step</div>
                   <div className="text-xs font-bold text-brand-gold-550 dark:text-brand-gold-300 truncate mt-1">
-                    {inProgressStage ? inProgressStage.stage_number : (overallStatus === 'completed' ? 'Finished' : 'Waiting')}
+                    {inProgressStage ? (inProgressStage.simple_name || inProgressStage.stage_name) : (overallStatus === 'completed' ? 'Finished' : (overallStatus === 'failed' ? 'Failed' : (isProcessing ? 'Waiting' : 'Not Available')))}
                   </div>
                 </div>
               </div>

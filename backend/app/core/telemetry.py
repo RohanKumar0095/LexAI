@@ -271,6 +271,18 @@ class TraceCollector:
         if start_t:
             trace.total_duration_ms = round((time.perf_counter() - start_t) * 1000.0, 2)
 
+
+        if failed:
+            for s in trace.stages:
+                if s.status == "in_progress":
+                    s.status = "failed"
+                    if not s.error:
+                        s.error = "Stage interrupted by pipeline error"
+                    s.completed_at = time.time()
+                    p_start = self._stage_perf.get(trace_id, {}).get(s.stage_id)
+                    if p_start:
+                        s.duration_ms = round((time.perf_counter() - p_start) * 1000.0, 2)
+
         return trace
 
 

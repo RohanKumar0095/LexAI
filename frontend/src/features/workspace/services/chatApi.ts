@@ -269,6 +269,9 @@ export async function getPipelineTrace(traceId: string): Promise<PipelineTrace |
       headers,
     });
     if (!response.ok) {
+      if (response.status === 403) {
+        throw new Error('Access denied: You do not have permission to view this telemetry trace.');
+      }
       return null;
     }
     return await response.json();

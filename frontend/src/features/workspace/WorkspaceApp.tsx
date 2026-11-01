@@ -83,6 +83,18 @@ export function AppContent() {
   // Automatically track latest trace ID when active or inspector opens
   const effectiveTraceId = inspectedTraceId || activeTraceId || latestTraceId;
 
+  // When a new message starts sending, automatically focus inspector on new active trace
+  useEffect(() => {
+    if (activeTraceId) {
+      setInspectedTraceId(null);
+    }
+  }, [activeTraceId]);
+
+  // When switching conversations, clear specific message trace selection
+  useEffect(() => {
+    setInspectedTraceId(null);
+  }, [activeConversationId]);
+
 
   // User details & local preferences states
   const [language, setLanguage] = useState<'en' | 'hi'>(() => {

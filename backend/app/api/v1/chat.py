@@ -334,8 +334,8 @@ def get_rag_trace(
 
     # If trace was linked to an authenticated user, verify requester matches
     if trace.user_id:
-        requester = decode_token(authorization, db) if authorization else None
-        if not requester or requester.id != trace.user_id:
+        requester_user_id = get_authenticated_user_id(authorization, db)
+        if not requester_user_id or requester_user_id != trace.user_id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You do not have permission to view this telemetry trace."
