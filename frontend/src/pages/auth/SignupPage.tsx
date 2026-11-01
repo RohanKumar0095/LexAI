@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth, AuthApiError } from '../../context/AuthContext';
 import { AuthLayout } from '../../components/auth/AuthLayout';
 import { PasswordInput } from '../../components/auth/PasswordInput';
-import { Mail, User, Phone, ArrowRight, Briefcase, Compass, Loader2 } from 'lucide-react';
+import { Mail, User, Phone, ArrowRight, Briefcase, Compass, Loader2, CheckCircle } from 'lucide-react';
 
 export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -16,9 +16,21 @@ export const SignupPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  // Validation errors
+  // Validation errors & status
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clean up redirect timer on unmount
+  useEffect(() => {
+    return () => {
+      if (redirectTimeoutRef.current) {
+        clearTimeout(redirectTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -71,12 +83,13 @@ export const SignupPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (persona === 'lawyer') return;
+    if (persona === 'lawyer' || isLoading || successMessage) return;
 
     if (!validate()) return;
 
     setIsLoading(true);
     setErrors({});
+    setSuccessMessage(null);
 
     try {
       const success = await signup({
@@ -92,9 +105,23 @@ export const SignupPage: React.FC = () => {
     } catch (err: unknown) {
       console.error('Signup error:', err);
       if (err instanceof AuthApiError) {
+        // Supabase requires email verification (status 200 message)
+        if (
+          err.statusCode === 200 ||
+          err.message.toLowerCase().includes('check your email')
+        ) {
+          setSuccessMessage('Account created! Please check your email to confirm your registration before logging in.');
+          setErrors({});
+          redirectTimeoutRef.current = setTimeout(() => {
+            navigate('/login');
+          }, 3500);
+          return;
+        }
+
         if (
           err.statusCode === 409 ||
           err.message.toLowerCase().includes('already exists') ||
+          err.message.toLowerCase().includes('already registered') ||
           err.message.toLowerCase().includes('registered')
         ) {
           setErrors({ email: 'An account with this email already exists' });
@@ -186,6 +213,18 @@ export const SignupPage: React.FC = () => {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-3.5 animate-in fade-in text-left">
+          {successMessage && (
+            <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-300 flex items-start gap-2.5 animate-in fade-in">
+              <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              <div className="flex-1 leading-relaxed">
+                <p className="font-medium text-emerald-200">{successMessage}</p>
+                <p className="mt-1 text-[11px] text-emerald-400/80">
+                  Redirecting to Sign In in a few seconds...
+                </p>
+              </div>
+            </div>
+          )}
+
           {errors.general && (
             <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-400">
               {errors.general}
@@ -205,13 +244,14 @@ export const SignupPage: React.FC = () => {
                 type="text"
                 placeholder="Rohit Sharma"
                 value={name}
+                disabled={isLoading || !!successMessage}
                 onChange={(e) => {
                   setName(e.target.value);
                   if (errors.name) setErrors(prev => ({ ...prev, name: '' }));
                 }}
                 className={`w-full pl-10 pr-3.5 py-2 rounded-xl text-xs text-[#F7F4FC] placeholder-[#B8AEC9]/50 transition-all outline-none focus:ring-1 focus:ring-[#A855F7] ${
                   errors.name ? 'border-red-500' : 'border'
-                }`}
+                } ${isLoading || !!successMessage ? 'opacity-60 cursor-not-allowed' : ''}`}
                 style={{
                   backgroundColor: 'rgba(10, 8, 16, 0.92)',
                   borderColor: errors.name ? '#EF4444' : 'rgba(192, 132, 252, 0.22)',
@@ -235,13 +275,14 @@ export const SignupPage: React.FC = () => {
                 type="email"
                 placeholder="name@example.com"
                 value={email}
+                disabled={isLoading || !!successMessage}
                 onChange={(e) => {
                   setEmail(e.target.value);
                   if (errors.email) setErrors(prev => ({ ...prev, email: '' }));
                 }}
                 className={`w-full pl-10 pr-3.5 py-2 rounded-xl text-xs text-[#F7F4FC] placeholder-[#B8AEC9]/50 transition-all outline-none focus:ring-1 focus:ring-[#A855F7] ${
                   errors.email ? 'border-red-500' : 'border'
-                }`}
+                } ${isLoading || !!successMessage ? 'opacity-60 cursor-not-allowed' : ''}`}
                 style={{
                   backgroundColor: 'rgba(10, 8, 16, 0.92)',
                   borderColor: errors.email ? '#EF4444' : 'rgba(192, 132, 252, 0.22)',
@@ -265,13 +306,14 @@ export const SignupPage: React.FC = () => {
                 type="tel"
                 placeholder="+91 98765 43210"
                 value={phone}
+                disabled={isLoading || !!successMessage}
                 onChange={(e) => {
                   setPhone(e.target.value);
                   if (errors.phone) setErrors(prev => ({ ...prev, phone: '' }));
                 }}
                 className={`w-full pl-10 pr-3.5 py-2 rounded-xl text-xs text-[#F7F4FC] placeholder-[#B8AEC9]/50 transition-all outline-none focus:ring-1 focus:ring-[#A855F7] ${
                   errors.phone ? 'border-red-500' : 'border'
-                }`}
+                } ${isLoading || !!successMessage ? 'opacity-60 cursor-not-allowed' : ''}`}
                 style={{
                   backgroundColor: 'rgba(10, 8, 16, 0.92)',
                   borderColor: errors.phone ? '#EF4444' : 'rgba(192, 132, 252, 0.22)',
@@ -289,6 +331,7 @@ export const SignupPage: React.FC = () => {
             <PasswordInput
               placeholder="••••••••••••"
               value={password}
+              disabled={isLoading || !!successMessage}
               onChange={(e) => {
                 setPassword(e.target.value);
                 if (errors.password) setErrors(prev => ({ ...prev, password: '' }));
@@ -306,6 +349,7 @@ export const SignupPage: React.FC = () => {
             <PasswordInput
               placeholder="••••••••••••"
               value={confirmPassword}
+              disabled={isLoading || !!successMessage}
               onChange={(e) => {
                 setConfirmPassword(e.target.value);
                 if (errors.confirmPassword) setErrors(prev => ({ ...prev, confirmPassword: '' }));
@@ -318,7 +362,7 @@ export const SignupPage: React.FC = () => {
           {/* PRIMARY CREATE ACCOUNT BUTTON — Vivid Purple #7C22E8 */}
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || !!successMessage}
             className="w-full mt-2 py-3 px-5 rounded-xl font-semibold text-xs tracking-wide text-white transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-lg hover:brightness-110 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               backgroundColor: '#7C22E8',
@@ -327,6 +371,8 @@ export const SignupPage: React.FC = () => {
           >
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin text-white" />
+            ) : successMessage ? (
+              <span>Redirecting to Sign In...</span>
             ) : (
               <>
                 <span>Create Free Account</span>

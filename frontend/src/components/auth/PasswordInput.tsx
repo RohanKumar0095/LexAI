@@ -9,7 +9,7 @@ interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement>
 }
 
 export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(({
-  label = "Password",
+  label,
   errorText,
   helperText,
   className = "",
