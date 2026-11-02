@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Conversation, Message } from '../types/chat';
 import { apiService } from '../services/apiService';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../context';
 
 export const useChat = () => {
   const { isAuthenticated, isGuest, token } = useAuth();
@@ -216,7 +216,8 @@ export const useChat = () => {
           return c;
         })
       );
-    } catch (e) {
+    } catch (err) {
+      console.error('Failed to send chat message:', err);
       setIsTyping(false);
       const errorMsg: Message = {
         id: `msg-err-${Date.now()}`,

@@ -89,7 +89,7 @@ export const RightsCheckerPanel: React.FC<RightsCheckerPanelProps> = ({ onAskLex
     const charge = answers[3] || 'unknown reasons';
     const warrant = answers[4] || 'no warrant shown';
 
-    const prompt = `I was ${sit.toLowerCase()} in a ${loc.toLowerCase()}. The questioning status is: "${charge}", and the officer\'s warrant status was: "${warrant}". What are my specific legal rights, and what should I do next?`;
+    const prompt = `I was ${sit.toLowerCase()} in a ${loc.toLowerCase()}. The questioning status is: "${charge}", and the officer's warrant status was: "${warrant}". What are my specific legal rights, and what should I do next?`;
     onAskLex(prompt);
   };
 

@@ -12,7 +12,7 @@ from backend.app.services.rag_service import RAGService, get_rag_service
 from backend.app.services.supabase_chat_service import get_supabase_chat_service
 from backend.app.core.timing import StageTimer
 from backend.app.core.telemetry import get_trace_collector, PipelineTrace
-from backend.app.api.v1.auth import decode_token
+from backend.app.core.security import decode_token
 from backend.app.llm.gemini import get_gemini_service
 
 logger = logging.getLogger(__name__)

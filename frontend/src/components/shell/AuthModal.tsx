@@ -3,7 +3,7 @@ import { X, User, Briefcase, Eye, EyeOff, ShieldCheck, ArrowRight, Lock } from '
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Badge } from '../ui/Badge';
-import { useAuth, AuthApiError } from '../../context/AuthContext';
+import { useAuth, AuthApiError } from '../../context';
 
 export type UserPersona = 'citizen' | 'lawyer';
 export type AuthTab = 'signin' | 'signup';

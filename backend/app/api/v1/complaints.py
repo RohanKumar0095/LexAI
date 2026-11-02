@@ -1,26 +1,15 @@
 import logging
 from typing import Optional
 from fastapi import APIRouter
-from pydantic import BaseModel
+from backend.app.schemas.complaints import ComplaintDraftRequest, ComplaintDraftResponse
 from backend.app.llm.gemini import get_gemini_service
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-
-class ComplaintDraftRequest(BaseModel):
-    type: str = "Consumer Complaint"
-    situation: str
-    date: Optional[str] = ""
-    location: Optional[str] = "New Delhi"
-    involvedParty: str
-    description: Optional[str] = ""
-    desiredAction: Optional[str] = ""
-
-
-class ComplaintDraftResponse(BaseModel):
-    draft: str
+# Re-exports for backward compatibility
+__all__ = ["router", "ComplaintDraftRequest", "ComplaintDraftResponse"]
 
 
 @router.post("/generate", response_model=ComplaintDraftResponse, summary="Generate structured legal complaint or notice draft")
@@ -58,147 +47,112 @@ Requirements:
 
     # Robust fallback template generator tailored to document type
     date_val = request.date or "Recent"
-    loc_val = (request.location or "NEW DELHI").upper()
-    opp_party = request.involvedParty
-    situation = request.situation
-    desc = request.description or situation
-    prayer = request.desiredAction or "Provide complete refund and damages of Rs. 25,000 for mental harassment."
+    loc_val = request.location or "New Delhi"
+    party_val = request.involvedParty
+    sit_val = request.situation
+    doc_type = request.type.lower()
 
-    if "police" in request.type.lower() or "fir" in request.type.lower():
-        draft = f"""TO,
-THE STATION HOUSE OFFICER (SHO),
-POLICE STATION: {loc_val}
+    if "consumer" in doc_type:
+        draft = f"""BEFORE THE DISTRICT CONSUMER DISPUTES REDRESSAL COMMISSION AT {loc_val.upper()}
 
-SUBJECT: COMPLAINT UNDER SECTION 173 OF BHARATIYA NAGARIK SURAKSHA SANHITA, 2023 (BNSS) REGARDING: {situation.upper()}
-
-Sir/Madam,
-
-1. I, [Complainant Name], residing at [Your Residential Address], contact number [Your Mobile Number], submit this formal information regarding a cognizable offence.
-
-2. That on {date_val}, at or around {loc_val}, the following incident occurred:
-   {desc}
-
-3. That the person(s) / party involved in the said illegal act is:
-   Name/Organization: {opp_party}
-   Address/Details: [Opposite Party Address]
-
-4. That the aforementioned acts constitute cognizable offences under the Bharatiya Nyaya Sanhita, 2023 (BNS).
-
-PRAYER:
-In view of the above facts and circumstances, it is most respectfully prayed that you may kindly:
-a) Register an FIR under relevant sections of BNS, 2023;
-b) Conduct a swift investigation to apprehend the culprits and recover any stolen or misappropriated property;
-c) Provide a free copy of the registered FIR to the undersigned as mandated by law.
-
-Date: [Current Date]
-Place: {loc_val}
-
-Yours faithfully,
-
-___________________
-[Complainant Signature & Name]
-[Contact Number]"""
-
-    elif "rti" in request.type.lower():
-        draft = f"""APPLICATION FOR OBTAINING INFORMATION UNDER SECTION 6(1) OF THE RIGHT TO INFORMATION ACT, 2005
-
-TO:
-The Central Public Information Officer (CPIO) / Public Information Officer (PIO),
-[Name of Public Authority / Department],
-{loc_val}
-
-1. Full Name of Applicant: [Your Full Name]
-2. Address: [Your Full Address]
-3. Particulars of Information Required:
-   Subject Matter: {situation}
-   Reference / Involved Entity: {opp_party}
-   Period to which information relates: {date_val} onwards
-
-4. Description of Information Required:
-   a) Detailed status report regarding {desc}.
-   b) Certified copies of all file notings, orders, and correspondence concerning the aforesaid matter.
-   c) Name, designation, and contact details of the official responsible for the processing of this matter.
-
-5. Application Fee:
-   Prescribed fee of Rs. 10/- attached herewith via [IPO / Court Fee Stamp / Online Receipt No: _______].
-
-Date: [Current Date]
-Place: {loc_val}
-
-___________________
-[Signature of the Applicant]"""
-
-    elif "notice" in request.type.lower():
-        draft = f"""LEGAL NOTICE
-(DELIVERED VIA REGISTERED SPEED POST / EMAIL)
-
-TO:
-{opp_party}
-[Address of Opposite Party]
-
-SUBJECT: LEGAL NOTICE REGARDING {situation.upper()}
-
-Sir/Madam,
-
-Under instructions from and on behalf of my client, [Client Name], resident of [Client Address], I hereby serve upon you the following Legal Notice:
-
-1. That my client had entered into transactions/engagement with you on {date_val} at {loc_val}.
-2. That details of the grievance and breach on your part are as follows:
-   {desc}
-3. That your conduct constitutes a breach of contractual duties and statutory provisions of Indian law.
-
-THEREFORE, YOU ARE HEREBY CALLED UPON to:
-- {prayer}
-within a period of 15 (fifteen) days from the date of receipt of this notice, failing which my client shall be constrained to initiate appropriate civil and criminal proceedings against you in the competent court of jurisdiction entirely at your risk, cost, and consequence.
-
-Copy retained for records and court exhibits.
-
-Date: [Current Date]
-Place: {loc_val}
-
-___________________
-[Advocate Signature / Client Signature]"""
-
-    else:
-        draft = f"""BEFORE THE DISTRICT CONSUMER DISPUTES REDRESSAL COMMISSION, {loc_val}
-(Under Section 35 of the Consumer Protection Act, 2019)
-
-COMPLAINT NO. _______ / 2026
+COMPLAINT NO. _____ OF 2026
 
 IN THE MATTER OF:
-[Your Name], S/o or D/o [Parent Name],
-Resident of: [Your Full Address]
-Email: [Your Email] | Mobile: [Your Phone]
-                                                      ...COMPLAINANT
-VERSUS
-
-{opp_party},
-Address: [Opposite Party Address]
-                                                      ...OPPOSITE PARTY
+Complainant: [Your Full Name & Address]
+Versus
+Opposite Party (OP): {party_val}
 
 COMPLAINT UNDER SECTION 35 OF THE CONSUMER PROTECTION ACT, 2019 FOR DEFICIENCY IN SERVICE AND UNFAIR TRADE PRACTICE
 
 MOST RESPECTFULLY SHOWETH:
-1. That the Complainant is a consumer under Section 2(7) of the Consumer Protection Act, 2019, having purchased goods / availed services from the Opposite Party on {date_val} at {loc_val}.
-2. That the Opposite Party is engaged in commercial business under the name: {opp_party}.
-3. Facts of the Dispute:
-   - Specific Issue: {situation}
-   - Narrative of Events: {desc}
-4. That despite multiple written grievances and follow-ups, the Opposite Party has refused and neglected to rectify the deficiency.
-5. PRAYER:
-   It is therefore most respectfully prayed that this Hon'ble Commission may be pleased to direct the Opposite Party to:
-   a) {prayer};
-   b) Pay Rs. 20,000/- towards mental agony, harassment, and litigation expenses;
-   c) Pass any other relief deemed fit in the interest of justice.
+1. That the Complainant is a bonafide consumer having availed goods/services from the Opposite Party on or about {date_val}.
+2. That the Opposite Party failed to discharge its contractual and statutory obligations, resulting in severe grievance, specifically: {sit_val}.
+3. Particulars of Deficiency: {request.description or 'Defective goods/service not rectified despite repeated requests.'}
+4. That the Complainant served notices upon the Opposite Party, but the Opposite Party neglected to redress the grievance.
 
-Dated: [Current Date]
-Place: {loc_val}
-
-                                                      COMPLAINANT
-                                                      Through Counsel
+PRAYER:
+Wherefore, in light of the above facts, it is respectfully prayed that this Hon'ble Commission may be pleased to:
+a) Direct the Opposite Party to {request.desiredAction or 'refund the complete amount with 12% interest per annum'};
+b) Award damages of Rs. 25,000/- towards mental agony and litigation expenses;
+c) Pass any further orders deemed just and equitable.
 
 VERIFICATION:
-I, the Complainant above-named, do hereby verify that the contents of paragraphs 1 to 5 are true and correct to the best of my knowledge and belief.
-Verified at {loc_val} on this day."""
+I, the Complainant, verify that contents of Paras 1 to 4 are true to my personal knowledge. Verified at {loc_val} on {date_val}.
+
+[Complainant Signature]"""
+
+    elif "cyber" in doc_type:
+        draft = f"""TO: THE STATION HOUSE OFFICER / NODAL OFFICER
+CYBER CRIME CELL, {loc_val.upper()}
+
+SUBJECT: COMPLAINT UNDER SECTIONS 66C, 66D OF THE INFORMATION TECHNOLOGY ACT, 2000 AND APPLICABLE PROVISIONS OF BNS 2023 REGARDING CYBER FRAUD
+
+Respected Sir/Madam,
+
+I am filing this formal complaint regarding an online fraudulent activity that occurred on {date_val}.
+
+1. Victim Details: [Your Name, Phone, Aadhaar / ID]
+2. Suspect / Opposite Entity: {party_val}
+3. Incident Description: {sit_val}. {request.description or ''}
+4. Financial / Digital Impact: Loss incurred due to unauthorized transactions/phishing.
+5. Evidence Attached: Transaction screenshots, bank statement, UTR/Transaction ID records.
+
+PRAYER:
+Kindly register this complaint, facilitate freezing of the recipient fraud accounts through 1930 interbank coordination, and take immediate statutory action under law.
+
+Sincerely,
+[Your Name]
+Date: {date_val} | Place: {loc_val}"""
+
+    elif "notice" in doc_type or "legal notice" in doc_type:
+        draft = f"""LEGAL NOTICE
+(Registered A.D. / Speed Post / Email)
+
+Date: {date_val}
+To:
+{party_val}
+Address: [Opposite Party Registered Address]
+
+SUBJECT: LEGAL NOTICE UNDER INSTRUCTIONS OF MY CLIENT REGARDING: {sit_val.upper()}
+
+Sir/Madam,
+
+Under instructions from and on behalf of my client [Client Name], resident of {loc_val}, I hereby serve upon you this formal Legal Notice:
+
+1. That my client had entered into commercial/personal transactions with you regarding: {sit_val}.
+2. That despite assurances, you have failed to discharge your obligations: {request.description or 'Unfulfilled contractual commitments'}.
+3. That your conduct amounts to clear breach of contract, deficiency, and statutory violation.
+
+NOW THEREFORE, I hereby call upon you to {request.desiredAction or 'comply with your obligations and clear all outstanding dues'} within a period of 15 (fifteen) days from the receipt of this notice, failing which my client shall initiate appropriate civil and criminal proceedings against you before competent courts entirely at your risk, costs, and consequences.
+
+A copy of this notice is retained in my office for future legal action.
+
+[Advocate Name / Signature]
+Enrollment No.: D/_____/20__
+Enclosure: Proof of dispatch"""
+
+    else:
+        # Default Police Complaint / Formal Legal Grievance
+        draft = f"""TO: THE STATION HOUSE OFFICER (SHO)
+POLICE STATION: {loc_val.upper()}
+
+SUBJECT: WRITTEN COMPLAINT REGARDING {sit_val.upper()} AGAINST {party_val.upper()}
+
+Respected Sir/Madam,
+
+I, [Your Name], residing at {loc_val}, wish to lodge a formal complaint regarding the following incident which transpired on {date_val}:
+
+1. Facts of Incident: {sit_val}.
+2. Details of Opposite Party: {party_val}.
+3. Specific Allegations: {request.description or 'Action causing wrongful loss and harassment.'}
+4. Applicable Legal Provisions: Relevant sections of Bharatiya Nyaya Sanhita, 2023 (BNS).
+
+I request you to register an FIR / Daily Diary Entry under Section 173 of the Bharatiya Nagarik Suraksha Sanhita, 2023 (BNSS) and provide me a copy free of cost.
+
+Thanking you,
+Yours faithfully,
+
+[Your Name & Signature]
+Contact: [Your Phone Number]"""
 
     return ComplaintDraftResponse(draft=draft)

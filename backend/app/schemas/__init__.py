@@ -5,6 +5,11 @@ from backend.app.schemas.legal import (
     LegalChunkMetadata,
     LegalChunkCreate,
     LegalChunkRead,
+    DocumentAnalysisResponse,
+    DocumentClause,
+    DocumentTerm,
+    DocumentRiskFlag,
+    DocumentAnalyzeRequest,
 )
 from backend.app.schemas.rag import (
     LegalSource,
@@ -14,6 +19,23 @@ from backend.app.schemas.rag import (
     ChatRequest,
     ChatResponse,
     HealthResponse,
+    StructuredLegalAnswer,
+    KeyPointItem,
+)
+from backend.app.schemas.auth import (
+    SignUpRequest,
+    LoginRequest,
+    UserOut,
+    AuthResponse,
+    LogoutResponse,
+)
+from backend.app.schemas.complaints import (
+    ComplaintDraftRequest,
+    ComplaintDraftResponse,
+)
+from backend.app.schemas.roadmaps import (
+    RoadmapStep,
+    RoadmapResponse,
 )
 
 __all__ = [
@@ -23,6 +45,11 @@ __all__ = [
     "LegalChunkMetadata",
     "LegalChunkCreate",
     "LegalChunkRead",
+    "DocumentAnalysisResponse",
+    "DocumentClause",
+    "DocumentTerm",
+    "DocumentRiskFlag",
+    "DocumentAnalyzeRequest",
     "LegalSource",
     "RetrievedChunk",
     "SearchRequest",
@@ -30,4 +57,15 @@ __all__ = [
     "ChatRequest",
     "ChatResponse",
     "HealthResponse",
+    "StructuredLegalAnswer",
+    "KeyPointItem",
+    "SignUpRequest",
+    "LoginRequest",
+    "UserOut",
+    "AuthResponse",
+    "LogoutResponse",
+    "ComplaintDraftRequest",
+    "ComplaintDraftResponse",
+    "RoadmapStep",
+    "RoadmapResponse",
 ]

@@ -28,7 +28,6 @@ class CrossEncoderReranker(BaseReranker):
         settings = get_settings()
         self.model_name = model_name if model_name is not None else (settings.RERANKER_MODEL or "cross-encoder/ms-marco-MiniLM-L-6-v2")
         self._model = None
-        self._initialize_model()
 
     def _initialize_model(self):
         if not self.model_name:
@@ -63,6 +62,9 @@ class CrossEncoderReranker(BaseReranker):
 
         logger.info(f"Reranking {len(chunks)} candidate chunks for query (target top_k={top_k})")
         
+        if self._model is None and self.model_name:
+            self._initialize_model()
+
         # If model is loaded, compute cross-encoder scores
         if self._model is not None:
             try:

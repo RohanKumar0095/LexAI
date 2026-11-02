@@ -1,6 +1,10 @@
-import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, String, DateTime
 from backend.app.core.database import Base
+
+
+def utcnow():
+    return datetime.now(timezone.utc)
 
 
 class User(Base):
@@ -11,5 +15,5 @@ class User(Base):
     password_hash = Column(String(256), nullable=False)
     full_name = Column(String(256), nullable=True)
     avatar_url = Column(String(512), nullable=True)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=utcnow)
+    updated_at = Column(DateTime, default=utcnow, onupdate=utcnow)

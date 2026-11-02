@@ -4,7 +4,7 @@ import AppShell from './components/layout/AppShell';
 import ChatScreen from './components/chat/ChatScreen';
 
 // Auth
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context';
 
 // Hooks
 import { useTheme } from './hooks/useTheme';

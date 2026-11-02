@@ -1,3 +1,4 @@
+import os
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -33,21 +34,24 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning(f"Could not auto-create tables on startup (check database connection): {e}")
 
-    # Pre-warm expensive ML and RAG singletons once during startup
-    try:
-        logger.info("Pre-warming RAG models and persistent vector store...")
-        from backend.app.rag.embeddings import warmup_embedding_service
-        from backend.app.rag.vector_store import warmup_vector_store
-        from backend.app.rag.reranker import warmup_reranker
-        from backend.app.services.rag_service import warmup_rag_service
+    # Pre-warm expensive ML and RAG singletons once during startup (can be skipped in tests)
+    if not os.environ.get("SKIP_MODEL_WARMUP"):
+        try:
+            logger.info("Pre-warming RAG models and persistent vector store...")
+            from backend.app.rag.embeddings import warmup_embedding_service
+            from backend.app.rag.vector_store import warmup_vector_store
+            from backend.app.rag.reranker import warmup_reranker
+            from backend.app.services.rag_service import warmup_rag_service
 
-        warmup_embedding_service()
-        warmup_vector_store()
-        warmup_reranker()
-        warmup_rag_service()
-        logger.info("All RAG models, rerankers, and vector stores pre-warmed successfully.")
-    except Exception as e:
-        logger.warning(f"RAG pre-warmup warning (non-fatal): {e}")
+            warmup_embedding_service()
+            warmup_vector_store()
+            warmup_reranker()
+            warmup_rag_service()
+            logger.info("All RAG models, rerankers, and vector stores pre-warmed successfully.")
+        except Exception as e:
+            logger.warning(f"RAG pre-warmup warning (non-fatal): {e}")
+    else:
+        logger.info("SKIP_MODEL_WARMUP set: skipping heavy ML model pre-warming.")
 
     yield
     logger.info("Shutting down LexAI India RAG Backend...")

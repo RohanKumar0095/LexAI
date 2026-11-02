@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context';
 import { AuthLayout } from '../../components/auth/AuthLayout';
 import { OnboardingStepIndicator } from '../../components/auth/OnboardingStepIndicator';
 import { StateDistrictSelector } from '../../components/auth/StateDistrictSelector';

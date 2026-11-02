@@ -1,7 +1,11 @@
-import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, String, Integer, Text, DateTime, ForeignKey, Index
 from sqlalchemy.orm import relationship
 from backend.app.core.database import Base
+
+
+def utcnow():
+    return datetime.now(timezone.utc)
 
 
 class LegalDocument(Base):
@@ -18,8 +22,8 @@ class LegalDocument(Base):
     judgment_date = Column(String(64), nullable=True)
     jurisdiction = Column(String(128), default="India")
     language = Column(String(32), default="en")
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=utcnow)
+    updated_at = Column(DateTime, default=utcnow, onupdate=utcnow)
 
     chunks = relationship("LegalChunk", back_populates="document", cascade="all, delete-orphan")
 
@@ -35,7 +39,7 @@ class LegalChunk(Base):
     paragraph_reference = Column(String(128), nullable=True)
     chunk_type = Column(String(64), default="body")  # heading, body, headnote, order
     metadata_json = Column(Text, nullable=True)  # Stored as serialized JSON string for db portability
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=utcnow)
 
     document = relationship("LegalDocument", back_populates="chunks")
 

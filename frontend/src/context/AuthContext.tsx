@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   signupApi,
   loginApi,
@@ -14,39 +14,8 @@ import {
   supabaseSignOut,
   supabaseGetSession,
 } from '../services/supabaseClient';
-
-export interface UserProfile {
-  id?: string;
-  name: string;
-  email: string;
-  phone?: string;
-  state?: string;
-  district?: string;
-  language?: 'en' | 'hi';
-}
-
-export interface SignupData {
-  name?: string;
-  email: string;
-  password: string;
-  phone?: string;
-}
-
-interface AuthContextType {
-  isAuthenticated: boolean;
-  isGuest: boolean;
-  isLoading: boolean;
-  persona: 'citizen';
-  user: UserProfile | null;
-  token: string | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  signup: (data: SignupData) => Promise<boolean>;
-  logout: () => void;
-  continueAsGuest: () => void;
-  updateProfile: (profileUpdates: Partial<UserProfile>) => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { AuthContext } from './AuthContextDef';
+import type { UserProfile, SignupData } from './AuthContextDef';
 
 const TOKEN_KEY = 'lexai_access_token';
 const USER_KEY = 'lexai_user';
@@ -388,12 +357,4 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-export { AuthApiError };
+export default AuthProvider;

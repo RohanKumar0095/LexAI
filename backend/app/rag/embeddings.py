@@ -17,7 +17,7 @@ class EmbeddingService:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(EmbeddingService, cls).__new__(cls)
-            cls._instance._initialize_model()
+            cls._instance._model = None
         return cls._instance
 
     def _initialize_model(self):

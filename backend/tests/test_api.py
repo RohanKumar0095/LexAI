@@ -1,3 +1,5 @@
+import os
+os.environ["SKIP_MODEL_WARMUP"] = "1"
 import pytest
 from unittest.mock import MagicMock
 from fastapi.testclient import TestClient

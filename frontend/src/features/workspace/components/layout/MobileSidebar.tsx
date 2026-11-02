@@ -4,7 +4,7 @@ import {
   MapPin, AlertOctagon, Settings,
   MessageSquare, Pin, PinOff, Trash2, User, ChevronDown, ChevronRight, LogOut, Scale 
 } from 'lucide-react';
-import { useAuth } from '../../../../context/AuthContext';
+import { useAuth } from '../../../../context';
 import { LEXAI_LOGO_URL } from '../../../../constants/brand';
 import type { Conversation } from '../../types/chat';
 

@@ -308,8 +308,8 @@ def test_markdown_no_literal_asterisk_artifacts():
 
     md = LegalPromptBuilder.format_structured_answer_to_markdown(structured)
     # Ensure double newlines after headings so headings and bullets don't concatenate into '### Key Points * ...'
-    assert "### Key Legal Findings\n\n* " in md
-    assert "### Procedure & Steps\n\n1. " in md
-    assert "### Conditions & Requirements\n\n* " in md
+    assert "### Key Takeaways\n\n* " in md
+    assert "### Practical Steps\n\n1. " in md
+    assert "### Important Conditions\n\n* " in md
     assert "### Information Not Available in Indexed Documents\n\n* ⚠️ " in md
 

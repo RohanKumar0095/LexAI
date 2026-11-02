@@ -67,9 +67,7 @@ export const RagInspectorPanel: React.FC<RagInspectorPanelProps> = ({
             }
           } else {
             // Trace not yet ready on server
-            if (!trace) {
-              setTrace(null);
-            }
+            setTrace((prev) => (prev ? null : prev));
           }
         }
       } catch (err: any) {

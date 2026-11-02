@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth, AuthApiError } from '../../context/AuthContext';
+import { useAuth, AuthApiError } from '../../context';
 import { AuthLayout } from '../../components/auth/AuthLayout';
 import { PasswordInput } from '../../components/auth/PasswordInput';
 import { Mail, User, Phone, ArrowRight, Briefcase, Compass, Loader2, CheckCircle } from 'lucide-react';
