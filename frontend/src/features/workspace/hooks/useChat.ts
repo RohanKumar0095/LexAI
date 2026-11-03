@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Conversation, Message } from '../types/chat';
 import { apiService } from '../services/apiService';
+import { speechService } from '../services/speechService';
 import { useAuth } from '../../../context';
 
 export const useChat = () => {
@@ -46,6 +47,7 @@ export const useChat = () => {
   }, [isAuthenticated, token, isGuest]);
 
   const startNewChat = () => {
+    speechService.stop();
     setActiveConversationId(null);
     setMessages([]);
     setExplainMode('simple');
@@ -53,6 +55,7 @@ export const useChat = () => {
   };
 
   const loadConversation = async (id: string) => {
+    speechService.stop();
     setActiveConversationId(id);
 
     // 1. Immediately display in-memory messages if available

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Bookmark, BookmarkMinus, MessageSquare, AlertCircle, FileText, Trash2 } from 'lucide-react';
+import { Bookmark, BookmarkMinus, MessageSquare, AlertCircle, FileText, Trash2, Volume2, VolumeX } from 'lucide-react';
 import type { LawCategory, MockArticle } from '../../types/legal';
 import type { Conversation } from '../../types/chat';
+import { useMessageSpeech } from '../../hooks/useTextToSpeech';
 
 interface SavedLawsPanelProps {
   savedArticleIds: string[];
@@ -21,6 +22,82 @@ interface SavedDraft {
   description: string;
   date: string;
 }
+
+interface SavedChatMessageCardProps {
+  msg: {
+    id: string;
+    content: string;
+    timestamp: string;
+    conversationTitle: string;
+  };
+  onBookmarkMessage: (msgId: string) => void;
+  onAskLex: (prompt: string) => void;
+}
+
+const SavedChatMessageCard: React.FC<SavedChatMessageCardProps> = ({
+  msg,
+  onBookmarkMessage,
+  onAskLex,
+}) => {
+  const { isPlaying, toggleSpeech } = useMessageSpeech(msg.id, msg.content);
+
+  return (
+    <div 
+      className={`rounded-2xl border bg-surface p-4 shadow-sm space-y-2 relative transition-all duration-200 ${
+        isPlaying ? 'border-[#C084FC]/60 ring-1 ring-[#C084FC]/30 shadow-purple-900/40' : 'border-border'
+      }`}
+    >
+      <div className="flex justify-between items-center gap-2">
+        <span className="text-[9px] font-bold text-muted-foreground uppercase truncate tracking-wide">
+          Session: {msg.conversationTitle}
+        </span>
+        <button
+          onClick={() => onBookmarkMessage(msg.id)}
+          className="text-muted-foreground hover:text-red-500 transition-colors p-1 rounded-lg hover:bg-hover focus:outline-none focus:ring-1 focus:ring-red-500 cursor-pointer"
+          title="Remove from Saved Space"
+          aria-label="Remove from Saved Space"
+        >
+          <BookmarkMinus className="h-4 w-4" />
+        </button>
+      </div>
+
+      <p className="text-xs leading-relaxed text-foreground whitespace-pre-line line-clamp-4">
+        {msg.content}
+      </p>
+
+      <div className="pt-2 flex justify-between items-center text-[10px] text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <span>Saved: {msg.timestamp}</span>
+          <span>•</span>
+          <button
+            onClick={toggleSpeech}
+            className={`flex items-center gap-1 transition-colors cursor-pointer ${
+              isPlaying 
+                ? 'text-[#C084FC] font-semibold' 
+                : 'hover:text-foreground'
+            }`}
+            title={isPlaying ? 'Stop reading aloud' : 'Read aloud'}
+            aria-label={isPlaying ? 'Stop reading aloud' : 'Read aloud'}
+          >
+            {isPlaying ? (
+              <VolumeX className="h-3 w-3 text-[#C084FC] animate-pulse" />
+            ) : (
+              <Volume2 className="h-3 w-3" />
+            )}
+            <span>{isPlaying ? 'Stop' : 'Read'}</span>
+          </button>
+        </div>
+        <button
+          onClick={() => onAskLex(`Regarding the saved advice from "${msg.conversationTitle}": can you clarify this point?`)}
+          className="flex items-center gap-1.5 rounded-lg bg-selected border border-border px-2.5 py-1 text-[10px] font-bold text-foreground hover:opacity-90 transition-colors focus:outline-none focus:ring-1 focus:ring-brand-gold-550 cursor-pointer"
+        >
+          <MessageSquare className="h-3 w-3 text-brand-gold-550 dark:text-brand-gold-300" />
+          <span>Clarify in Chat</span>
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export const SavedLawsPanel: React.FC<SavedLawsPanelProps> = ({
   savedArticleIds,
@@ -192,39 +269,12 @@ export const SavedLawsPanel: React.FC<SavedLawsPanelProps> = ({
                 </div>
 
                 {savedChats.map((msg) => (
-                  <div 
+                  <SavedChatMessageCard
                     key={msg.id}
-                    className="rounded-2xl border border-border bg-surface p-4 shadow-sm space-y-2 relative"
-                  >
-                    <div className="flex justify-between items-center gap-2">
-                      <span className="text-[9px] font-bold text-muted-foreground uppercase truncate tracking-wide">
-                        Session: {msg.conversationTitle}
-                      </span>
-                      <button
-                        onClick={() => onBookmarkMessage(msg.id)}
-                        className="text-muted-foreground hover:text-red-500 transition-colors p-1 rounded-lg hover:bg-hover focus:outline-none focus:ring-1 focus:ring-red-500"
-                        title="Remove from Saved Space"
-                        aria-label="Remove from Saved Space"
-                      >
-                        <BookmarkMinus className="h-4 w-4" />
-                      </button>
-                    </div>
-
-                    <p className="text-xs leading-relaxed text-foreground whitespace-pre-line line-clamp-4">
-                      {msg.content}
-                    </p>
-
-                    <div className="pt-2 flex justify-between items-center text-[10px] text-muted-foreground">
-                      <span>Saved: {msg.timestamp}</span>
-                      <button
-                        onClick={() => onAskLex(`Regarding the saved advice from "${msg.conversationTitle}": can you clarify this point?`)}
-                        className="flex items-center gap-1.5 rounded-lg bg-selected border border-border px-2.5 py-1 text-[10px] font-bold text-foreground hover:opacity-90 transition-colors focus:outline-none focus:ring-1 focus:ring-brand-gold-550"
-                      >
-                        <MessageSquare className="h-3 w-3 text-brand-gold-550 dark:text-brand-gold-300" />
-                        <span>Clarify in Chat</span>
-                      </button>
-                    </div>
-                  </div>
+                    msg={msg}
+                    onBookmarkMessage={onBookmarkMessage}
+                    onAskLex={onAskLex}
+                  />
                 ))}
               </>
             )}

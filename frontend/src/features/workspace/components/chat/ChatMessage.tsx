@@ -8,9 +8,12 @@ import {
   SearchX, 
   AlertCircle, 
   BookOpen, 
-  FileText 
+  FileText,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import type { Message, Citation, KeyPointItem } from '../../types/chat';
+import { useMessageSpeech } from '../../hooks/useTextToSpeech';
 
 interface ChatMessageProps {
   message: Message;
@@ -29,6 +32,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   const isAssistant = message.role === 'assistant';
   const [copied, setCopied] = useState(false);
   const [rated, setRated] = useState<'up' | 'down' | null>(null);
+
+  const { isPlaying, toggleSpeech } = useMessageSpeech(message.id, message.content);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message.content);
@@ -276,9 +281,13 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
       }`}>
         
         {/* Message bubble */}
-        <div className={`rounded-2xl p-4 sm:p-5 text-xs leading-relaxed shadow-md border ${
+        <div className={`rounded-2xl p-4 sm:p-5 text-xs leading-relaxed shadow-md border transition-all duration-200 ${
           isAssistant 
-            ? 'bg-[#15111F] border-[#30243F] text-[#F8F7FC] rounded-tl-none shadow-purple-950/20' 
+            ? `bg-[#15111F] text-[#F8F7FC] rounded-tl-none shadow-purple-950/20 ${
+                isPlaying 
+                  ? 'border-[#C084FC]/60 ring-1 ring-[#C084FC]/30 shadow-purple-900/40' 
+                  : 'border-[#30243F]'
+              }`
             : 'bg-[#1C1728] border-[#30243F] text-[#F8F7FC] rounded-tr-none shadow-purple-950/20'
         }`}>
           {/* Evidence state badge */}
@@ -396,6 +405,24 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
                 title="Bookmark Information"
               >
                 {isBookmarked ? 'Saved' : 'Save'}
+              </button>
+              <span>•</span>
+              <button
+                onClick={toggleSpeech}
+                className={`flex items-center gap-1 transition-colors cursor-pointer ${
+                  isPlaying 
+                    ? 'text-[#C084FC] font-semibold' 
+                    : 'hover:text-white'
+                }`}
+                title={isPlaying ? 'Stop reading aloud' : 'Read response aloud'}
+                aria-label={isPlaying ? 'Stop reading aloud' : 'Read response aloud'}
+              >
+                {isPlaying ? (
+                  <VolumeX className="h-3 w-3 text-[#C084FC] animate-pulse" />
+                ) : (
+                  <Volume2 className="h-3 w-3" />
+                )}
+                <span>{isPlaying ? 'Stop' : 'Read'}</span>
               </button>
               
               {/* RAG Pipeline Trace Inspector button */}

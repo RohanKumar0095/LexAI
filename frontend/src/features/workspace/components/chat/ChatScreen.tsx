@@ -8,6 +8,7 @@ import { ChatScalesBackground } from './ChatScalesBackground';
 import type { Message } from '../../types/chat';
 import { X, Sparkles, Scale } from 'lucide-react';
 import { LEXAI_LOGO_URL } from '../../../../constants/brand';
+import { speechService } from '../../services/speechService';
 
 interface ChatScreenProps {
   messages: Message[];
@@ -49,6 +50,13 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isTyping]);
+
+  // Stop active speech playback when navigating away or unmounting
+  useEffect(() => {
+    return () => {
+      speechService.stop();
+    };
+  }, []);
 
   const hasMessages = messages.length > 0;
 
