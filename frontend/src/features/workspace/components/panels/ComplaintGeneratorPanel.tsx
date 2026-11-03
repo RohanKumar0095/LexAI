@@ -247,10 +247,10 @@ export const ComplaintGeneratorPanel: React.FC<ComplaintGeneratorPanelProps> = (
                 readOnly={!isEditable}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
-                className={`w-full flex-1 rounded-xl border p-4 text-[11px] font-mono leading-relaxed focus:outline-none focus:ring-1 focus:ring-brand-gold-550/20 focus:border-brand-gold-550 ${
+                className={`w-full flex-1 rounded-xl border p-4 text-[11px] font-mono leading-relaxed focus:outline-none focus:ring-1 focus:ring-brand-gold-550/20 focus:border-brand-gold-550 text-slate-850 dark:text-[#F1F0F6] ${
                   isEditable 
-                    ? 'border-brand-gold-550 bg-white dark:bg-slate-900 text-slate-850 dark:text-slate-100'
-                    : 'border-slate-200 bg-slate-50/50 dark:border-slate-850 dark:bg-brand-navy-950/20 text-slate-600 dark:text-slate-350'
+                    ? 'border-brand-gold-550 bg-white dark:bg-slate-900'
+                    : 'border-slate-200 bg-slate-50/50 dark:border-slate-850 dark:bg-brand-navy-950/20'
                 }`}
               />
             </div>
